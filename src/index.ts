@@ -1,2 +1,1 @@
-export class HoneycombOpenTelemetryWebSDK {
-}
+export class HoneycombOpenTelemetryWebSDK {}
