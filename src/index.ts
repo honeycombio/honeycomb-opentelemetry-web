@@ -1,1 +1,5 @@
-export class HoneycombOpenTelemetryWebSDK {}
+export class HoneycombOpenTelemetryWebSDK {
+  constructor() {
+    console.log('👋 hello');
+  }
+}

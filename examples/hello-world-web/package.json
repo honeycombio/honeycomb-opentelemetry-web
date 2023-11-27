@@ -1,0 +1,20 @@
+{
+  "name": "hello-world-web",
+  "version": "0.0.1",
+  "description": "An example vanilla web app that works with Honeycomb's OpenTelemetry Web Distro",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild index.js --bundle --sourcemap --outfile=build/bundle.js",
+    "start": "serve .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@honeycombio/opentelemetry-web": "file:../../dist/src"
+  },
+  "devDependencies": {
+    "esbuild": "0.19.8",
+    "serve": "^14.2.1"
+  }
+}

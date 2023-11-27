@@ -135,3 +135,6 @@ junit.xml
 smoke-tests/collector/data.json
 smoke-tests/collector/data-results/*.json
 smoke-tests/report.xml
+
+# example build outputs
+build
