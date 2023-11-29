@@ -1,5 +1,2 @@
-export class HoneycombOpenTelemetryWebSDK {
-  constructor() {
-    console.log('👋 hello');
-  }
-}
+export * from './base-otel-sdk';
+export * from './honeycomb-otel-sdk';
