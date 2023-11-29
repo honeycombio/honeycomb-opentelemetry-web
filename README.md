@@ -1,12 +1,18 @@
-# Default Community Health Files
-
-// TODO: ask Phillip whether we must call this a distro instead of a wrapper
-
-This repository contains default community health files for repositories in the Honeycomb organization and will automatically be picked up if they are not overwritten.
-
-More details on this repository structure can be found here: https://docs.github.com/en/github/building-a-strong-community/creating-a-default-community-health-file
-
 # {project-name}
+
+Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser.
+
+This package sets up OpenTelemetry for tracing, using our recommended practices, including:
+
+* Useful fields about the browser situation
+* Easy configuration to send to Honeycomb
+* Basic sampler to control event volume
+* Convenient packaging
+* An informative debug mode, including links to traces in Honeycomb
+
+// TODO: ask Phillip whether we must call this a distro instead of a wrapper. It's a wrapper.
+
+
 
 <!-- OSS metadata badge - rename repo link and set status in OSSMETADATA -->
 <!-- [![OSS Lifecycle](https://img.shields.io/osslifecycle/honeycombio/{repo-name})](https://github.com/honeycombio/home/blob/main/honeycomb-oss-lifecycle-and-practices.md) -->
