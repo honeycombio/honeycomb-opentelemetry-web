@@ -23,7 +23,7 @@ This wrapper is a little ahead of OpenTelemetry, so that you can get the recomme
 
 This wrapper is at least as stable as OpenTelemetry, because it is backwards-compatible as we update it to the latest OpenTelemetry versions, semantic conventions, and recommended practices.
 
-We test this library, with its combination of OpenTelemetry dependencies, so that you can be confident that upgrades will work.
+We test this library, with its combination of OpenTelemetry dependencies, so that you can be confident that upgrades will work. It is tested with the latest versions of Chrome, Firefox, and Safari. 
 
 This project provides a convenient distribution of all the code required to get traces from the browser. No package manager is required. (note: maybe not in alpha)
 
@@ -58,7 +58,7 @@ This wrapper can change faster than OpenTelemetry, and yet be more stable. This 
 
 Our version numbers are independent of the OpenTelemetry version numbers. Check the badge at the top of this README for the OpenTelemetry version this is based on.
 
-When OpenTelemetry releases a new version of the packages this project depends on, we update this project to use them within a week.
+When OpenTelemetry releases a new version of the packages this project depends on, we update this project to use them within a week, unless our tests indicate a problem.
 
 When the OpenTelemetry API or SDK has a major version bump, this package will too. We also have major version bumps of our own.
 
