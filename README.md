@@ -38,7 +38,17 @@ Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts
 
 Fields that can change during the lifetime of the page are instead added to each span in a SpanProcessor.
 
+## When you stop using this
 
+The parts of this wrapper are available separately.
+
+You can copy the [initialization](the-relevant-code.js) of the SDK and customize it for yourself.
+
+The UsefulBrowserFieldsSpanProcessor is available as a separate component. (or copy the code)
+
+The sampler is available as a separate package. // link
+
+The BaggageSpanProcessor is a separate package. // link
 
 ## Migration Practices
 
