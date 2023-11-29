@@ -1,5 +1,7 @@
 # Releasing
 
+// TODO: the doesn't happen yet
+
 - `Add steps to prepare release`
 - Update `CHANGELOG.md` with the changes since the last release.
 - Commit changes, push, and open a release preparation pull request for review.

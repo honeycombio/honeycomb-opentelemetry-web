@@ -1,5 +1,7 @@
 # Default Community Health Files
 
+// TODO: ask Phillip whether we must call this a distro instead of a wrapper
+
 This repository contains default community health files for repositories in the Honeycomb organization and will automatically be picked up if they are not overwritten.
 
 More details on this repository structure can be found here: https://docs.github.com/en/github/building-a-strong-community/creating-a-default-community-health-file

@@ -1,7 +1,7 @@
 {
-  "name": "@honeycombio/opentelemetry-node",
+  "name": "@honeycombio/opentelemetry-web",
   "version": "0.0.1",
-  "description": "Honeycomb OpenTelemetry Distro for Browser Applications",
+  "description": "Honeycomb OpenTelemetry Wrapper for Browser Applications",
   "main": "./dist/src/index.js",
   "files": [
     "dist",
