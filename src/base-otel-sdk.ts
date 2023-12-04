@@ -41,6 +41,7 @@ import {
 } from '@opentelemetry/sdk-trace-web';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { WebSDKConfiguration } from './types';
+import { SessionIdSpanProcessor } from './session-id-span-processor';
 
 /** This class represents everything needed to register a fully configured OpenTelemetry Web SDK */
 
@@ -153,6 +154,9 @@ export class WebSDK {
       contextManager: this._tracerProviderConfig?.contextManager,
       propagator: this._tracerProviderConfig?.textMapPropagator,
     });
+
+    // add processor for adding the sessionId attribute
+    tracerProvider.addSpanProcessor(new SessionIdSpanProcessor());
   }
 
   public shutdown(): Promise<void> {
