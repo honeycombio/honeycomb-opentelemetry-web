@@ -11,7 +11,7 @@ jobs:
       - name: Create Asana task
         uses: honeycombio/gha-create-asana-task@v1.0.1
         with:
-          asana-secret: ${{ secrets.ASANA_SECRET }}
+          asana-secret: ${{ secrets.ASANA_PAT }}
           asana-workspace-id: ${{ secrets.ASANA_WORKSPACE_ID }}
           asana-project-id: ${{ secrets.ASANA_PROJECT_ID }}
           asana-section-id: ${{ secrets.ASANA_SECTION_ID }}
