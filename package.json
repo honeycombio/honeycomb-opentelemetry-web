@@ -16,6 +16,7 @@
   "author": "Honeycomb <support@honeycomb.io> (https://www.honeycomb.io/)",
   "license": "Apache-2.0",
   "devDependencies": {
+    "cypress": "^13.6.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
