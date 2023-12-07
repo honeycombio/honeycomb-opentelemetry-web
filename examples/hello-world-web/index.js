@@ -7,23 +7,13 @@ import {
 } from '@opentelemetry/sdk-trace-base';
 
 const main = () => {
-  console.log('hey pk!');
   // Set OTel to log in Debug mode
   diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
   // Initialize base OTel WebSDK
   const sdk = new WebSDK({
     instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
-    spanProcessor: new SimpleSpanProcessor(
-      new ReportingSpanExporter({
-        sendSpansHere: (reportedSpan) => {
-          const spanList = document.getElementById('spans-go-here');
-          const newSpan = document.createElement('li');
-          newSpan.innerHTML = reportedSpan.name;
-          spanList.appendChild(newSpan);
-        },
-      }),
-    ),
+    spanProcessor: new SimpleSpanProcessor(new ConsoleSpanExporter()),
   });
   sdk.start();
 };

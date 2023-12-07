@@ -1,22 +1,40 @@
-describe('template spec', () => {
-  it('should log the expected message', () => {
-    cy.visit('http://localhost:3000');
+describe('Smoke Tests', () => {
+  it('initializes the OpenTelemetry API', () => {
+    cy.visit('http://localhost:3000', {
+      onBeforeLoad(win) {
+        cy.stub(win.console, 'debug').as('consoleDebug');
+      },
+    });
 
-    // some code to make it wait
+    cy.get('@consoleDebug').should(
+      'be.calledWithMatch',
+      '@opentelemetry/api: Registered a global for diag',
+    );
+    cy.get('@consoleDebug').should(
+      'be.calledWithMatch',
+      '@opentelemetry/api: Registered a global for trace',
+    );
+    cy.get('@consoleDebug').should(
+      'be.calledWithMatch',
+      '@opentelemetry/api: Registered a global for context',
+    );
+  });
 
-    cy.get('#spans-go-here')
-      .find('li')
-      .contains('documentLoad')
-      .should('exist');
+  it('logs document load traces', () => {
+    cy.visit('http://localhost:3000', {
+      onBeforeLoad(win) {
+        cy.stub(win.console, 'dir').as('consoleDir');
+      },
+    });
 
-    cy.get('#spans-go-here')
-      .find('li')
-      .contains('resourceFetch')
-      .should('exist');
-
-    cy.get('#spans-go-here')
-      .find('li')
-      .contains('documentFetch')
-      .should('exist');
+    cy.get('@consoleDir').should('be.calledWithMatch', {
+      name: 'documentLoad',
+    });
+    cy.get('@consoleDir').should('be.calledWithMatch', {
+      name: 'resourceFetch',
+    });
+    cy.get('@consoleDir').should('be.calledWithMatch', {
+      name: 'documentFetch',
+    });
   });
 });
