@@ -1,4 +1,4 @@
-# {project-name}
+# Honeycomb OpenTelemetry Web
 
 <!-- OSS metadata badge - rename repo link and set status in OSSMETADATA -->
 <!-- [![OSS Lifecycle](https://img.shields.io/osslifecycle/honeycombio/{repo-name})](https://github.com/honeycombio/home/blob/main/honeycomb-oss-lifecycle-and-practices.md) -->
@@ -23,7 +23,7 @@ This wrapper is a little ahead of OpenTelemetry, so that you can get the recomme
 
 This wrapper is at least as stable as OpenTelemetry, because it is backwards-compatible as we update it to the latest OpenTelemetry versions, semantic conventions, and recommended practices.
 
-We test this library, with its combination of OpenTelemetry dependencies, so that you can be confident that upgrades will work. It is tested with the latest versions of Chrome, Firefox, and Safari. 
+We test this library, with its combination of OpenTelemetry dependencies, so that you can be confident that upgrades will work. It is tested with the latest versions of Chrome, Firefox, and Safari.
 
 This project provides a convenient distribution of all the code required to get traces from the browser. No package manager is required. (note: maybe not in alpha)
 
@@ -38,7 +38,7 @@ Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts
 
 Fields that can change during the lifetime of the page are instead added to each span in a SpanProcessor.
 
-## When you stop using this
+## When to stop using this
 
 The parts of this wrapper are available separately.
 
@@ -89,6 +89,16 @@ When an option is not available upstream, we give it a name. If that options bec
 1. We add the new name, and accept both for 6 months.
 1. We mark the old name as deprecated in this documentation, and issue a warning in debug mode.
 1. After this period, the old name will be ignored (at the next major version bump).
+
+## Development
+
+### Tests
+
+To run smoke tests, make sure you have docker installed and run
+
+```sh
+npm run test:smoke
+```
 
 ## Contributing
 
