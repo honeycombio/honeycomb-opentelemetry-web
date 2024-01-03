@@ -56,21 +56,6 @@ jobs:
 
 
 workflows:
-  # we'll turn on nightly once this is published to npm
-  # nightly:
-  #   triggers:
-  #     - schedule:
-  #         cron: "0 0 * * *"
-  #         filters:
-  #           branches:
-  #             only:
-  #               - main
-    jobs:
-      - test
-      - smoke_test:
-          requires:
-            - test
-
   build:
     jobs:
       - check-format:
