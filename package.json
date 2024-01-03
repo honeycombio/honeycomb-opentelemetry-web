@@ -14,7 +14,7 @@
     "clean": "tsc --build --clean",
     "clean:smoke-test-example": "docker stop smoke-tests && docker rm smoke-tests",
     "lint": "eslint .",
-    "lint:ci": "npm run lint-ci-prep && npm run lint",
+    "lint:ci": "npm run lint:ci-prep && npm run lint",
     "lint:ci-prep": "cd ./examples/hello-world-web && npm ci",
     "lint:fix": "eslint . --fix",
     "start:smoke-test-example": "docker build -t smoke-tests . && docker run -dp 127.0.0.1:3000:3000 --name smoke-tests smoke-tests",
