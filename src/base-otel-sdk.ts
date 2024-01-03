@@ -23,11 +23,11 @@ import {
   registerInstrumentations,
 } from '@opentelemetry/instrumentation';
 import {
+  browserDetector,
   Detector,
   DetectorSync,
   detectResourcesSync,
   IResource,
-  browserDetector,
   Resource,
   ResourceDetectionConfig,
 } from '@opentelemetry/resources';

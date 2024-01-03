@@ -17,12 +17,7 @@
  * limitations under the License.
  */
 
-import { Context } from '@opentelemetry/api';
-import {
-  ReadableSpan,
-  Span,
-  SpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
+import { Span, SpanProcessor } from '@opentelemetry/sdk-trace-base';
 
 const SESSION_ID_BYTES = 16;
 const SHARED_CHAR_CODES_ARRAY = Array(32);
@@ -35,11 +30,11 @@ export class SessionIdSpanProcessor implements SpanProcessor {
     this._sessionId = this._idGenerator();
   }
 
-  onStart(span: Span, parentContext: Context): void {
+  onStart(span: Span): void {
     span.setAttribute('session.id', this._sessionId);
   }
 
-  onEnd(span: ReadableSpan): void {}
+  onEnd(): void {}
 
   forceFlush(): Promise<void> {
     return Promise.resolve();
