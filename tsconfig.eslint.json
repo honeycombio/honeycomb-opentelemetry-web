@@ -10,6 +10,8 @@
     // whatever paths you intend to lint
     "./src/",
     "./test/",
+    "./cypress/",
+    "./*.ts", // root typescript files
     "./*.js", // root javascript files
     "./.*.js", // root javascript config files
     "./examples/*/*.js", // examples javascript files

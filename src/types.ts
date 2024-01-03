@@ -22,11 +22,11 @@ import { TextMapPropagator } from '@opentelemetry/api';
 import { InstrumentationOption } from '@opentelemetry/instrumentation';
 import { Detector, DetectorSync, IResource } from '@opentelemetry/resources';
 import {
+  IdGenerator,
   Sampler,
   SpanExporter,
   SpanLimits,
   SpanProcessor,
-  IdGenerator,
 } from '@opentelemetry/sdk-trace-base';
 
 export interface WebSDKConfiguration {

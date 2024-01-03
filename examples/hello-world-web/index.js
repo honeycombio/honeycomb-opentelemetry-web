@@ -1,5 +1,5 @@
 import { WebSDK } from '@honeycombio/opentelemetry-web';
-import { DiagConsoleLogger, DiagLogLevel, diag } from '@opentelemetry/api';
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import {
   ConsoleSpanExporter,
