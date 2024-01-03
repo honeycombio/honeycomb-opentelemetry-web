@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "tsc --build",
+    "check-format": "prettier --list-different \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "clean": "tsc --build --clean",
     "clean:smoke-test-example": "docker stop smoke-tests && docker rm smoke-tests",
     "lint": "eslint .",
