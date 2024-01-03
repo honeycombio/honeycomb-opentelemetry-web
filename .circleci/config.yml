@@ -1,0 +1,85 @@
+version: 2.1
+
+filters_always: &filters_always
+  filters:
+    tags:
+      only: /.*/
+
+executors:
+  node:
+    docker:
+      - image: cimg/node:16.16
+
+jobs:
+  build:
+    executor: node
+    steps:
+      - checkout
+      - run: npm i
+      - run: npm run build
+
+  check-format:
+    executor: node
+    steps:
+      - checkout
+      - run: npm ci
+      - run: npm run check-format
+
+  lint:
+    executor: node
+    steps:
+      - checkout
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint:ci
+
+  test:
+    executor: node
+    # https://circleci.com/docs/collect-test-data/#jest
+    steps:
+      - checkout
+      - run: npm i
+      - run:
+          name: Install JUnit coverage reporter
+          # command: yarn add --dev jest-junit
+          command: npm i --save-dev jest-junit
+      - run:
+          name: Run tests with JUnit as reporter
+          # command: jest --ci --runInBand --reporters=default --reporters=jest-junit
+          command: npm run test:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/
+      - store_test_results:
+          path: ./reports/
+      - store_artifacts:
+          path: ./reports/
+
+
+workflows:
+  # we'll turn on nightly once this is published to npm
+  # nightly:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 0 * * *"
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+    jobs:
+      - test
+      - smoke_test:
+          requires:
+            - test
+
+  build:
+    jobs:
+      - check-format:
+          <<: *filters_always
+      - lint:
+          <<: *filters_always
+      - test:
+          <<: *filters_always
+      - build:
+          <<: *filters_always
+          requires:
+            - test
