@@ -43,3 +43,41 @@ export interface WebSDKConfiguration {
   spanLimits: SpanLimits;
   idGenerator: IdGenerator;
 }
+
+/**
+ * The options used to configure the Honeycomb Node SDK.
+ */
+export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
+  /** The API key used to send telemetry to Honeycomb. */
+  apiKey?: string;
+
+  /** The API key used to send traces telemetry to Honeycomb. Defaults to apikey if not set. */
+  tracesApiKey?: string;
+
+  /** The API endpoint where telemetry is sent. Defaults to 'https://api.honeycomb.io' */
+  endpoint?: string;
+
+  /** The API endpoint where traces telemetry is sent. Defaults to endpoint if not set. */
+  tracesEndpoint?: string;
+
+  /** The dataset where traces telemetry is stored in Honeycomb. Only used when using a classic API key. */
+  dataset?: string;
+
+  /** The service name of the application and where traces telemetry is stored in Honeycomb. */
+  serviceName?: string;
+
+  /** The sample rate used to determine whether a trace is exported. Defaults to 1 (send everything). */
+  sampleRate?: number;
+
+  /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production. */
+  debug?: boolean;
+
+  /** The local visualizations flag enables logging Honeycomb URLs for completed traces. Do not use in production. */
+  localVisualizations?: boolean;
+
+  /** Skip options validation warnings (eg no API key configured). This is useful when the SDK is being
+   * used in conjuction with an OpenTelemetry Collector (which will handle the API key and dataset configuration).
+   * Defaults to 'false'.
+   */
+  skipOptionsValidation?: boolean;
+}

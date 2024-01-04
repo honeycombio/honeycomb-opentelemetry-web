@@ -1,19 +1,17 @@
-import { WebSDK } from '@honeycombio/opentelemetry-web';
+import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
-import {
-  ConsoleSpanExporter,
-  SimpleSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
 
 const main = () => {
   // Set OTel to log in Debug mode
   diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
   // Initialize base OTel WebSDK
-  const sdk = new WebSDK({
+  const sdk = new HoneycombWebSDK({
+    endpoint: 'https://api.honeycomb.io/v1/traces',
+    apiKey: 'api-key-goes-here',
+    serviceName: 'web-distro',
     instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
-    spanProcessor: new SimpleSpanProcessor(new ConsoleSpanExporter()),
   });
   sdk.start();
 };
