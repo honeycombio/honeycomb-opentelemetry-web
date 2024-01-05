@@ -45,7 +45,7 @@ export interface WebSDKConfiguration {
 }
 
 /**
- * The options used to configure the Honeycomb Node SDK.
+ * The options used to configure the Honeycomb Web SDK.
  */
 export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   /** The API key used to send telemetry to Honeycomb. */
