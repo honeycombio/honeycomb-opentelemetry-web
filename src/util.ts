@@ -42,3 +42,7 @@ export const getTracesEndpoint = (options?: HoneycombOptions) => {
 
   return `${DEFAULT_API_ENDPOINT}/${TRACES_PATH}`;
 };
+
+export const getTracesApiKey = (options?: HoneycombOptions) => {
+  return options?.tracesApiKey || options?.apiKey;
+};

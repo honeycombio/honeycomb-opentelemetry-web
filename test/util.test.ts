@@ -2,6 +2,7 @@ import {
   isClassic,
   maybeAppendTracesPath,
   getTracesEndpoint,
+  getTracesApiKey,
 } from '../src/util';
 
 // classic keys are 32 chars long
@@ -63,5 +64,32 @@ describe('traces endpoint', () => {
       endpoint: 'my-custom-endpoint',
     };
     expect(getTracesEndpoint(options)).toBe('my-custom-traces-endpoint');
+  });
+});
+
+describe('traces api key', () => {
+  test('uses apiKey if no tracesApiKey is provided', () => {
+    const options = {
+      apiKey: 'basic-api-key',
+    };
+
+    expect(getTracesApiKey(options)).toBe('basic-api-key');
+  });
+
+  test('uses tracesApiKey over apiKey', () => {
+    const options = {
+      apiKey: 'basic-api-key',
+      tracesApiKey: 'traces-api-key',
+    };
+
+    expect(getTracesApiKey(options)).toBe('traces-api-key');
+  });
+
+  test('uses tracesApiKey if no apiKey is provided', () => {
+    const options = {
+      tracesApiKey: 'traces-api-key',
+    };
+
+    expect(getTracesApiKey(options)).toBe('traces-api-key');
   });
 });

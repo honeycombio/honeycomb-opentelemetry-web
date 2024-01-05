@@ -1,5 +1,5 @@
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { isClassic, getTracesEndpoint } from './util';
+import { isClassic, getTracesEndpoint, getTracesApiKey } from './util';
 import { HoneycombOptions } from './types';
 
 export const TEAM_HEADER_KEY = 'x-honeycomb-team';
@@ -13,13 +13,12 @@ export const DATASET_HEADER_KEY = 'x-honeycomb-dataset';
 export function configureHoneycombHttpJsonTraceExporter(
   options?: HoneycombOptions,
 ): OTLPTraceExporter {
+  const apiKey = getTracesApiKey(options);
   return new OTLPTraceExporter({
     url: getTracesEndpoint(options),
     headers: {
-      [TEAM_HEADER_KEY]: options?.apiKey,
-      [DATASET_HEADER_KEY]: isClassic(options?.apiKey)
-        ? options?.dataset
-        : undefined,
+      [TEAM_HEADER_KEY]: apiKey,
+      [DATASET_HEADER_KEY]: isClassic(apiKey) ? options?.dataset : undefined,
     },
   });
 }
