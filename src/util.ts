@@ -24,7 +24,7 @@ export function isClassic(apikey?: string): boolean {
  */
 export function maybeAppendTracesPath(url: string) {
   if (!url?.endsWith(TRACES_PATH)) {
-    return url.endsWith('/') ? url + TRACES_PATH : url + TRACES_PATH;
+    return url.endsWith('/') ? url + TRACES_PATH : url + '/' + TRACES_PATH;
   }
   return url;
 }
