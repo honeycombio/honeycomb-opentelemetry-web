@@ -11,7 +11,7 @@ const classicApiKey = 'this is a string that is 32 char';
 const apiKey = 'an api key for 22 char';
 
 describe('isClassic', () => {
-  it('should return true for a clasic key', () => {
+  it('should return true for a classic key', () => {
     expect(isClassic(classicApiKey)).toBe(true);
   });
 
