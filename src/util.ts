@@ -19,7 +19,6 @@ export function isClassic(apikey?: string): boolean {
  * based exporter protocol.
  *
  * @param url the base URL to append traces path to if missing
- * @param protocol the exporter protocol to send telemetry
  * @returns the endpoint with traces path appended if missing
  */
 export function maybeAppendTracesPath(url: string) {

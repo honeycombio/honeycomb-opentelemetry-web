@@ -8,7 +8,7 @@ const main = () => {
 
   // Initialize base OTel WebSDK
   const sdk = new HoneycombWebSDK({
-    endpoint: 'https://api.honeycomb.io/v1/traces',
+    endpoint: 'https://api.honeycomb.io',
     apiKey: 'api-key-goes-here',
     serviceName: 'web-distro',
     instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
