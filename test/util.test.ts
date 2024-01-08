@@ -41,6 +41,13 @@ describe('maybeAppendTracesPath', () => {
     );
     expect(endpoint).toBe('https://api.honeycomb.io/v1/traces');
   });
+
+  it('does not append the traces path if the url ends with /v1/traces', () => {
+    const endpoint = maybeAppendTracesPath(
+      'https://api.honeycomb.io/v1/traces/',
+    );
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/traces/');
+  });
 });
 
 describe('traces endpoint', () => {

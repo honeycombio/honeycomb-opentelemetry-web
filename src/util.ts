@@ -22,10 +22,11 @@ export function isClassic(apikey?: string): boolean {
  * @returns the endpoint with traces path appended if missing
  */
 export function maybeAppendTracesPath(url: string) {
-  if (!url?.endsWith(TRACES_PATH)) {
-    return url.endsWith('/') ? url + TRACES_PATH : url + '/' + TRACES_PATH;
+  if (url.endsWith(TRACES_PATH) || url.endsWith(`${TRACES_PATH}/`)) {
+    return url;
   }
-  return url;
+
+  return url.endsWith('/') ? url + TRACES_PATH : url + '/' + TRACES_PATH;
 }
 
 export const getTracesEndpoint = (options?: HoneycombOptions) => {
