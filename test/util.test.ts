@@ -1,8 +1,8 @@
 import {
+  getTracesApiKey,
+  getTracesEndpoint,
   isClassic,
   maybeAppendTracesPath,
-  getTracesEndpoint,
-  getTracesApiKey,
 } from '../src/util';
 
 // classic keys are 32 chars long

@@ -1,7 +1,7 @@
 import {
+  configureHoneycombHttpJsonTraceExporter,
   DATASET_HEADER_KEY,
   TEAM_HEADER_KEY,
-  configureHoneycombHttpJsonTraceExporter,
 } from '../src/http-json-trace-exporter';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { DEFAULT_API_ENDPOINT } from '../src/util';
