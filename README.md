@@ -71,7 +71,7 @@ Pass these options to the HoneycombWebSDK:
 
 ### Send to an OpenTelemetry Collector
 
-`*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb. To send to a collector instead, see below.
+`*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 
 In production, we recommend running an OpenTelemetry Collector, so that your browser app can send traces to its origin.
 Your OpenTelemetry Collector can send the traces on to Honeycomb, and your API key will be in the Collector's configuration. Here is a configuration of the Honeycomb Web SDK that sends to your Collector:
