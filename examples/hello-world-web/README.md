@@ -4,13 +4,14 @@ You can run this example to see the SDK in action.
 
 ## Run this application
 
-`npm install` 
+`npm install`
 
 Paste your API key into `index.js`, where is says "your api key goes here".
 
-`npm run build` TODO: this step doesn't work. The module isn't published yet.
+`npm run build` 
 
-`npm run serve`
+
+`npm run start`
 
 Visit [http://localhost:8080]() to see "hello world".
 
