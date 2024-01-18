@@ -6,9 +6,7 @@ import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-expor
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
     super({
-      spanProcessor: new BatchSpanProcessor(
-        configureHoneycombHttpJsonTraceExporter(options),
-      ),
+      traceExporter: configureHoneycombHttpJsonTraceExporter(options),
       ...options,
     });
   }
