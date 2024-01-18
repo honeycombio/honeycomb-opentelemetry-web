@@ -48,25 +48,33 @@ export interface WebSDKConfiguration {
  * The options used to configure the Honeycomb Web SDK.
  */
 export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
-  /** The API key used to send telemetry to Honeycomb. */
+  /** Honeycomb API key for sending traces directly to Honeycomb */
   apiKey?: string;
 
-  /** The API key used to send traces telemetry to Honeycomb. Defaults to apikey if not set. */
+  /** Honeycomb API key for sending traces telemetry to Honeycomb. Defaults to apiKey if not set. */
   tracesApiKey?: string;
 
-  /** The API endpoint where telemetry is sent. Defaults to 'https://api.honeycomb.io' */
+  /** The API endpoint where telemetry is sent. Defaults to 'https://api.honeycomb.io/v1/traces'.
+   * Appends `/v1/traces` to the endpoint provided.
+   */
   endpoint?: string;
 
   /** The API endpoint where traces telemetry is sent. Defaults to endpoint if not set. */
   tracesEndpoint?: string;
 
-  /** The dataset where traces telemetry is stored in Honeycomb. Only used when using a classic API key. */
+  /** The dataset where traces telemetry is stored in Honeycomb. Only required when using a classic API key.
+   * https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic
+   */
   dataset?: string;
 
-  /** The service name of the application and where traces telemetry is stored in Honeycomb. */
+  /** The service name of the application and where traces telemetry is stored in Honeycomb.
+   * Defaults to `unknown_service`
+   */
   serviceName?: string;
 
-  /** The sample rate used to determine whether a trace is exported. Defaults to 1 (send everything). */
+  /** The sample rate used to determine whether a trace is exported. Defaults to 1 (send everything).
+   * If you want to send a random fraction of traces, make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent.
+   */
   sampleRate?: number;
 
   /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production. */
