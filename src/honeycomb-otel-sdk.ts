@@ -1,4 +1,3 @@
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebSDK } from './base-otel-sdk';
 import { HoneycombOptions } from './types';
 import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
