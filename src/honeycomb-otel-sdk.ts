@@ -5,6 +5,7 @@ import { configureHoneycombResource } from './honeycomb-resource';
 import { configureEntryPageResource } from './entry-page-resource';
 import { mergeResources } from './merge-resources';
 import { configureDebug } from './honeycomb-debug';
+import { configureSpanProcessor } from './span-processor-builder';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
@@ -16,6 +17,7 @@ export class HoneycombWebSDK extends WebSDK {
         configureHoneycombResource(),
       ]),
       traceExporter: configureHoneycombHttpJsonTraceExporter(options),
+      spanProcessor: configureSpanProcessor(options),
     });
 
     if (options?.debug) {
