@@ -42,7 +42,6 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 import { WebSDKConfiguration } from './types';
 import { SessionIdSpanProcessor } from './session-id-span-processor';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
-import { VERSION } from './version';
 
 /** This class represents everything needed to register a fully configured OpenTelemetry Web SDK */
 
@@ -130,13 +129,6 @@ export class WebSDK {
         detectResourcesSync(internalConfig),
       );
     }
-
-    this._resource.merge(
-      new Resource({
-        'honeycomb.distro.version': VERSION,
-        'honeycomb.distro.runtime_version': 'browser',
-      }),
-    );
 
     this._resource =
       this._serviceName === undefined
