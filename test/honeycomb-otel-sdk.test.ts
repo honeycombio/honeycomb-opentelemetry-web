@@ -1,8 +1,7 @@
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
+import { WebSDK } from '../src/base-otel-sdk';
 
-// placeholder test while getting test infra setup,
-// will make this more meaningful later
-test('it should return a NodeSDK', () => {
+test('it should extend the OTel WebSDK', () => {
   const honeycomb = new HoneycombWebSDK();
-  expect(honeycomb).toBeDefined();
+  expect(honeycomb).toBeInstanceOf(WebSDK);
 });
