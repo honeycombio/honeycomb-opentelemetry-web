@@ -6,7 +6,9 @@
   "scripts": {
     "build": "esbuild index.js --bundle --sourcemap --outfile=build/bundle.js",
     "start": "npm run build && serve .",
-    "watch:build": "chokidar \"../../src/*.ts\" -c \"npm run build\"",
+    "build-src": "cd ../../ && npm run build",
+    "watch:build-bundle": "npm run build-src && npm run build",
+    "watch:build": "chokidar \"../../src/*.ts\" -c \"npm run watch:build-bundle\"",
     "dev": "npm run start & npm run watch:build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
