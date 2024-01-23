@@ -36,19 +36,7 @@ npm run test
 
 ## Smoke Tests
 
-Smoke tests currently use Cypress and rely on console output.
-For now, update the example app by adding a ConsoleSpanExporter to the config:
-
-```js
-import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
-...
-  const sdk = new HoneycombWebSDK({
-    apiKey: 'api-key',
-    serviceName: 'web-distro',
-    instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
-    traceExporter: new ConsoleSpanExporter() // for local and smoke testing
-  });
-```
+Smoke tests currently use Cypress and Docker, and rely on console output.
 
 ```sh
 # run smoke tests with cypress and docker
@@ -84,3 +72,5 @@ npm start
 # run example in watch mode to update when source changes
 # npm run dev
 ```
+
+To see output in the console in the browser, be sure to enable the console level Verbose in Console Dev Tools.
