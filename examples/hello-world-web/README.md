@@ -14,7 +14,7 @@ Visit [http://localhost:8080]() to see "hello world".
 
 Now go to [https://ui.honeycomb.io](), click Home, and choose the dataset "web-distro" (unless you changed the `serviceName` in `index.js`).
 
-## Sync changes to `honeycomb-opentelemetry-web` package
+## Sync changes from `honeycomb-opentelemetry-web` package
 
 `npm run dev`
 
