@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild index.js --bundle --sourcemap --outfile=build/bundle.js",
-    "start": "serve .",
+    "start": "npm run build && serve .",
+    "build-src": "cd ../../ && npm run build",
+    "watch:build-bundle": "npm run build-src && npm run build",
+    "watch:build": "chokidar \"../../src/*.ts\" -c \"npm run watch:build-bundle\"",
+    "dev": "npm run start & npm run watch:build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -15,6 +19,8 @@
     "@opentelemetry/auto-instrumentations-web": "^0.34.0"
   },
   "devDependencies": {
+    "chokidar": "^3.5.3",
+    "chokidar-cli": "^3.0.0",
     "esbuild": "0.19.8",
     "serve": "^14.2.1"
   }
