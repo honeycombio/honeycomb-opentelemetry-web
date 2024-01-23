@@ -37,7 +37,7 @@ Install this library:
 
 Initialize tracing at the start of your application:
 
-```
+```js
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
@@ -76,7 +76,7 @@ Pass these options to the HoneycombWebSDK:
 In production, we recommend running an OpenTelemetry Collector, so that your browser app can send traces to its origin.
 Your OpenTelemetry Collector can send the traces on to Honeycomb, and your API key will be in the Collector's configuration. Here is a configuration of the Honeycomb Web SDK that sends to your Collector:
 
-```
+```js
 {
   endpoint: "/",
   serviceName: "your-spiffy-browser-application",
@@ -163,22 +163,16 @@ When an option is not available upstream, we give it a name. If that options bec
 
 ## Development
 
-### Tests
-
-To run smoke tests, make sure you have docker installed and run
-
-```sh
-npm run test:smoke
-```
+See [DEVELOPING.md](./DEVELOPING.md)
 
 ## Contributing
 
-See [CONTRIBUTING.md]()
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Support
 
-See [SUPPORT.md]()
+See [SUPPORT.md](./SUPPORT.md)
 
 ## Code of Conduct
 
-See [CODE_OF_CONDUCT.md]()
+See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
