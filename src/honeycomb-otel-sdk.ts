@@ -2,6 +2,7 @@ import { WebSDK } from './base-otel-sdk';
 import { HoneycombOptions } from './types';
 import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
 import { configureHoneycombResource } from './honeycomb-resource';
+import { configureDebug } from './honeycomb-debug';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
@@ -11,5 +12,9 @@ export class HoneycombWebSDK extends WebSDK {
 
       ...options,
     });
+
+    if (options?.debug) {
+      configureDebug(options);
+    }
   }
 }
