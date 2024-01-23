@@ -1,4 +1,4 @@
-import { HoneycombWebSDK } from '../dist/src';
+import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
 
 const consoleSpy = jest
   .spyOn(console, 'debug')
