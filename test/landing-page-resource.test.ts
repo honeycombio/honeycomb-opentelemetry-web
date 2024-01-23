@@ -17,5 +17,6 @@ test('it should have location attributes', () => {
     'landing_page.path': '/some-page',
     'landing_page.search': '?search_params=yes&hello=hi',
     'landing_page.hash': '#the-hash',
+    'landing_page.hostname': 'something-something.com',
   });
 });
