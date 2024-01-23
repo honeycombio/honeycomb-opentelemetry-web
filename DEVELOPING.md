@@ -62,15 +62,8 @@ npm install
 
 # add api key into index.js
 
-# bundle example app
-npm run build
-
-# start example app
-npm start
-
-# after PR 26
-# run example in watch mode to update when source changes
-# npm run dev
+# bundle and run example in watch mode to update when source changes
+npm run dev
 ```
 
 To see output in the console in the browser, be sure to enable the console level Verbose in Console Dev Tools.
