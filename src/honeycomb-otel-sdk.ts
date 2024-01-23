@@ -11,6 +11,7 @@ export class HoneycombWebSDK extends WebSDK {
       resource: mergeResources([
         configureHoneycombResource(),
         options?.resource,
+        options?.resourceFields,
       ]),
       traceExporter: configureHoneycombHttpJsonTraceExporter(options),
     });

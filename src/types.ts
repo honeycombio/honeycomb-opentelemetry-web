@@ -20,7 +20,12 @@
 import type { ContextManager } from '@opentelemetry/api';
 import { TextMapPropagator } from '@opentelemetry/api';
 import { InstrumentationOption } from '@opentelemetry/instrumentation';
-import { Detector, DetectorSync, IResource } from '@opentelemetry/resources';
+import {
+  Detector,
+  DetectorSync,
+  IResource,
+  ResourceAttributes,
+} from '@opentelemetry/resources';
 import {
   IdGenerator,
   Sampler,
@@ -88,4 +93,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * Defaults to 'false'.
    */
   skipOptionsValidation?: boolean;
+
+  /** Any additional attributes to add to the resource */
+  resourceFields?: ResourceAttributes;
 }
