@@ -1,4 +1,4 @@
-import { configureDebug } from '../src/honeycomb-debug';
+import { HoneycombWebSDK } from '../dist/src';
 
 const consoleSpy = jest
   .spyOn(console, 'debug')
@@ -14,42 +14,46 @@ afterAll(() => {
 
 describe('when debug is set to true', () => {
   it('should log the debug information to the console', () => {
-    configureDebug({
+    new HoneycombWebSDK({
       debug: true,
     });
-    const expectedConfig = {
-      debug: true,
-      apiKey: 'MISSING',
-      serviceName: 'MISSING',
-      endpoint: 'https://api.honeycomb.io',
-      tracesEndpoint: 'https://api.honeycomb.io/v1/traces',
-    };
-    expect(consoleSpy).toHaveBeenCalledWith(
+    const expectedConfig = JSON.stringify(
+      {
+        debug: true,
+        apiKey: 'MISSING',
+        serviceName: 'MISSING',
+        endpoint: 'https://api.honeycomb.io/v1/traces',
+        tracesEndpoint: 'https://api.honeycomb.io/v1/traces',
+      },
+      null,
+      2,
+    );
+    expect(consoleSpy.mock.calls[1][0]).toContain(
       'Honeycomb Web SDK Debug Mode Enabled',
     );
-    expect(consoleSpy).toHaveBeenCalledWith(
-      JSON.stringify(expectedConfig, null, 2),
-    );
+    expect(consoleSpy.mock.calls[2][0]).toContain(expectedConfig);
   });
   it('should log the provided options configuration to the console', () => {
-    configureDebug({
+    new HoneycombWebSDK({
       debug: true,
       endpoint: 'http://shenanigans:1234',
       apiKey: 'my-key',
       serviceName: 'my-service',
     });
-    const expectedConfig = {
-      debug: true,
-      apiKey: 'my-key',
-      serviceName: 'my-service',
-      endpoint: 'http://shenanigans:1234',
-      tracesEndpoint: 'http://shenanigans:1234/v1/traces',
-    };
-    expect(consoleSpy).toHaveBeenCalledWith(
+    const expectedConfig = JSON.stringify(
+      {
+        debug: true,
+        endpoint: 'http://shenanigans:1234',
+        apiKey: 'my-key',
+        serviceName: 'my-service',
+        tracesEndpoint: 'http://shenanigans:1234/v1/traces',
+      },
+      null,
+      2,
+    );
+    expect(consoleSpy.mock.calls[1][0]).toContain(
       'Honeycomb Web SDK Debug Mode Enabled',
     );
-    expect(consoleSpy).toHaveBeenCalledWith(
-      JSON.stringify(expectedConfig, null, 2),
-    );
+    expect(consoleSpy.mock.calls[2][0]).toContain(expectedConfig);
   });
 });
