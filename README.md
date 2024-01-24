@@ -98,11 +98,11 @@ The SDK adds these fields to all telemetry:
 |------|--------|---------|-------------|---------|
 | user_agent.original | [stable](https://github.com/scheler/opentelemetry-specification/blob/browser-events/specification/resource/semantic_conventions/browser.md) | static | window.user_agent | `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36` |
 | browser.height | planned | per-span | `[window.innerHeight](https://developer.mozilla.org/en-US/docs/Web/API/Window/innerHeight)`, the height of the layout viewport in pixels | 287 |
-| `landing_page.url`      | custom | static |   | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2` |
-| `landing_page.path`     | custom | static |   | `/getting-data-in/data-best-practices/`                                                              |
-| `landing_page.search`   | custom | static |   | `?page=2`                                                                                            |
-| `landing_page.hash`     | custom | static |   | `#datasets-group-data-together`                                                                      |
-| `landing_page.hostname` | custom | static |   | `docs.honeycomb.io`                                                                                  |
+| `entry_page.url`      | custom | static |   | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2` |
+| `entry_page.path`     | custom | static |   | `/getting-data-in/data-best-practices/`                                                              |
+| `entry_page.search`   | custom | static |   | `?page=2`                                                                                            |
+| `entry_page.hash`     | custom | static |   | `#datasets-group-data-together`                                                                      |
+| `entry_page.hostname` | custom | static |   | `docs.honeycomb.io`                                                                                  |
 
 Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts/resources/), so they are same for every span emitted for the loaded page.
 
