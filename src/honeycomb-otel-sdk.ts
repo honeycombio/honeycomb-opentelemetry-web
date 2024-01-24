@@ -9,8 +9,8 @@ export class HoneycombWebSDK extends WebSDK {
     super({
       ...options,
       resource: mergeResources([
-        configureHoneycombResource(),
         options?.resource,
+        configureHoneycombResource(),
       ]),
       traceExporter: configureHoneycombHttpJsonTraceExporter(options),
     });

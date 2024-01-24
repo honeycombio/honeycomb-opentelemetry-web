@@ -159,6 +159,8 @@ export class WebSDK {
     tracerProvider.addSpanProcessor(new SessionIdSpanProcessor());
   }
 
+  /* Experimental getter method: not currently part of the upstream
+   * sdk's API */
   public getResourceAttributes() {
     return this._resource.attributes;
   }
