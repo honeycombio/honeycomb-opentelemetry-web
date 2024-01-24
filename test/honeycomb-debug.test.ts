@@ -1,5 +1,10 @@
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
-import { defaultOptions } from '../src/util';
+import {
+  defaultOptions,
+  MISSING_API_KEY_ERROR,
+  MISSING_SERVICE_NAME_ERROR,
+  TRACES_PATH,
+} from '../src/util';
 
 const consoleSpy = jest
   .spyOn(console, 'debug')
@@ -14,49 +19,42 @@ afterAll(() => {
 });
 
 describe('when debug is set to true', () => {
-  it('should log the debug information with defaults to the console', () => {
-    new HoneycombWebSDK({
-      debug: true,
-    });
-    const expectedConfig = JSON.stringify(
-      {
-        apiKey: defaultOptions.apiKey,
-        tracesApiKey: defaultOptions.tracesApiKey,
-        endpoint: defaultOptions.tracesEndpoint,
-        tracesEndpoint: defaultOptions.tracesEndpoint,
-        serviceName: defaultOptions.serviceName,
+  describe('when options are missing', () => {
+    it('should log defaults and errors to the console', () => {
+      new HoneycombWebSDK({
         debug: true,
-      },
-      null,
-      2,
-    );
-    expect(consoleSpy.mock.calls[1][0]).toContain(
-      'Honeycomb Web SDK Debug Mode Enabled',
-    );
-    expect(consoleSpy.mock.calls[2][0]).toContain(expectedConfig);
+      });
+      expect(consoleSpy.mock.calls[1][0]).toContain(
+        'Honeycomb Web SDK Debug Mode Enabled',
+      );
+      expect(consoleSpy.mock.calls[2][0]).toContain(MISSING_API_KEY_ERROR);
+      expect(consoleSpy.mock.calls[3][0]).toContain(
+        `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${defaultOptions.tracesEndpoint}'`,
+      );
+      expect(consoleSpy.mock.calls[4][0]).toContain(MISSING_SERVICE_NAME_ERROR);
+    });
   });
-  it('should log the provided options configuration to the console', () => {
-    new HoneycombWebSDK({
-      debug: true,
-      endpoint: 'http://shenanigans:1234',
-      apiKey: 'my-key',
-      serviceName: 'my-service',
-    });
-    const expectedConfig = JSON.stringify(
-      {
-        apiKey: 'my-key',
-        tracesApiKey: 'my-key',
-        endpoint: 'http://shenanigans:1234/v1/traces',
-        tracesEndpoint: 'http://shenanigans:1234/v1/traces',
-        serviceName: 'my-service',
+  describe('when options are provided', () => {
+    it('should log the configured options to the console', () => {
+      const testConfig = {
         debug: true,
-      },
-      null,
-      2,
-    );
-    expect(consoleSpy.mock.calls[1][0]).toContain(
-      'Honeycomb Web SDK Debug Mode Enabled',
-    );
-    expect(consoleSpy.mock.calls[2][0]).toContain(expectedConfig);
+        endpoint: 'http://shenanigans:1234',
+        apiKey: 'my-key',
+        serviceName: 'my-service',
+      };
+      new HoneycombWebSDK(testConfig);
+      expect(consoleSpy.mock.calls[1][0]).toContain(
+        'Honeycomb Web SDK Debug Mode Enabled',
+      );
+      expect(consoleSpy.mock.calls[2][0]).toContain(
+        `@honeycombio/opentelemetry-web: API Key configured for traces: '${testConfig.apiKey}'`,
+      );
+      expect(consoleSpy.mock.calls[3][0]).toContain(
+        `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${testConfig.endpoint}/${TRACES_PATH}'`,
+      );
+      expect(consoleSpy.mock.calls[4][0]).toContain(
+        `@honeycombio/opentelemetry-web: Service Name configured for traces: '${testConfig.serviceName}'`,
+      );
+    });
   });
 });

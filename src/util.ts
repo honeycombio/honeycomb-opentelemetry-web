@@ -22,6 +22,9 @@ export const defaultOptions: HoneycombOptions = {
   // skipOptionsValidation: false,
 };
 
+export const MISSING_API_KEY_ERROR = `❌ @honeycombio/opentelemetry-web: Missing API Key. Set \`apiKey\` in HoneycombOptions. Telemetry will not be exported.`;
+export const MISSING_SERVICE_NAME_ERROR = `❌ @honeycombio/opentelemetry-web: Missing Service Name. Set \`serviceName\` in HoneycombOptions. Defaulting to '${defaultOptions.serviceName}'`;
+
 /**
  * Determines whether the passed in apikey is classic (32 chars) or not.
  *
