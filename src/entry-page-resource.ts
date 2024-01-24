@@ -1,15 +1,15 @@
 import { Resource } from '@opentelemetry/resources';
 
-export function configureLandingPageResource(): Resource {
+export function configureEntryPageResource(): Resource {
   let attributes = {};
   if (window?.location) {
     const { href, pathname, search, hash, hostname } = window.location;
     attributes = {
-      'landing_page.url': href,
-      'landing_page.path': pathname,
-      'landing_page.search': search,
-      'landing_page.hash': hash,
-      'landing_page.hostname': hostname,
+      'entry_page.url': href,
+      'entry_page.path': pathname,
+      'entry_page.search': search,
+      'entry_page.hash': hash,
+      'entry_page.hostname': hostname,
     };
   }
 
