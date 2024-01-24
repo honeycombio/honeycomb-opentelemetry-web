@@ -1,6 +1,6 @@
 import { HoneycombOptions } from './types';
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
-import { getTracesApiKey, getTracesEndpoint } from './util';
+import { defaultOptions, getTracesApiKey, getTracesEndpoint } from './util';
 
 /**
  * Configures the Honeycomb Web SDK to log debug information to the console.
@@ -9,31 +9,17 @@ import { getTracesApiKey, getTracesEndpoint } from './util';
  *
  * @param options the provided Honeycomb options
  */
-
 export function configureDebug(options?: HoneycombOptions): void {
-  diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
-  diag.debug('Honeycomb Web SDK Debug Mode Enabled');
   if (options?.debug) {
-    options.apiKey
-      ? options.apiKey
-      : (options.apiKey = getTracesApiKey(options));
+    diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+    diag.debug('Honeycomb Web SDK Debug Mode Enabled');
+    const currentOptions = { ...defaultOptions, ...options };
 
-    if (options.apiKey == undefined) {
-      options.apiKey = 'MISSING';
-    }
+    currentOptions.apiKey = getTracesApiKey(currentOptions);
+    currentOptions.tracesApiKey = getTracesApiKey(currentOptions);
+    currentOptions.endpoint = getTracesEndpoint(options);
+    currentOptions.tracesEndpoint = getTracesEndpoint(options);
 
-    options.serviceName
-      ? options.serviceName
-      : (options.serviceName = 'MISSING');
-
-    options.endpoint
-      ? options.endpoint
-      : (options.endpoint = getTracesEndpoint(options));
-
-    options.tracesEndpoint
-      ? options.tracesEndpoint
-      : (options.tracesEndpoint = getTracesEndpoint(options));
-
-    diag.debug(JSON.stringify(options, null, 2));
+    diag.debug(JSON.stringify(currentOptions, null, 2));
   }
 }

@@ -77,7 +77,9 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   sampleRate?: number;
 
-  /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production. */
+  /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production.
+   * Defaults to 'false'.
+   */
   debug?: boolean;
 
   /** The local visualizations flag enables logging Honeycomb URLs for completed traces. Do not use in production. */
