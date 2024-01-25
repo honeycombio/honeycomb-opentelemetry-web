@@ -4,12 +4,20 @@
 import { configureEntryPageResource } from '../src/entry-page-resource';
 import { Resource } from '@opentelemetry/resources';
 
+afterAll(() => {
+  jest.clearAllMocks();
+});
+
 test('it should return a Resource', () => {
   const resource = configureEntryPageResource();
   expect(resource).toBeInstanceOf(Resource);
 });
 
 test('it should have location attributes', () => {
+  jest
+    .spyOn(document, 'referrer', 'get')
+    .mockReturnValue('http://fan-site.com');
+
   const resource = configureEntryPageResource();
   expect(resource.attributes).toEqual({
     'entry_page.url':
@@ -18,5 +26,6 @@ test('it should have location attributes', () => {
     'entry_page.search': '?search_params=yes&hello=hi',
     'entry_page.hash': '#the-hash',
     'entry_page.hostname': 'something-something.com',
+    'entry_page.referrer': 'http://fan-site.com',
   });
 });
