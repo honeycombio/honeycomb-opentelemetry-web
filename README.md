@@ -109,6 +109,7 @@ The SDK adds these fields to all telemetry:
 | `entry_page.search`   | custom | static |   | `?page=2`                                                                                            |
 | `entry_page.hash`     | custom | static |   | `#datasets-group-data-together`                                                                      |
 | `entry_page.hostname` | custom | static |   | `docs.honeycomb.io`                                                                                  |
+| `entry_page.referrer` | custom | static | [Document: referrer](https://developer.mozilla.org/en-US/docs/Web/API/Document/referrer)   | `https://honeycomb.io`                                                                                  |
 
 Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts/resources/), so they are same for every span emitted for the loaded page.
 
