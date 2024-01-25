@@ -104,6 +104,11 @@ The SDK adds these fields to all telemetry:
 | browser.language | stable | static | [Navigator: language](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language) | "fr-FR" |
 | honeycomb.distro.version | stable | static | package version | "1.2.3" |
 | honeycomb.distro.runtime_version | stable | static | | "browser"
+| `entry_page.url`      | custom | static |   | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2` |
+| `entry_page.path`     | custom | static |   | `/getting-data-in/data-best-practices/`                                                              |
+| `entry_page.search`   | custom | static |   | `?page=2`                                                                                            |
+| `entry_page.hash`     | custom | static |   | `#datasets-group-data-together`                                                                      |
+| `entry_page.hostname` | custom | static |   | `docs.honeycomb.io`                                                                                  |
 
 Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts/resources/), so they are same for every span emitted for the loaded page.
 
