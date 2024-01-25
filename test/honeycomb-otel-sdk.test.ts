@@ -8,6 +8,9 @@ test('it should extend the OTel WebSDK', () => {
   expect(honeycomb).toBeInstanceOf(WebSDK);
 });
 
+/* These test relies on `getResourceAttributes`, a method not
+ * currently available in the proposed upstream version of
+ * the base-otel-sdk. */
 describe('resource config', () => {
   test('it should merge resources from the configuration', () => {
     const config = {
