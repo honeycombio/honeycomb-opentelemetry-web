@@ -54,6 +54,23 @@ jobs:
       - store_artifacts:
           path: ./reports/
 
+  publish_github:
+    executor: github
+    steps:
+      - run:
+          name: "GHR Draft"
+          command: ghr -draft -n ${CIRCLE_TAG} -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG}
+
+  publish_npm:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: store npm auth token
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish --access public
 
 workflows:
   build:
@@ -68,3 +85,13 @@ workflows:
           <<: *filters_always
           requires:
             - test
+      - publish_github:
+          <<: *filters_publish
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build
+      - publish_npm:
+          <<: *filters_publish
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build
