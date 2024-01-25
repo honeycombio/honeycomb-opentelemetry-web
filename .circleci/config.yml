@@ -5,10 +5,20 @@ filters_always: &filters_always
     tags:
       only: /.*/
 
+filters_publish: &filters_publish
+  filters:
+    tags:
+      only: /^v[0-9].*/
+    branches:
+      ignore: /.*/
+
 executors:
   node:
     docker:
       - image: cimg/node:16.16
+  github:
+    docker:
+      - image: cibuilds/github:0.13.0
 
 jobs:
   build:
