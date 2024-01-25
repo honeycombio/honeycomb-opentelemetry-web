@@ -16,33 +16,54 @@ import {
  * @param options the provided Honeycomb options
  */
 export function configureDebug(options?: HoneycombOptions): void {
-  if (options?.debug) {
-    diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
-    diag.debug('🐝 Honeycomb Web SDK Debug Mode Enabled 🐝');
-    const currentOptions = { ...defaultOptions, ...options };
-
-    // tracesApiKey and tracesEndpoint need to be computed from apiKey and endpoint
-    currentOptions.tracesApiKey = getTracesApiKey(options) || '';
-    currentOptions.tracesEndpoint = getTracesEndpoint(options);
-
-    if (currentOptions.tracesApiKey === '') {
-      diag.debug(MISSING_API_KEY_ERROR);
-    } else {
-      diag.debug(
-        `@honeycombio/opentelemetry-web: API Key configured for traces: '${currentOptions.tracesApiKey}'`,
-      );
-    }
-
-    diag.debug(
-      `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${currentOptions.tracesEndpoint}'`,
-    );
-
-    if (currentOptions.serviceName == defaultOptions.serviceName) {
-      diag.debug(MISSING_SERVICE_NAME_ERROR);
-    } else {
-      diag.debug(
-        `@honeycombio/opentelemetry-web: Service Name configured for traces: '${currentOptions.serviceName}'`,
-      );
-    }
+  if (!options?.debug) {
+    return;
   }
+  diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+  diag.debug('🐝 Honeycomb Web SDK Debug Mode Enabled 🐝');
+
+  // traces endpoint must be computed from provided options
+  const tracesEndpoint = getTracesEndpoint(options);
+  const currentOptions = {
+    ...defaultOptions,
+    ...options,
+    tracesEndpoint,
+  };
+
+  debugTracesApiKey(currentOptions);
+  debugServiceName(currentOptions);
+  debugTracesEndpoint(currentOptions);
+}
+
+function debugTracesApiKey(options: HoneycombOptions): void {
+  const tracesApiKey = getTracesApiKey(options) || '';
+  if (!tracesApiKey) {
+    diag.debug(MISSING_API_KEY_ERROR);
+    return;
+  }
+  diag.debug(
+    `@honeycombio/opentelemetry-web: API Key configured for traces: '${tracesApiKey}'`,
+  );
+}
+
+function debugServiceName(options: HoneycombOptions): void {
+  const serviceName = options.serviceName || defaultOptions.serviceName;
+  if (serviceName === defaultOptions.serviceName) {
+    diag.debug(MISSING_SERVICE_NAME_ERROR);
+    return;
+  }
+  diag.debug(
+    `@honeycombio/opentelemetry-web: Service Name configured for traces: '${serviceName}'`,
+  );
+}
+
+function debugTracesEndpoint(options: HoneycombOptions): void {
+  const tracesEndpoint = getTracesEndpoint(options);
+  if (!tracesEndpoint) {
+    diag.debug('No endpoint configured for traces');
+    return;
+  }
+  diag.debug(
+    `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${tracesEndpoint}'`,
+  );
 }

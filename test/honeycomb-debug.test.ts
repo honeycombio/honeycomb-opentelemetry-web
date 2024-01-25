@@ -28,10 +28,10 @@ describe('when debug is set to true', () => {
         'Honeycomb Web SDK Debug Mode Enabled',
       );
       expect(consoleSpy.mock.calls[2][0]).toContain(MISSING_API_KEY_ERROR);
-      expect(consoleSpy.mock.calls[3][0]).toContain(
+      expect(consoleSpy.mock.calls[3][0]).toContain(MISSING_SERVICE_NAME_ERROR);
+      expect(consoleSpy.mock.calls[4][0]).toContain(
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${defaultOptions.tracesEndpoint}'`,
       );
-      expect(consoleSpy.mock.calls[4][0]).toContain(MISSING_SERVICE_NAME_ERROR);
     });
   });
   describe('when options are provided', () => {
@@ -50,10 +50,10 @@ describe('when debug is set to true', () => {
         `@honeycombio/opentelemetry-web: API Key configured for traces: '${testConfig.apiKey}'`,
       );
       expect(consoleSpy.mock.calls[3][0]).toContain(
-        `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${testConfig.endpoint}/${TRACES_PATH}'`,
+        `@honeycombio/opentelemetry-web: Service Name configured for traces: '${testConfig.serviceName}'`,
       );
       expect(consoleSpy.mock.calls[4][0]).toContain(
-        `@honeycombio/opentelemetry-web: Service Name configured for traces: '${testConfig.serviceName}'`,
+        `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${testConfig.endpoint}/${TRACES_PATH}'`,
       );
     });
   });
