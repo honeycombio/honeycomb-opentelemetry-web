@@ -20,6 +20,19 @@ describe('Smoke Tests', () => {
     );
   });
 
+  it('logs honeycomb config with debug enabled', () => {
+    cy.visit('http://localhost:3000', {
+      onBeforeLoad(win) {
+        cy.stub(win.console, 'debug').as('consoleDebug');
+      },
+    });
+
+    cy.get('@consoleDebug').should(
+      'be.calledWithMatch',
+      'Honeycomb Web SDK Debug Mode Enabled',
+    );
+  });
+
   it('logs document load traces', () => {
     cy.visit('http://localhost:3000', {
       onBeforeLoad(win) {

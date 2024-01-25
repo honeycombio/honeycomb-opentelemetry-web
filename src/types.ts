@@ -74,18 +74,25 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
 
   /** The sample rate used to determine whether a trace is exported. Defaults to 1 (send everything).
    * If you want to send a random fraction of traces, make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent.
+   * TODO: Not yet implemented
    */
-  sampleRate?: number;
+  // sampleRate?: number;
 
-  /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production. */
-  debug?: boolean;
-
-  /** The local visualizations flag enables logging Honeycomb URLs for completed traces. Do not use in production. */
-  localVisualizations?: boolean;
-
-  /** Skip options validation warnings (eg no API key configured). This is useful when the SDK is being
-   * used in conjuction with an OpenTelemetry Collector (which will handle the API key and dataset configuration).
+  /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production.
    * Defaults to 'false'.
    */
-  skipOptionsValidation?: boolean;
+  debug?: boolean;
+
+  /** The local visualizations flag enables logging Honeycomb URLs for completed traces. Do not use in production.
+   * Defaults to 'false'.
+   * TODO: Not yet implemented
+   */
+  // localVisualizations?: boolean;
+
+  /** Skip options validation warnings (eg no API key configured). This is useful when the SDK is being
+   * used in conjunction with an OpenTelemetry Collector (which will handle the API key and dataset configuration).
+   * Defaults to 'false'.
+   * TODO: Not yet implemented
+   */
+  // skipOptionsValidation?: boolean;
 }
