@@ -37,7 +37,7 @@ Install this library:
 
 Initialize tracing at the start of your application:
 
-```
+```js
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
@@ -76,7 +76,7 @@ Pass these options to the HoneycombWebSDK:
 In production, we recommend running an OpenTelemetry Collector, so that your browser app can send traces to its origin.
 Your OpenTelemetry Collector can send the traces on to Honeycomb, and your API key will be in the Collector's configuration. Here is a configuration of the Honeycomb Web SDK that sends to your Collector:
 
-```
+```js
 {
   endpoint: "/",
   serviceName: "your-spiffy-browser-application",
@@ -98,6 +98,12 @@ The SDK adds these fields to all telemetry:
 |------|--------|---------|-------------|---------|
 | user_agent.original | [stable](https://github.com/scheler/opentelemetry-specification/blob/browser-events/specification/resource/semantic_conventions/browser.md) | static | window.user_agent | `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36` |
 | browser.height | planned | per-span | `[window.innerHeight](https://developer.mozilla.org/en-US/docs/Web/API/Window/innerHeight)`, the height of the layout viewport in pixels | 287 |
+| browser.brands | stable | static | [NavigatorUAData: brands](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/brands) | ["Not_A Brand 8", "Chromium 120", "Google Chrome 120"] |
+| browser.platform | stable | static | [NavigatorUAData: platform](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/platform) | "Windows" |
+| browser.mobile | stable | static | [NavigatorUAData: mobile](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/mobile) | true |
+| browser.language | stable | static | [Navigator: language](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language) | "fr-FR" |
+| honeycomb.distro.version | stable | static | package version | "1.2.3" |
+| honeycomb.distro.runtime_version | stable | static | | "browser"
 
 Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts/resources/), so they are same for every span emitted for the loaded page.
 
@@ -157,22 +163,16 @@ When an option is not available upstream, we give it a name. If that options bec
 
 ## Development
 
-### Tests
-
-To run smoke tests, make sure you have docker installed and run
-
-```sh
-npm run test:smoke
-```
+See [DEVELOPING.md](./DEVELOPING.md)
 
 ## Contributing
 
-See [CONTRIBUTING.md]()
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Support
 
-See [SUPPORT.md]()
+See [SUPPORT.md](./SUPPORT.md)
 
 ## Code of Conduct
 
-See [CODE_OF_CONDUCT.md]()
+See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)

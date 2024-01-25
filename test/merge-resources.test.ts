@@ -20,7 +20,7 @@ describe('mergeResources', () => {
     });
   });
 
-  test('handles undefined values', () => {
+  test('ignores undefined values', () => {
     const resources = [
       undefined,
       new Resource({ hnyId: '12345' }),
@@ -39,7 +39,7 @@ describe('mergeResources', () => {
     });
   });
 
-  test('handles null values', () => {
+  test('ignores null values', () => {
     const resources = [
       new Resource({ hnyId: '12345' }),
       null,
@@ -59,7 +59,7 @@ describe('mergeResources', () => {
     });
   });
 
-  test('handles empty array', () => {
+  test('returns an empty resource when passed an empty array', () => {
     const result = mergeResources([]);
     expect(result).toBeInstanceOf(Resource);
     expect(result.attributes).toEqual({});
