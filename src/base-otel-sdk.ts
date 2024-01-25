@@ -159,6 +159,12 @@ export class WebSDK {
     tracerProvider.addSpanProcessor(new SessionIdSpanProcessor());
   }
 
+  /* Experimental getter method: not currently part of the upstream
+   * sdk's API */
+  public getResourceAttributes() {
+    return this._resource.attributes;
+  }
+
   public shutdown(): Promise<void> {
     const promises: Promise<unknown>[] = [];
     if (this._tracerProvider) {
