@@ -72,11 +72,11 @@ jobs:
       - attach_workspace:
           at: ./
       - run:
-        name: Spin up example app
-        command: docker build -t smoke-tests . && docker run -dp 127.0.0.1:3000:3000 --name smoke-tests smoke-tests
+          name: Spin up example app
+          command: docker build -t smoke-tests . && docker run -dp 127.0.0.1:3000:3000 --name smoke-tests smoke-tests
       - run:
-        name: Spin down example app
-        command: docker stop smoke-tests && docker rm smoke-tests
+          name: Spin down example app
+          command: docker stop smoke-tests && docker rm smoke-tests
 
 
   publish_github:
