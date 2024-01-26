@@ -1,11 +1,17 @@
 # Honeycomb OpenTelemetry Web
 
-<!-- OSS metadata badge - rename repo link and set status in OSSMETADATA -->
-<!-- [![OSS Lifecycle](https://img.shields.io/osslifecycle/honeycombio/{repo-name})](https://github.com/honeycombio/home/blob/main/honeycomb-oss-lifecycle-and-practices.md) -->
+[![OSS Lifecycle](https://img.shields.io/osslifecycle/honeycombio/honeycomb-opentelemetry-web)](https://github.com/honeycombio/home/blob/main/honeycomb-oss-lifecycle-and-practices.md)
+[![CircleCI](https://circleci.com/gh/honeycombio/honeycomb-opentelemetry-web.svg?style=shield)](https://circleci.com/gh/honeycombio/honeycomb-opentelemetry-web)
+[![npm](https://img.shields.io/npm/v/@honeycombio/opentelemetry-web)](https://www.npmjs.com/package/@honeycombio/opentelemetry-web)
 
 Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser.
+<!-- TODO: happy badges of the OTel versions we are using -->
+**STATUS: this library is ALPHA.**
 
-// TODO: happy badges of the OTel versions we are using
+Latest release:
+
+* built with OpenTelemetry JS [Stable v1.19.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.19.0), [Experimental v0.46.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.46.0), [API v1.7.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.7.0)
+* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.34.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-node-v0.34.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
