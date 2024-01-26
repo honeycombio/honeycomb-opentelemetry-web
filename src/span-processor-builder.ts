@@ -7,14 +7,18 @@ import {
 } from '@opentelemetry/sdk-trace-base';
 import { Context } from '@opentelemetry/api';
 
-export const configureSpanProcessors = (options: HoneycombOptions) => {
+export const configureSpanProcessors = (options?: HoneycombOptions) => {
   const honeycombSpanProcessor = new CompositeSpanProcessor();
 
+  // we always want to add the browser attrs span processor
   honeycombSpanProcessor.addProcessor(new BrowserAttributesSpanProcessor());
 
-  if (options.spanProcessor) {
-    honeycombSpanProcessor.addProcessor(options.spanProcessor);
+  // if there is a user provided span processor, add it to the composite span processor
+  if (options?.spanProcessor) {
+    honeycombSpanProcessor.addProcessor(options?.spanProcessor);
   }
+
+  return honeycombSpanProcessor;
 };
 
 export class CompositeSpanProcessor implements SpanProcessor {
