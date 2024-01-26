@@ -1,14 +1,26 @@
 import { HoneycombOptions } from './types';
 import { BrowserAttributesSpanProcessor } from './browser-attributes-span-processor';
 import {
+  BatchSpanProcessor,
   ReadableSpan,
   Span,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
 import { Context } from '@opentelemetry/api';
+import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
+
+// TODO: jsdocs
+// TODO: naming this file
+// TODO: tests
 
 export const configureSpanProcessors = (options?: HoneycombOptions) => {
   const honeycombSpanProcessor = new CompositeSpanProcessor();
+
+  // add exporter
+  // TODO: also leave a comment here
+  honeycombSpanProcessor.addProcessor(
+    new BatchSpanProcessor(configureHoneycombHttpJsonTraceExporter(options)),
+  );
 
   // we always want to add the browser attrs span processor
   honeycombSpanProcessor.addProcessor(new BrowserAttributesSpanProcessor());
