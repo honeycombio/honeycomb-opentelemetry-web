@@ -10,8 +10,8 @@ Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser.
 
 Latest release:
 
-* built with OpenTelemetry JS [Stable v1.19.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.19.0), [Experimental v0.46.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.46.0), [API v1.7.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.7.0)
-* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.34.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-node-v0.34.0)
+* built with OpenTelemetry JS [Stable v1.18.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.18.1), [Experimental v0.45.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.45.1), [API v1.7.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.7.0)
+* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.33.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-node-v0.33.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
@@ -63,17 +63,17 @@ Build and run your application, and then look for data in Honeycomb. On the Home
 
 Pass these options to the HoneycombWebSDK:
 
-| name | required? | type | default value | description |
-|------|-----------|------|---------------|-------------|
-| *apiKey* | required[*](#send-to-an-opentelemetry-collector) |string| | [Honeycomb API Key](https://docs.honeycomb.io/working-with-your-data/settings/api-keys/) for sending traces directly to Honeycomb |
-| *serviceName* | optional | string|unknown_service | The name of this browser application. Your telemetry will go to a Honeycomb dataset with this name. |
-| *localVisualizations*| optional | boolean | false | For each trace created, print a link to the console so that you can find it in Honeycomb. Super useful in development! Do not use in production. |
-| sampleRate | optional | number |1 | If you want to send a random fraction of traces, then make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent, and the rest never be created. |
-| tracesEndpoint | optional | string|`${endpoint}/v1/traces` | Populate this to send traces to a route other than /v1/traces |
-| debug | optional |boolean| false | Enable additional logging |
-| tracesApiKey | optional |string| | If traces should go to a different place than metrics(?), put the traces-only API key here. | 
-| dataset | optional |string| | Populate this only if your Honeycomb team is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic) |
-| skipOptionsValidation | optional | boolean | false | Do not require any fields.[*](#send-to-an-opentelemetry-collector) |
+| name                  | required?                                        | type    | default value           | description                                                                                                                                                               |
+| --------------------- | ------------------------------------------------ | ------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| *apiKey*              | required[*](#send-to-an-opentelemetry-collector) | string  |                         | [Honeycomb API Key](https://docs.honeycomb.io/working-with-your-data/settings/api-keys/) for sending traces directly to Honeycomb                                         |
+| *serviceName*         | optional                                         | string  | unknown_service         | The name of this browser application. Your telemetry will go to a Honeycomb dataset with this name.                                                                       |
+| *localVisualizations* | optional                                         | boolean | false                   | For each trace created, print a link to the console so that you can find it in Honeycomb. Super useful in development! Do not use in production.                          |
+| sampleRate            | optional                                         | number  | 1                       | If you want to send a random fraction of traces, then make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent, and the rest never be created. |
+| tracesEndpoint        | optional                                         | string  | `${endpoint}/v1/traces` | Populate this to send traces to a route other than /v1/traces                                                                                                             |
+| debug                 | optional                                         | boolean | false                   | Enable additional logging                                                                                                                                                 |
+| tracesApiKey          | optional                                         | string  |                         | If traces should go to a different place than metrics(?), put the traces-only API key here.                                                                               |
+| dataset               | optional                                         | string  |                         | Populate this only if your Honeycomb team is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic)                                   |
+| skipOptionsValidation | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector)                                                                                                        |
 
 ### Send to an OpenTelemetry Collector
 
@@ -100,21 +100,21 @@ You can also [add your own instrumentation](https://docs.honeycomb.io/getting-da
 
 The SDK adds these fields to all telemetry:
 
-| name | status | static? | description | example |
-|------|--------|---------|-------------|---------|
-| user_agent.original | [stable](https://github.com/scheler/opentelemetry-specification/blob/browser-events/specification/resource/semantic_conventions/browser.md) | static | window.user_agent | `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36` |
-| browser.height | planned | per-span | `[window.innerHeight](https://developer.mozilla.org/en-US/docs/Web/API/Window/innerHeight)`, the height of the layout viewport in pixels | 287 |
-| browser.brands | stable | static | [NavigatorUAData: brands](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/brands) | ["Not_A Brand 8", "Chromium 120", "Google Chrome 120"] |
-| browser.platform | stable | static | [NavigatorUAData: platform](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/platform) | "Windows" |
-| browser.mobile | stable | static | [NavigatorUAData: mobile](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/mobile) | true |
-| browser.language | stable | static | [Navigator: language](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language) | "fr-FR" |
-| honeycomb.distro.version | stable | static | package version | "1.2.3" |
-| honeycomb.distro.runtime_version | stable | static | | "browser"
-| `entry_page.url`      | custom | static |   | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2` |
-| `entry_page.path`     | custom | static |   | `/getting-data-in/data-best-practices/`                                                              |
-| `entry_page.search`   | custom | static |   | `?page=2`                                                                                            |
-| `entry_page.hash`     | custom | static |   | `#datasets-group-data-together`                                                                      |
-| `entry_page.hostname` | custom | static |   | `docs.honeycomb.io`                                                                                  |
+| name                             | status                                                                                                                                      | static?  | description                                                                                                                              | example                                                                                                                    |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| user_agent.original              | [stable](https://github.com/scheler/opentelemetry-specification/blob/browser-events/specification/resource/semantic_conventions/browser.md) | static   | window.user_agent                                                                                                                        | `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36` |
+| browser.height                   | planned                                                                                                                                     | per-span | `[window.innerHeight](https://developer.mozilla.org/en-US/docs/Web/API/Window/innerHeight)`, the height of the layout viewport in pixels | 287                                                                                                                        |
+| browser.brands                   | stable                                                                                                                                      | static   | [NavigatorUAData: brands](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/brands)                                       | ["Not_A Brand 8", "Chromium 120", "Google Chrome 120"]                                                                     |
+| browser.platform                 | stable                                                                                                                                      | static   | [NavigatorUAData: platform](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/platform)                                   | "Windows"                                                                                                                  |
+| browser.mobile                   | stable                                                                                                                                      | static   | [NavigatorUAData: mobile](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/mobile)                                       | true                                                                                                                       |
+| browser.language                 | stable                                                                                                                                      | static   | [Navigator: language](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language)                                               | "fr-FR"                                                                                                                    |
+| honeycomb.distro.version         | stable                                                                                                                                      | static   | package version                                                                                                                          | "1.2.3"                                                                                                                    |
+| honeycomb.distro.runtime_version | stable                                                                                                                                      | static   |                                                                                                                                          | "browser"                                                                                                                  |
+| `entry_page.url`                 | custom                                                                                                                                      | static   |                                                                                                                                          | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2`                       |
+| `entry_page.path`                | custom                                                                                                                                      | static   |                                                                                                                                          | `/getting-data-in/data-best-practices/`                                                                                    |
+| `entry_page.search`              | custom                                                                                                                                      | static   |                                                                                                                                          | `?page=2`                                                                                                                  |
+| `entry_page.hash`                | custom                                                                                                                                      | static   |                                                                                                                                          | `#datasets-group-data-together`                                                                                            |
+| `entry_page.hostname`            | custom                                                                                                                                      | static   |                                                                                                                                          | `docs.honeycomb.io`                                                                                                        |
 
 Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts/resources/), so they are same for every span emitted for the loaded page.
 
