@@ -64,6 +64,21 @@ jobs:
       - store_artifacts:
           path: ./reports/
 
+  smoke_test:
+    machine:
+      image: ubuntu-2004:202107-02
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./
+      - run:
+        name: Spin up example app
+        command: docker build -t smoke-tests . && docker run -dp 127.0.0.1:3000:3000 --name smoke-tests smoke-tests
+      - run:
+        name: Spin down example app
+        command: docker stop smoke-tests && docker rm smoke-tests
+
+
   publish_github:
     executor: github
     steps:
@@ -95,6 +110,10 @@ workflows:
           <<: *filters_always
           requires:
             - test
+      - smoke_test:
+          <<: *filters_always
+          requires:
+            - build
       - publish_github:
           <<: *filters_publish
           context: Honeycomb Secrets for Public Repos
