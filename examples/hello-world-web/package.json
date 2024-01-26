@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@honeycombio/opentelemetry-web": "file:../../dist/src",
-    "@opentelemetry/auto-instrumentations-web": "~0.34.0"
+    "@opentelemetry/auto-instrumentations-web": "~0.33.0"
   },
   "devDependencies": {
     "chokidar": "^3.5.3",
