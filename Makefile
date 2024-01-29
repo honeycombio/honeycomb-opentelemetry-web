@@ -17,13 +17,13 @@ smoke-docker: smoke-tests/collector/data.json
 
 smoke-cypress: smoke-tests/collector/data.json
 	@echo ""
-	@echo "+++ Tryin that Cypress thing"
+	@echo "+++ Running Cypress in chrome browser."
 	@echo ""
 	npx cypress run --headed --browser chrome
 
 smoke-bats: smoke-tests/collector/data.json
 	@echo ""
-	@echo "+++ Running HTTP smoke tests for TypeScript."
+	@echo "+++ Running bats smoke tests."
 	@echo ""
 	cd smoke-tests && bats ./smoke-e2e.bats --report-formatter junit --output ./
 

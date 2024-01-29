@@ -40,15 +40,5 @@ describe('Smoke Tests', () => {
       'BrowserDetector found resource.',
     );
     cy.get('@consoleDebug').should('be.calledWithMatch', 'items to be sent');
-
-    // cy.get('@consoleDebug').should('be.calledWithMatch', {
-    //   name: 'documentLoad',
-    // });
-    // cy.get('@consoleDebug').should('be.calledWithMatch', {
-    //   name: 'resourceFetch',
-    // });
-    // cy.get('@consoleDebug').should('be.calledWithMatch', {
-    //   name: 'documentFetch',
-    // });
   });
 });
