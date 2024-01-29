@@ -9,15 +9,17 @@ import {
 import { Context } from '@opentelemetry/api';
 import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
 
-// TODO: jsdocs
-// TODO: naming this file
-// TODO: tests
-
+/**
+ * Builds and returns Span Processor that combines the BatchSpanProcessor, BrowserSpanProcessor,
+ * and optionally a user provided Span Processor.
+ * @param options The {@link HoneycombOptions}
+ * @returns a {@link CompositeSpanProcessor}
+ */
 export const configureSpanProcessors = (options?: HoneycombOptions) => {
   const honeycombSpanProcessor = new CompositeSpanProcessor();
 
-  // add exporter
-  // TODO: also leave a comment here
+  // We have to configure the exporter here becuase the way the base SDK is setup
+  // does not allow having both a `spanProcessor` and `traceExporter` configured.
   honeycombSpanProcessor.addProcessor(
     new BatchSpanProcessor(configureHoneycombHttpJsonTraceExporter(options)),
   );
@@ -33,6 +35,10 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
   return honeycombSpanProcessor;
 };
 
+/**
+ * A {@link SpanProcessor} that combines multiple span processors into a single
+ * span processor that can be passed into the SDKs `spanProcessor` option.
+ */
 export class CompositeSpanProcessor implements SpanProcessor {
   private spanProcessors: Array<SpanProcessor> = [];
 

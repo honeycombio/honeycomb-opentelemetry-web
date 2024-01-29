@@ -1,6 +1,11 @@
 import { Span } from '@opentelemetry/api';
 import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
 
+/**
+ * A {@link SpanProcessor} that adds browser specific attributes to each span
+ * that might change over the course of a session.
+ * Static attributes (e.g. User Agent) are added to the Resource.
+ */
 export class BrowserAttributesSpanProcessor implements SpanProcessor {
   constructor() {}
 

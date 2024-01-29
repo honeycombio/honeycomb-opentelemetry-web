@@ -15,7 +15,9 @@ export class HoneycombWebSDK extends WebSDK {
         options?.resource,
         configureHoneycombResource(),
       ]),
-      // TODO: leave comment about traceExporter shenanies
+      // Exporter is configured through the span processor because
+      // the base SDK does not allow having both a spanProcessor and a
+      // traceExporter configured at the same time.
       spanProcessor: configureSpanProcessors(options),
     });
 
