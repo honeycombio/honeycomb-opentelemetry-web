@@ -31,23 +31,15 @@ describe('Smoke Tests', () => {
       'be.calledWithMatch',
       'Honeycomb Web SDK Debug Mode Enabled',
     );
-  });
 
-  it('logs document load traces', () => {
-    cy.visit('http://localhost:3000', {
-      onBeforeLoad(win) {
-        cy.stub(win.console, 'dir').as('consoleDir');
-      },
-    });
-
-    cy.get('@consoleDir').should('be.calledWithMatch', {
-      name: 'documentLoad',
-    });
-    cy.get('@consoleDir').should('be.calledWithMatch', {
-      name: 'resourceFetch',
-    });
-    cy.get('@consoleDir').should('be.calledWithMatch', {
-      name: 'documentFetch',
-    });
+    // cy.get('@consoleDebug').should('be.calledWithMatch', {
+    //   name: 'documentLoad',
+    // });
+    // cy.get('@consoleDebug').should('be.calledWithMatch', {
+    //   name: 'resourceFetch',
+    // });
+    // cy.get('@consoleDebug').should('be.calledWithMatch', {
+    //   name: 'documentFetch',
+    // });
   });
 });

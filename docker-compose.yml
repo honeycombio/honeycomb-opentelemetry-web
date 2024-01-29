@@ -1,0 +1,18 @@
+version: '3.0'
+
+services:
+  collector:
+    image: otel/opentelemetry-collector:0.92.0
+    command: ['--config=/etc/otel-collector-config.yaml']
+    volumes:
+      - './smoke-tests/collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml'
+      - './smoke-tests/collector:/var/lib'
+    ports:
+      - '4318:4318'
+
+  app-hello-world-web:
+    build:
+      context: .
+    image: hny/hello-world-web:local
+    ports:
+      - '3000:3000'

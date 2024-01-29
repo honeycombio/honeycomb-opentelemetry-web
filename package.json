@@ -18,6 +18,9 @@
     "lint:ci-prep": "cd ./examples/hello-world-web && npm ci",
     "lint:fix": "eslint . --fix",
     "start:smoke-test-example": "docker build -t smoke-tests . && docker run -dp 127.0.0.1:3000:3000 --name smoke-tests smoke-tests",
+    "smoke": "docker-compose up --build --detach && cypress run --headed",
+    "smoke-bats": "cd smoke-tests && bats verify.bats",
+    "unsmoke": "docker-compose down",
     "test": "jest --config ./jest.config.js --no-cache -u --silent",
     "test:ci": "jest --config ./jest.config.js --ci --runInBand --reporters=default --reporters=jest-junit --no-cache -u --silent",
     "test:smoke": "npm run start:smoke-test-example && cypress run && npm run clean:smoke-test-example"

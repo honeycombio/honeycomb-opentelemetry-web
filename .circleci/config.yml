@@ -12,6 +12,9 @@ filters_publish: &filters_publish
     branches:
       ignore: /.*/
 
+orbs:
+  bats: circleci/bats@1.0.0
+
 executors:
   node:
     docker:
@@ -71,13 +74,27 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
+      - bats/install
       - run:
-          name: Spin up example app
-          command: docker build -t smoke-tests . && docker run -dp 127.0.0.1:3000:3000 --name smoke-tests smoke-tests
+          name: What's the BATS?
+          command: |
+            which bats
+            bats --version
+      - run:
+          name: Run Cypress
+          command: npm run smoke
+      - run:
+          name: Run Bats
+          command: npm run smoke-bats
+      - store_test_results:
+          path: ./smoke-tests/
+      - store_artifacts:
+          path: ./smoke-tests/report.xml
+      - store_artifacts:
+          path: ./smoke-tests/collector/data-results
       - run:
           name: Spin down example app
-          command: docker stop smoke-tests && docker rm smoke-tests
-
+          command: npm run unsmoke
 
   publish_github:
     executor: github

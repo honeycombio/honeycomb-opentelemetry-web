@@ -15,6 +15,7 @@
     "./*.js", // root javascript files
     "./.*.js", // root javascript config files
     "./examples/*/*.js", // examples javascript files
-    "./examples/*/*.ts" // examples typescript files
+    "./examples/*/*.ts", // examples typescript files
+    "./smoke-tests/**/*.ts" // smoke test typescript files
   ]
 }
