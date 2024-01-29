@@ -14,6 +14,7 @@ filters_publish: &filters_publish
 
 orbs:
   bats: circleci/bats@1.0.0
+  cypress: cypress-io/cypress@3
 
 executors:
   node:
@@ -80,6 +81,12 @@ jobs:
           command: |
             which bats
             bats --version
+      - cypress/install
+      - run:
+          name: What's the Cypress?
+          command: |
+            which cypress
+            cypress --version
       - run:
           name: Run Cypress
           command: npm run smoke
