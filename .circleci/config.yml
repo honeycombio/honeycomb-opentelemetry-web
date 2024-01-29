@@ -86,8 +86,8 @@ jobs:
           name: What's the Cypress?
           command: npx cypress --version
       - run:
-          name: Makin smoke
-          command: npm run test:smoke
+          name: Spin up and run e2e smoke tests
+          command: make smoke
       - store_test_results:
           path: ./smoke-tests/
       - store_artifacts:
@@ -95,8 +95,8 @@ jobs:
       - store_artifacts:
           path: ./smoke-tests/collector/data-results
       - run:
-          name: No mo smoke
-          command: npm run test:unsmoke
+          name: Tear down e2e smoke tests
+          command: make unsmoke
 
   publish_github:
     executor: github
