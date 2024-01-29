@@ -84,9 +84,7 @@ jobs:
       - cypress/install
       - run:
           name: What's the Cypress?
-          command: |
-            which cypress
-            cypress --version
+          command: npx cypress --version
       - run:
           name: Run Cypress
           command: npm run smoke
