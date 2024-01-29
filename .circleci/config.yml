@@ -87,7 +87,7 @@ jobs:
           command: npx cypress --version
       - run:
           name: Makin smoke
-          command: make smoke
+          command: npm run test:smoke
       - store_test_results:
           path: ./smoke-tests/
       - store_artifacts:
@@ -96,7 +96,7 @@ jobs:
           path: ./smoke-tests/collector/data-results
       - run:
           name: No mo smoke
-          command: make unsmoke
+          command: npm run test:unsmoke
 
   publish_github:
     executor: github
