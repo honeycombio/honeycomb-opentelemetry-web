@@ -130,8 +130,8 @@ workflows:
       #     <<: *filters_always
       - build:
           <<: *filters_always
-          requires:
-            - test
+          # requires:
+          #   - test
       - smoke_test:
           <<: *filters_always
           requires:
