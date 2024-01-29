@@ -4,8 +4,8 @@
 import { configureEntryPageResource } from '../src/entry-page-resource';
 import { Resource } from '@opentelemetry/resources';
 
-afterAll(() => {
-  jest.clearAllMocks();
+afterEach(() => {
+  jest.resetAllMocks();
 });
 
 test('it should return a Resource', () => {
