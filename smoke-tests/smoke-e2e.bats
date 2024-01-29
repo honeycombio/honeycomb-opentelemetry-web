@@ -6,6 +6,13 @@ CONTAINER_NAME="app-hello-world-web"
 TRACER_NAME="hello-world-tracer"
 DOCUMENT_LOAD_SCOPE="@opentelemetry/instrumentation-document-load"
 
+setup_file() {
+  echo "# 🚧" >&3
+}
+teardown_file() {
+  cp collector/data.json collector/data-results/data-${CONTAINER_NAME}.json
+}
+
 # TESTS
 
 @test "Agent includes service.name in resource attributes" {

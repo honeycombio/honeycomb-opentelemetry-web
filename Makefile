@@ -25,7 +25,7 @@ smoke-bats: smoke-tests/collector/data.json
 	@echo ""
 	@echo "+++ Running HTTP smoke tests for TypeScript."
 	@echo ""
-	cd smoke-tests && bats ./verify.bats --report-formatter junit --output ./
+	cd smoke-tests && bats ./smoke-e2e.bats --report-formatter junit --output ./
 
 smoke: smoke-docker smoke-cypress smoke-bats
 
