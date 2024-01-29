@@ -12,7 +12,7 @@
   - ESLint (dbaeumer.vscode-eslint)
   - Prettier (esbenp.prettier-vscode)
   - Prettier ESLint (rvest.vs-code-prettier-eslint)
-- Docker - Required for running smoke-tests.
+- Docker & Docker Compose - Required for running smoke-tests.
   - [Docker Desktop](https://www.docker.com/products/docker-desktop/) is a reliable choice if you don't have your own preference.
 
 ## Main Commands
@@ -36,17 +36,27 @@ npm run test
 
 ## Smoke Tests
 
-Smoke tests currently use Cypress and Docker, and rely on console output.
+Smoke tests use Cypress and Docker with `docker-compose`, exporting telemetry to a local collector.
+They can be run with either `npm` scripts or with `make` targets (the latter works better in CI).
 
 ```sh
 # run smoke tests with cypress and docker
 npm run test:smoke
+
+# alternative using make: run smoke tests with cypress and docker (used in CI)
+make smoke
 ```
 
-If it doesn't clean up properly afterward, manually tear it down:
+The results of both the tests themselves and the telemetry collected by the collector are in a file `data.json` in the `smoke-tests` directory.
+These artifacts are also uploaded to Circle when run in CI.
+
+After smoke tests are done, tear down docker containers:
 
 ```sh
-npm run clean:smoke-test-example
+npm run test:unsmoke
+
+# alternative using make
+make unsmoke
 ```
 
 ## Example Application
