@@ -40,6 +40,10 @@ export class CompositeSpanProcessor implements SpanProcessor {
     this.spanProcessors.push(processor);
   }
 
+  public getSpanProcessors() {
+    return this.spanProcessors;
+  }
+
   onStart(span: Span, parentContext: Context): void {
     this.spanProcessors.forEach((processor) => {
       processor.onStart(span, parentContext);

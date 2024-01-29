@@ -10,6 +10,7 @@ describe('BrowserAttributesSpanProcessor', () => {
 
   beforeEach(() => {
     windowSpy = jest.spyOn(globalThis, 'window', 'get');
+
     span = new Span(
       new BasicTracerProvider().getTracer('browser-attrs-testing'),
       ROOT_CONTEXT,
