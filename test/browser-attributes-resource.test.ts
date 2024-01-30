@@ -14,7 +14,8 @@ test('it should have location attributes', () => {
     'browser.touch_screen_enabled': false,
     'screen.height': 0,
     'screen.width': 0,
-    'user_agent.original':
-      'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/20.0.3',
+    // user agent will be different locally and on CI,
+    // we're really only testing to make sure it gets the value
+    'user_agent.original': navigator.userAgent,
   });
 });
