@@ -40,8 +40,8 @@ describe('BrowserAttributesSpanProcessor', () => {
     browserAttrsSpanProcessor.onStart(span);
 
     expect(span.attributes).toEqual({
-      'browser.width': window.screen.width,
-      'browser.height': window.screen.height,
+      'browser.width': window.innerWidth,
+      'browser.height': window.innerHeight,
       'browser.hash': window.location.hash,
       'browser.url': window.location.href,
       'browser.route': window.location.pathname,

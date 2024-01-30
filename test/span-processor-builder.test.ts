@@ -118,8 +118,8 @@ describe('configureSpanProcessors', () => {
 
     honeycombSpanProcessors.onStart(span, ROOT_CONTEXT);
     expect(span.attributes).toEqual({
-      'browser.width': window.screen.width,
-      'browser.height': window.screen.height,
+      'browser.width': window.innerWidth,
+      'browser.height': window.innerHeight,
       'browser.hash': window.location.hash,
       'browser.url': window.location.href,
       'browser.route': window.location.pathname,
@@ -147,8 +147,8 @@ describe('configureSpanProcessors', () => {
 
     honeycombSpanProcessors.onStart(span, ROOT_CONTEXT);
     expect(span.attributes).toEqual({
-      'browser.width': window.screen.width,
-      'browser.height': window.screen.height,
+      'browser.width': window.innerWidth,
+      'browser.height': window.innerHeight,
       'browser.hash': window.location.hash,
       'browser.url': window.location.href,
       'browser.route': window.location.pathname,

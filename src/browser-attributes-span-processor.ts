@@ -11,8 +11,8 @@ export class BrowserAttributesSpanProcessor implements SpanProcessor {
 
   onStart(span: Span) {
     span.setAttributes({
-      'browser.width': window.screen.width,
-      'browser.height': window.screen.height,
+      'browser.width': window.innerWidth,
+      'browser.height': window.innerHeight,
       'browser.hash': window.location.hash,
       'browser.url': window.location.href,
       'browser.route': window.location.pathname,
