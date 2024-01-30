@@ -2,6 +2,7 @@ import { WebSDK } from './base-otel-sdk';
 import { HoneycombOptions } from './types';
 import { configureHoneycombResource } from './honeycomb-resource';
 import { configureEntryPageResource } from './entry-page-resource';
+import { configureBrowserAttributesResource } from './browser-attributes-resource';
 import { mergeResources } from './merge-resources';
 import { configureDebug } from './honeycomb-debug';
 import { configureSpanProcessors } from './span-processor-builder';
@@ -12,6 +13,7 @@ export class HoneycombWebSDK extends WebSDK {
       ...options,
       resource: mergeResources([
         configureEntryPageResource(),
+        configureBrowserAttributesResource(),
         options?.resource,
         configureHoneycombResource(),
       ]),
