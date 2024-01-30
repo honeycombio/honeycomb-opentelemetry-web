@@ -1,3 +1,6 @@
+/**
+ * @jest-environment-options {"url": "http://something-something.com/some-page?search_params=yes&hello=hi#the-hash"}
+ */
 import {
   CompositeSpanProcessor,
   configureSpanProcessors,
@@ -80,11 +83,8 @@ describe('CompositeSpanProcessor', () => {
 
 describe('configureSpanProcessors', () => {
   let span: Span;
-  let windowSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    windowSpy = jest.spyOn(globalThis, 'window', 'get');
-
     span = new Span(
       new BasicTracerProvider().getTracer('browser-attrs-testing'),
       ROOT_CONTEXT,
@@ -98,16 +98,6 @@ describe('configureSpanProcessors', () => {
     );
   });
   test('Configures BatchSpanProcessor & BrowserAttributesSpanProcessor by default', () => {
-    windowSpy.mockImplementation(() => ({
-      location: {
-        hash: '#testing',
-        href: 'https://example.com/some-path#testing',
-        pathname: '/some-path',
-      },
-      innerWidth: 1720,
-      innerHeight: 1000,
-    }));
-
     const honeycombSpanProcessors = configureSpanProcessors({});
     expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(2);
     expect(honeycombSpanProcessors.getSpanProcessors()[0]).toBeInstanceOf(
@@ -116,25 +106,17 @@ describe('configureSpanProcessors', () => {
 
     honeycombSpanProcessors.onStart(span, ROOT_CONTEXT);
     expect(span.attributes).toEqual({
-      'browser.width': window.innerWidth,
-      'browser.height': window.innerHeight,
-      'page.hash': window.location.hash,
-      'page.url': window.location.href,
-      'page.route': window.location.pathname,
-      'page.hostname': window.location.hostname,
-      'page.search': window.location.search,
+      'browser.width': 1024,
+      'browser.height': 768,
+      'page.hash': '#the-hash',
+      'page.hostname': 'something-something.com',
+      'page.route': '/some-page',
+      'page.search': '?search_params=yes&hello=hi',
+      'page.url':
+        'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
     });
   });
   test('Configures additional user provided span processor', () => {
-    windowSpy.mockImplementation(() => ({
-      location: {
-        hash: '#testing',
-        href: 'https://example.com/some-path#testing',
-        pathname: '/some-path',
-      },
-      innerWidth: 1720,
-      innerHeight: 1000,
-    }));
     const honeycombSpanProcessors = configureSpanProcessors({
       spanProcessor: new TestSpanProcessorOne(),
     });
@@ -145,13 +127,14 @@ describe('configureSpanProcessors', () => {
 
     honeycombSpanProcessors.onStart(span, ROOT_CONTEXT);
     expect(span.attributes).toEqual({
-      'browser.width': window.innerWidth,
-      'browser.height': window.innerHeight,
-      'page.hash': window.location.hash,
-      'page.url': window.location.href,
-      'page.route': window.location.pathname,
-      'page.hostname': window.location.hostname,
-      'page.search': window.location.search,
+      'browser.width': 1024,
+      'browser.height': 768,
+      'page.hash': '#the-hash',
+      'page.hostname': 'something-something.com',
+      'page.route': '/some-page',
+      'page.search': '?search_params=yes&hello=hi',
+      'page.url':
+        'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
       'processor1.name': 'TestSpanProcessorOne',
     });
   });
