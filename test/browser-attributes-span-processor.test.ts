@@ -31,10 +31,8 @@ describe('BrowserAttributesSpanProcessor', () => {
         href: 'https://example.com/some-path#testing',
         pathname: '/some-path',
       },
-      screen: {
-        width: 1440,
-        height: 982,
-      },
+      innerWidth: 1720,
+      innerHeight: 1000,
     }));
 
     browserAttrsSpanProcessor.onStart(span);
@@ -42,9 +40,11 @@ describe('BrowserAttributesSpanProcessor', () => {
     expect(span.attributes).toEqual({
       'browser.width': window.innerWidth,
       'browser.height': window.innerHeight,
-      'browser.hash': window.location.hash,
-      'browser.url': window.location.href,
-      'browser.route': window.location.pathname,
+      'page.hash': window.location.hash,
+      'page.url': window.location.href,
+      'page.route': window.location.pathname,
+      'page.hostname': window.location.hostname,
+      'page.search': window.location.search,
     });
   });
 });

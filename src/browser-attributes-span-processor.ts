@@ -10,12 +10,16 @@ export class BrowserAttributesSpanProcessor implements SpanProcessor {
   constructor() {}
 
   onStart(span: Span) {
+    const { href, pathname, search, hash, hostname } = window.location;
+
     span.setAttributes({
       'browser.width': window.innerWidth,
       'browser.height': window.innerHeight,
-      'browser.hash': window.location.hash,
-      'browser.url': window.location.href,
-      'browser.route': window.location.pathname,
+      'page.hash': hash,
+      'page.url': href,
+      'page.route': pathname,
+      'page.hostname': hostname,
+      'page.search': search,
     });
   }
 
