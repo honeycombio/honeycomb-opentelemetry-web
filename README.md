@@ -1,11 +1,17 @@
 # Honeycomb OpenTelemetry Web
 
-<!-- OSS metadata badge - rename repo link and set status in OSSMETADATA -->
-<!-- [![OSS Lifecycle](https://img.shields.io/osslifecycle/honeycombio/{repo-name})](https://github.com/honeycombio/home/blob/main/honeycomb-oss-lifecycle-and-practices.md) -->
+[![OSS Lifecycle](https://img.shields.io/osslifecycle/honeycombio/honeycomb-opentelemetry-web)](https://github.com/honeycombio/home/blob/main/honeycomb-oss-lifecycle-and-practices.md)
+[![CircleCI](https://circleci.com/gh/honeycombio/honeycomb-opentelemetry-web.svg?style=shield)](https://circleci.com/gh/honeycombio/honeycomb-opentelemetry-web)
+[![npm](https://img.shields.io/npm/v/@honeycombio/opentelemetry-web)](https://www.npmjs.com/package/@honeycombio/opentelemetry-web)
 
 Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser.
+<!-- TODO: happy badges of the OTel versions we are using -->
+**STATUS: this library is ALPHA.**
 
-// TODO: happy badges of the OTel versions we are using
+Latest release:
+
+* built with OpenTelemetry JS [Stable v1.18.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.18.1), [Experimental v0.45.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.45.1), [API v1.7.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.7.0)
+* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.33.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-node-v0.33.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
@@ -57,17 +63,17 @@ Build and run your application, and then look for data in Honeycomb. On the Home
 
 Pass these options to the HoneycombWebSDK:
 
-| name | required? | type | default value | description |
-|------|-----------|------|---------------|-------------|
-| *apiKey* | required[*](#send-to-an-opentelemetry-collector) |string| | [Honeycomb API Key](https://docs.honeycomb.io/working-with-your-data/settings/api-keys/) for sending traces directly to Honeycomb |
-| *serviceName* | optional | string|unknown_service | The name of this browser application. Your telemetry will go to a Honeycomb dataset with this name. |
-| *localVisualizations*| optional | boolean | false | For each trace created, print a link to the console so that you can find it in Honeycomb. Super useful in development! Do not use in production. |
-| sampleRate | optional | number |1 | If you want to send a random fraction of traces, then make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent, and the rest never be created. |
-| tracesEndpoint | optional | string|`${endpoint}/v1/traces` | Populate this to send traces to a route other than /v1/traces |
-| debug | optional |boolean| false | Enable additional logging |
-| tracesApiKey | optional |string| | If traces should go to a different place than metrics(?), put the traces-only API key here. | 
-| dataset | optional |string| | Populate this only if your Honeycomb team is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic) |
-| skipOptionsValidation | optional | boolean | false | Do not require any fields.[*](#send-to-an-opentelemetry-collector) |
+| name                  | required?                                        | type    | default value           | description                                                                                                                                                               |
+| --------------------- | ------------------------------------------------ | ------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| *apiKey*              | required[*](#send-to-an-opentelemetry-collector) | string  |                         | [Honeycomb API Key](https://docs.honeycomb.io/working-with-your-data/settings/api-keys/) for sending traces directly to Honeycomb                                         |
+| *serviceName*         | optional                                         | string  | unknown_service         | The name of this browser application. Your telemetry will go to a Honeycomb dataset with this name.                                                                       |
+| *localVisualizations* | optional                                         | boolean | false                   | For each trace created, print a link to the console so that you can find it in Honeycomb. Super useful in development! Do not use in production.                          |
+| sampleRate            | optional                                         | number  | 1                       | If you want to send a random fraction of traces, then make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent, and the rest never be created. |
+| tracesEndpoint        | optional                                         | string  | `${endpoint}/v1/traces` | Populate this to send traces to a route other than /v1/traces                                                                                                             |
+| debug                 | optional                                         | boolean | false                   | Enable additional logging                                                                                                                                                 |
+| tracesApiKey          | optional                                         | string  |                         | If traces should go to a different place than metrics(?), put the traces-only API key here.                                                                               |
+| dataset               | optional                                         | string  |                         | Populate this only if your Honeycomb team is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic)                                   |
+| skipOptionsValidation | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector)                                                                                                        |
 
 ### Send to an OpenTelemetry Collector
 
