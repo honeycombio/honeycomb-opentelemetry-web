@@ -3,7 +3,6 @@
 load test_helpers/utilities
 
 CONTAINER_NAME="app-hello-world-web"
-TRACER_NAME="hello-world-tracer"
 DOCUMENT_LOAD_SCOPE="@opentelemetry/instrumentation-document-load"
 
 setup_file() {
@@ -60,23 +59,3 @@ teardown_file() {
 	result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"session.id\").value.stringValue")
 	assert_not_empty "$result"
 }
-
-# @test "Auto instrumentation produces an http request span" {
-#   result=$(span_names_for "@opentelemetry/instrumentation-http")
-#   assert_equal "$result" '"GET /"'
-# }
-
-# @test "Manual instrumentation produces span with name of span" {
-# 	result=$(span_names_for ${TRACER_NAME})
-# 	assert_equal "$result" '"sleep"'
-# }
-
-# @test "Manual instrumentation adds custom attribute" {
-# 	result=$(span_attributes_for ${TRACER_NAME} | jq "select(.key == \"delay_ms\").value.intValue")
-# 	assert_equal "$result" '"100"'
-# }
-
-# @test "BaggageSpanProcessor: key-values added to baggage appear on child spans" {
-# 	result=$(span_attributes_for ${TRACER_NAME} | jq "select(.key == \"for_the_children\").value.stringValue")
-# 	assert_equal "$result" '"another important value"'
-# }

@@ -4,9 +4,6 @@ describe('Smoke Tests', () => {
       onBeforeLoad(win) {
         cy.stub(win.console, 'debug').as('consoleDebug');
       },
-      onLoad(win) {
-        console.log('onLoad', win);
-      },
     });
   });
   it('initializes the OpenTelemetry API', () => {
