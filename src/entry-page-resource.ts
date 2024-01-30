@@ -10,6 +10,7 @@ export function configureEntryPageResource(): Resource {
       'entry_page.search': search,
       'entry_page.hash': hash,
       'entry_page.hostname': hostname,
+      'entry_page.referrer': document.referrer,
     };
   }
 
