@@ -1,11 +1,12 @@
 describe('Smoke Tests', () => {
-  it('initializes the OpenTelemetry API', () => {
-    cy.visit('http://localhost:3000', {
+  beforeEach(() => {
+    cy.visit('index.html', {
       onBeforeLoad(win) {
         cy.stub(win.console, 'debug').as('consoleDebug');
       },
     });
-
+  });
+  it('initializes the OpenTelemetry API', () => {
     cy.get('@consoleDebug').should(
       'be.calledWithMatch',
       '@opentelemetry/api: Registered a global for diag',
@@ -21,33 +22,20 @@ describe('Smoke Tests', () => {
   });
 
   it('logs honeycomb config with debug enabled', () => {
-    cy.visit('http://localhost:3000', {
-      onBeforeLoad(win) {
-        cy.stub(win.console, 'debug').as('consoleDebug');
-      },
-    });
-
     cy.get('@consoleDebug').should(
       'be.calledWithMatch',
       'Honeycomb Web SDK Debug Mode Enabled',
     );
+    cy.get('@consoleDebug').should(
+      'be.calledWithMatch',
+      '@honeycombio/opentelemetry-web',
+    );
   });
-
-  it('logs document load traces', () => {
-    cy.visit('http://localhost:3000', {
-      onBeforeLoad(win) {
-        cy.stub(win.console, 'dir').as('consoleDir');
-      },
-    });
-
-    cy.get('@consoleDir').should('be.calledWithMatch', {
-      name: 'documentLoad',
-    });
-    cy.get('@consoleDir').should('be.calledWithMatch', {
-      name: 'resourceFetch',
-    });
-    cy.get('@consoleDir').should('be.calledWithMatch', {
-      name: 'documentFetch',
-    });
+  it('logs expected output with debug enabled', () => {
+    cy.get('@consoleDebug').should(
+      'be.calledWithMatch',
+      'BrowserDetector found resource.',
+    );
+    cy.get('@consoleDebug').should('be.calledWithMatch', 'items to be sent');
   });
 });

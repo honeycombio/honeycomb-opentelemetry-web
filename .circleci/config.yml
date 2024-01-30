@@ -12,6 +12,10 @@ filters_publish: &filters_publish
     branches:
       ignore: /.*/
 
+orbs:
+  bats: circleci/bats@1.0.0
+  cypress: cypress-io/cypress@3
+
 executors:
   node:
     docker:
@@ -66,18 +70,33 @@ jobs:
 
   smoke_test:
     machine:
-      image: ubuntu-2004:2023.04.1
+      image: ubuntu-2004:2024.01.1
     steps:
       - checkout
       - attach_workspace:
           at: ./
+      - bats/install
       - run:
-          name: Spin up example app
-          command: docker build -t smoke-tests . && docker run -dp 127.0.0.1:3000:3000 --name smoke-tests smoke-tests
+          name: What's the BATS?
+          command: |
+            which bats
+            bats --version
+      - cypress/install
       - run:
-          name: Spin down example app
-          command: docker stop smoke-tests && docker rm smoke-tests
-
+          name: What's the Cypress?
+          command: npx cypress --version
+      - run:
+          name: Spin up and run e2e smoke tests
+          command: make smoke
+      - store_test_results:
+          path: ./smoke-tests/
+      - store_artifacts:
+          path: ./smoke-tests/report.xml
+      - store_artifacts:
+          path: ./smoke-tests/collector/data-results
+      - run:
+          name: Tear down e2e smoke tests
+          command: make unsmoke
 
   publish_github:
     executor: github
