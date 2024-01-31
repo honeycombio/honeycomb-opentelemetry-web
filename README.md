@@ -60,7 +60,7 @@ const sdk = new HoneycombWebSDK({
 sdk.start();
 ```
 
-Build and run your application, and then look for data in Honeycomb. On the Home screen, choose your application by looking for the service name in the dropdown at the top. Find some traces there.
+Build and run your application, and then look for data in Honeycomb. On the Home screen, choose your application by looking for the service name in the Dataset dropdown at the top. Data should populate.
 
 ![Honeycomb screen, with "Home" circled on the left, and the dropdown circled at the top.](docs/honeycomb-home.png)
 
@@ -70,15 +70,15 @@ Pass these options to the HoneycombWebSDK:
 
 | name                  | required?                                        | type    | default value           | description                                                                                                                                                               |
 | --------------------- | ------------------------------------------------ | ------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| apiKey            | required[*](#send-to-an-opentelemetry-collector) | string  |                         | [Honeycomb API Key](https://docs.honeycomb.io/working-with-your-data/settings/api-keys/) for sending traces directly to Honeycomb                                         |
+| apiKey            | required[*](#send-to-an-opentelemetry-collector) | string  |                         | [Honeycomb API Key](https://docs.honeycomb.io/working-with-your-data/settings/api-keys/) for sending traces directly to Honeycomb.                                         |
 | serviceName         | optional                                         | string  | unknown_service         | The name of this browser application. Your telemetry will go to a Honeycomb dataset with this name.                                                                       |
 | localVisualizations** | optional                                         | boolean | false                   | For each trace created, print a link to the console so that you can find it in Honeycomb. Super useful in development! Do not use in production.                          |
 | sampleRate**            | optional                                         | number  | 1                       | If you want to send a random fraction of traces, then make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent, and the rest never be created. |
-| tracesEndpoint        | optional                                         | string  | `${endpoint}/v1/traces` | Populate this to send traces to a route other than /v1/traces                                                                                                             |
-| debug                 | optional                                         | boolean | false                   | Enable additional logging                                                                                                                                                 |
+| tracesEndpoint        | optional                                         | string  | `${endpoint}/v1/traces` | Populate this to send traces to a route other than `/v1/traces`.                                                                                                            |
+| debug                 | optional                                         | boolean | false                   | Enable additional logging.                                                                                                                                                |
 | tracesApiKey          | optional                                         | string  |                         | If traces should go to a different place than metrics(?), put the traces-only API key here.                                                                               |
-| dataset               | optional                                         | string  |                         | Populate this only if your Honeycomb team is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic)                                   |
-| skipOptionsValidation** | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector)                                                                                                        |
+| dataset               | optional                                         | string  |                         | Populate this only if your target Honeycomb environment is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic).                                  |
+| skipOptionsValidation** | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with an OpenTelemetry Collector.                                                                                                       |
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 
