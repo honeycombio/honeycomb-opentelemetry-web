@@ -74,11 +74,10 @@ Pass these options to the HoneycombWebSDK:
 | serviceName         | optional                                         | string  | unknown_service         | The name of this browser application. Your telemetry will go to a Honeycomb dataset with this name.                                                                       |
 | localVisualizations** | optional                                         | boolean | false                   | For each trace created, print a link to the console so that you can find it in Honeycomb. Super useful in development! Do not use in production.                          |
 | sampleRate**            | optional                                         | number  | 1                       | If you want to send a random fraction of traces, then make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent, and the rest never be created. |
-| tracesEndpoint        | optional                                         | string  | `${endpoint}/v1/traces` | Populate this to send traces to a route other than `/v1/traces`.                                                                                                            |
-| debug                 | optional                                         | boolean | false                   | Enable additional logging.                                                                                                                                                |
-| tracesApiKey          | optional                                         | string  |                         | If traces should go to a different place than metrics(?), put the traces-only API key here.                                                                               |
-| dataset               | optional                                         | string  |                         | Populate this only if your target Honeycomb environment is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic).                                  |
-| skipOptionsValidation** | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with an OpenTelemetry Collector.                                                                                                       |
+| tracesEndpoint        | optional                                         | string  | `${endpoint}/v1/traces` | Populate this to send traces to a route other than /v1/traces.                                                                                                             |
+| debug                 | optional                                         | boolean | false                   | Enable additional logging.                                                                                                                                                 |
+| dataset               | optional                                         | string  |                         | Populate this only if your Honeycomb environment is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic).                                   |
+| skipOptionsValidation** | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with OpenTelemetry Collector.                                                                                                       |
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 
@@ -98,12 +97,6 @@ Your OpenTelemetry Collector can send the traces on to Honeycomb, and your API k
 ```
 
 ## Fields emitted
-
-What do you get from this SDK?
-
-By default, no instrumentation is added.
-You can configure [automatic instrumentation](https://docs.honeycomb.io/getting-data-in/opentelemetry/browser-js/#automatic-instrumentation).
-You can also [add your own instrumentation](https://docs.honeycomb.io/getting-data-in/opentelemetry/browser-js/#adding-manual-instrumentation).
 
 The SDK adds these fields to all telemetry:
 
@@ -147,7 +140,7 @@ Our version numbers are independent of the OpenTelemetry version numbers. Check 
 
 When OpenTelemetry releases a new version of the packages this project depends on, we update this project to use them within a week, unless our tests indicate a problem.
 
-When the OpenTelemetry API or SDK has a major version bump, this package will too. We also have major version bumps of our own.
+When the OpenTelemetry API or SDK has a major version bump, this package will, too. We also have major version bumps of our own.
 
 ### Code
 
