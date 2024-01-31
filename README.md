@@ -109,7 +109,7 @@ The SDK adds these fields to all telemetry:
 | browser.platform | stable | static | [NavigatorUAData: platform](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/platform) | "Windows" |
 | browser.mobile | stable | static | [NavigatorUAData: mobile](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/mobile) | true |
 | browser.language | stable | static | [Navigator: language](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language) | "fr-FR" |
-| browser.touch_screen_enabled | stable | static |  | true |
+| browser.touch_screen_enabled | stable | static | [Navigator: maxTouchPoints](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/maxTouchPoints) | true |
 | `page.url`      | custom | per-span |   | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2` |
 | `page.route`     | custom | per-span |   | `/getting-data-in/data-best-practices/`                                                              |
 | `page.search`   | custom | per-span |   | `?page=2`                                                                                            |
