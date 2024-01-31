@@ -1,10 +1,11 @@
 import { WebSDK } from './base-otel-sdk';
 import { HoneycombOptions } from './types';
-import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
 import { configureHoneycombResource } from './honeycomb-resource';
 import { configureEntryPageResource } from './entry-page-resource';
+import { configureBrowserAttributesResource } from './browser-attributes-resource';
 import { mergeResources } from './merge-resources';
 import { configureDebug } from './honeycomb-debug';
+import { configureSpanProcessors } from './span-processor-builder';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
@@ -12,10 +13,14 @@ export class HoneycombWebSDK extends WebSDK {
       ...options,
       resource: mergeResources([
         configureEntryPageResource(),
+        configureBrowserAttributesResource(),
         options?.resource,
         configureHoneycombResource(),
       ]),
-      traceExporter: configureHoneycombHttpJsonTraceExporter(options),
+      // Exporter is configured through the span processor because
+      // the base SDK does not allow having both a spanProcessor and a
+      // traceExporter configured at the same time.
+      spanProcessor: configureSpanProcessors(options),
     });
 
     if (options?.debug) {
