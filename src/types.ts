@@ -95,5 +95,5 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   skipOptionsValidation?: boolean;
 
   /** Any additional attributes to add to the resource */
-  resourceFields?: ResourceAttributes;
+  resourceAttributes?: ResourceAttributes;
 }

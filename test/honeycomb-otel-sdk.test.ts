@@ -27,12 +27,12 @@ describe('resource config', () => {
     expect(attributes.myTestAttr).toEqual('my-test-attr');
   });
 
-  test('it should include resourceFields from the configuration', () => {
+  test('it should include resourceAttributes from the configuration', () => {
     const config = {
       resource: new Resource({
         myTestAttr: 'my-test-attr',
       }),
-      resourceFields: { jumpingJacks: 25, marbles: 52 },
+      resourceAttributes: { jumpingJacks: 25, marbles: 52 },
     };
 
     const honeycomb = new HoneycombWebSDK(config);
