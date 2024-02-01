@@ -118,6 +118,22 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * ```
    */
   entryPageAttributes?: false | EntryPageConfig;
+
+  webVitals?: false | WebVitalsConfig;
+}
+
+interface WebVitalsConfig {
+  elementDataAttribute?: string;
+  reportOptions?: {
+    reportAllChanges?: boolean;
+    durationThreshold?: number;
+  };
+  // onCLS?: CLSReportCallbackWithAttribution;
+  // onFCP?: FCPReportCallbackWithAttribution;
+  // onFID?: FIDReportCallbackWithAttribution;
+  // onINP?: INPReportCallbackWithAttribution;
+  // onLCP?: LCPReportCallbackWithAttribution;
+  // onTTFB?: TTFBReportCallbackWithAttribution;
 }
 
 /* Configure which fields to include in the `entry_page` resource attributes. By default,
