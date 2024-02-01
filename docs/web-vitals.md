@@ -32,7 +32,7 @@ All metrics have the following attributes: `web_vital.name`, `web_vital.rating`,
 
 ```
 
-### Cumulative Layout Score attributes
+### [Cumulative Layout Score](https://web.dev/articles/cls) attributes
 
 ```
 /* Shared fields */
@@ -84,7 +84,7 @@ All metrics have the following attributes: `web_vital.name`, `web_vital.rating`,
 
 The event time is when the single largest layout shift contributing to the page's CLS score occurred. (performance.timeOrigin + metric.largestShiftTime)
 
-### Largest Contentful Paint attributes
+### [Largest Contentful Paint](https://web.dev/articles/lcp) attributes
 
 ```
 /** Shared fields */
@@ -141,7 +141,7 @@ The event time is when the single largest layout shift contributing to the page'
 
 The event time is the start of the page load (performance.timeOrigin), the duration is equivalent to "lcp.value"
 
-### Interaction to Next Paint attributes
+### [Interaction to Next Paint](https://web.dev/articles/optimize-inp) attributes
 
 ```
 /** Shared fields */
@@ -182,7 +182,7 @@ The event time is the start of the page load (performance.timeOrigin), the durat
 
 The event time is equal to the time the interaction began {[TODO] `attribution.eventTime + performance.timeOrigin`? or just `attribution.eventTime`}, the duration is equal to `inp.value`
 
-### First Contentful Paint attributes
+### [First Contentful Paint](https://web.dev/articles/fcp) attributes
 
 ```
 /** Shared fields */
@@ -216,10 +216,9 @@ The event time is equal to the time the interaction began {[TODO] `attribution.e
 
 The event time is equal to the start of the page load, the duration is equal to `fcp.value`
 
-### Time to First Byte attributes
+### [Time to First Byte](https://web.dev/articles/ttfb) attributes
 
 ```
-
 /** Shared fields */
 "web_vital.name": "TTFB",
 "web_vital.rating": "good" | "needs-improvement" | "poor",
