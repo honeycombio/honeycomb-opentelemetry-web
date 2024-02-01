@@ -1,15 +1,14 @@
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
-import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 const main = () => {
-  // Set OTel to log in Debug mode
-  diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
-
   // Initialize base OTel WebSDK
   const sdk = new HoneycombWebSDK({
-    apiKey: 'api-key-goes-here',
+    // To send direct to Honeycomb, set API Key and comment out endpoint
+    // apiKey: 'api-key',
+    endpoint: 'http://localhost:4318', // send to local collector
     serviceName: 'web-distro',
+    debug: true,
     instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
   });
   sdk.start();

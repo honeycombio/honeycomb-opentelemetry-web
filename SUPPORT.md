@@ -1,5 +1,7 @@
 # How to Get Help
 
-// TODO: put more in here. We actually want to hear from people
+This project uses GitHub issues to track bugs, feature requests, and questions about using the project.
 
-This project uses GitHub issues to track bugs, feature requests, and questions about using the project. Please search for existing issues before filing a new one.
+This distribution of OpenTelemetry aims to make using OpenTelemetry in the browser easier and more useful. If you have ideas for browser fields or other ways of making this easier to use, please open an issue!
+
+Please search for existing issues before filing a new one.

@@ -5,10 +5,24 @@ filters_always: &filters_always
     tags:
       only: /.*/
 
+filters_publish: &filters_publish
+  filters:
+    tags:
+      only: /^v[0-9].*/
+    branches:
+      ignore: /.*/
+
+orbs:
+  bats: circleci/bats@1.0.0
+  cypress: cypress-io/cypress@3
+
 executors:
   node:
     docker:
       - image: cimg/node:16.16
+  github:
+    docker:
+      - image: cibuilds/github:0.13.0
 
 jobs:
   build:
@@ -54,6 +68,53 @@ jobs:
       - store_artifacts:
           path: ./reports/
 
+  smoke_test:
+    machine:
+      image: ubuntu-2004:2024.01.1
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./
+      - bats/install
+      - run:
+          name: What's the BATS?
+          command: |
+            which bats
+            bats --version
+      - cypress/install
+      - run:
+          name: What's the Cypress?
+          command: npx cypress --version
+      - run:
+          name: Spin up and run e2e smoke tests
+          command: make smoke
+      - store_test_results:
+          path: ./smoke-tests/
+      - store_artifacts:
+          path: ./smoke-tests/report.xml
+      - store_artifacts:
+          path: ./smoke-tests/collector/data-results
+      - run:
+          name: Tear down e2e smoke tests
+          command: make unsmoke
+
+  publish_github:
+    executor: github
+    steps:
+      - run:
+          name: "GHR Draft"
+          command: ghr -draft -n ${CIRCLE_TAG} -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG}
+
+  publish_npm:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: store npm auth token
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish --access public
 
 workflows:
   build:
@@ -68,3 +129,19 @@ workflows:
           <<: *filters_always
           requires:
             - test
+      - smoke_test:
+          <<: *filters_always
+          requires:
+            - build
+      - publish_github:
+          <<: *filters_publish
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build
+            - smoke_test
+      - publish_npm:
+          <<: *filters_publish
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build
+            - smoke_test
