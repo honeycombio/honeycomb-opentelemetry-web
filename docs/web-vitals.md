@@ -6,7 +6,7 @@ By default, Honeycomb includes events for all web vitals except [first-input-del
 
 All vitals have the following attributes: `web_vital.name`, `web_vital.rating`, `web_vital.id`
 
-```
+```ts
 /**
  * The name of the vital (in acronym form).
  */
@@ -29,12 +29,11 @@ All vitals have the following attributes: `web_vital.name`, `web_vital.rating`, 
  */
 
 "web_vital.id": string;
-
 ```
 
 ### [Cumulative Layout Score](https://web.dev/articles/cls) attributes
 
-```
+```ts
 /* Shared fields */
 "web_vital.name": "CLS",
 "web_vital.rating": "good" | "needs-improvement" | "poor",
@@ -45,6 +44,7 @@ All vitals have the following attributes: `web_vital.name`, `web_vital.rating`, 
 "cls.value": number;
 "cls.delta": number;
 
+ /**
  * A selector identifying the first element (in document order) that
  * shifted when the single largest layout shift contributing to the page's
  * CLS score occurred.
@@ -86,7 +86,7 @@ The event time is when the single largest layout shift contributing to the page'
 
 ### [Largest Contentful Paint](https://web.dev/articles/lcp) attributes
 
-```
+```ts
 /** Shared fields */
 "web_vital.name": "LCP",
 "web_vital.rating": "good" | "needs-improvement" | "poor",
@@ -109,7 +109,7 @@ The event time is when the single largest layout shift contributing to the page'
  */
 "lcp.url": string;
 
-**
+/**
  * The time from when the user initiates loading the page until when the
  * browser receives the first byte of the response (a.k.a. TTFB). See
  * [Optimize LCP](https://web.dev/articles/optimize-lcp) for details.
@@ -143,7 +143,7 @@ The event time is the start of the page load (performance.timeOrigin), the durat
 
 ### [Interaction to Next Paint](https://web.dev/articles/optimize-inp) attributes
 
-```
+```ts
 /** Shared fields */
 "web_vital.name": "INP",
 "web_vital.rating": "good" | "needs-improvement" | "poor",
@@ -184,7 +184,7 @@ The event time is equal to the time the interaction began {[TODO] `attribution.e
 
 ### [First Contentful Paint](https://web.dev/articles/fcp) attributes
 
-```
+```ts
 /** Shared fields */
 "web_vital.name": "FCP",
 "web_vital.rating": "good" | "needs-improvement" | "poor",
@@ -218,7 +218,7 @@ The event time is equal to the start of the page load, the duration is equal to 
 
 ### [Time to First Byte](https://web.dev/articles/ttfb) attributes
 
-```
+```js
 /** Shared fields */
 "web_vital.name": "TTFB",
 "web_vital.rating": "good" | "needs-improvement" | "poor",
@@ -258,7 +258,7 @@ The event time is equal to the timeOrigin & the duration is equal to ttfb.value
 
 For more fine-tuned event processing, pass in a custom callback functions for each of the web-vitals:
 
-```
+```js
 
 const sdk = new HoneycombWebSDK({
   webVitals: {
@@ -270,7 +270,7 @@ const sdk = new HoneycombWebSDK({
 
 Supported fields:
 
-```
+```ts
 onCLS?: CLSReportCallbackWithAttribution;
 onFCP?: FCPReportCallbackWithAttribution;
 onFID?: FIDReportCallbackWithAttribution;
@@ -339,7 +339,7 @@ const sdk = new HoneycombWebSDK({
 
 ## Config Options
 
-```
+```ts
 interface WebVitalsConfig {
   elementDataAttribute?: string;
   reportOptions?: {
