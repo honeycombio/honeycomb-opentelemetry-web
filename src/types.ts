@@ -106,10 +106,10 @@ interface WebVitalsConfig {
     reportAllChanges?: boolean;
     durationThreshold?: number;
   };
-  onCLS?: CLSReportCallbackWithAttribution;
-  onFCP?: FCPReportCallbackWithAttribution;
-  onFID?: FIDReportCallbackWithAttribution;
-  onINP?: INPReportCallbackWithAttribution;
-  onLCP?: LCPReportCallbackWithAttribution;
-  onTTFB?: TTFBReportCallbackWithAttribution;
+  // onCLS?: CLSReportCallbackWithAttribution;
+  // onFCP?: FCPReportCallbackWithAttribution;
+  // onFID?: FIDReportCallbackWithAttribution;
+  // onINP?: INPReportCallbackWithAttribution;
+  // onLCP?: LCPReportCallbackWithAttribution;
+  // onTTFB?: TTFBReportCallbackWithAttribution;
 }
