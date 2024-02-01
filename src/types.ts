@@ -95,4 +95,21 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * TODO: Not yet implemented
    */
   // skipOptionsValidation?: boolean;
+  //
+
+  webVitals?: false | WebVitalsConfig;
+}
+
+interface WebVitalsConfig {
+  elementDataAttribute?: string;
+  reportOptions?: {
+    reportAllChanges?: boolean;
+    durationThreshold?: number;
+  };
+  onCLS?: CLSReportCallbackWithAttribution;
+  onFCP?: FCPReportCallbackWithAttribution;
+  onFID?: FIDReportCallbackWithAttribution;
+  onINP?: INPReportCallbackWithAttribution;
+  onLCP?: LCPReportCallbackWithAttribution;
+  onTTFB?: TTFBReportCallbackWithAttribution;
 }
