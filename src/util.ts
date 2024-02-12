@@ -5,6 +5,7 @@ export const DEFAULT_API_ENDPOINT = 'https://api.honeycomb.io';
 export const TRACES_PATH = 'v1/traces';
 export const DEFAULT_TRACES_ENDPOINT = `${DEFAULT_API_ENDPOINT}/${TRACES_PATH}`;
 export const DEFAULT_SERVICE_NAME = 'unknown_service';
+export const DEFAULT_SAMPLE_RATE = 1;
 
 /**
  * Default options for the Honeycomb Web SDK.
@@ -16,8 +17,8 @@ export const defaultOptions: HoneycombOptions = {
   tracesEndpoint: DEFAULT_TRACES_ENDPOINT,
   serviceName: DEFAULT_SERVICE_NAME,
   debug: false,
+  sampleRate: 1,
   // TODO: Not yet implemented
-  // sampleRate: 1,
   // localVisualizations: false,
   // skipOptionsValidation: false,
 };

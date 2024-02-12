@@ -72,11 +72,11 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   serviceName?: string;
 
-  /** The sample rate used to determine whether a trace is exported. Defaults to 1 (send everything).
+  /** The sample rate used to determine whether a trace is exported.
    * If you want to send a random fraction of traces, make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent.
-   * TODO: Not yet implemented
+   * Defaults to 1 (send everything).
    */
-  // sampleRate?: number;
+  sampleRate?: number;
 
   /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production.
    * Defaults to 'false'.
