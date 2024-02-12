@@ -33,7 +33,7 @@ describe('when debug is set to true', () => {
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${defaultOptions.tracesEndpoint}'`,
       );
       expect(consoleSpy.mock.calls[5][0]).toContain(
-        `@honeycombio/opentelemetry-web: Sample Rate configured: '${defaultOptions.sampleRate}'`,
+        `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${defaultOptions.sampleRate}'`,
       );
     });
   });
@@ -60,7 +60,7 @@ describe('when debug is set to true', () => {
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${testConfig.endpoint}/${TRACES_PATH}'`,
       );
       expect(consoleSpy.mock.calls[5][0]).toContain(
-        `@honeycombio/opentelemetry-web: Sample Rate configured: '${testConfig.sampleRate}'`,
+        `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${testConfig.sampleRate}'`,
       );
     });
   });
