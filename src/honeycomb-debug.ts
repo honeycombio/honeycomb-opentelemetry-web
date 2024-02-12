@@ -2,6 +2,7 @@ import { HoneycombOptions } from './types';
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import {
   defaultOptions,
+  getSampleRate,
   getTracesApiKey,
   getTracesEndpoint,
   MISSING_API_KEY_ERROR,
@@ -33,6 +34,7 @@ export function configureDebug(options?: HoneycombOptions): void {
   debugTracesApiKey(currentOptions);
   debugServiceName(currentOptions);
   debugTracesEndpoint(currentOptions);
+  debugSampleRate(currentOptions);
 }
 
 function debugTracesApiKey(options: HoneycombOptions): void {
@@ -65,5 +67,17 @@ function debugTracesEndpoint(options: HoneycombOptions): void {
   }
   diag.debug(
     `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${tracesEndpoint}'`,
+  );
+}
+
+function debugSampleRate(options: HoneycombOptions): void {
+  const sampleRate = getSampleRate(options);
+  if (!sampleRate) {
+    // this should never happen, but guard just in case?
+    diag.debug('No sampler configured for traces');
+    return;
+  }
+  diag.debug(
+    `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${sampleRate}'`,
   );
 }

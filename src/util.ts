@@ -68,3 +68,16 @@ export const getTracesEndpoint = (options?: HoneycombOptions) => {
 export const getTracesApiKey = (options?: HoneycombOptions) => {
   return options?.tracesApiKey || options?.apiKey;
 };
+
+export const getSampleRate = (options?: HoneycombOptions) => {
+  if (
+    // sample rate must be a whole integer greater than 0
+    options?.sampleRate &&
+    options?.sampleRate > 0 &&
+    options?.sampleRate % 1 === 0
+  ) {
+    return options?.sampleRate;
+  }
+
+  return DEFAULT_SAMPLE_RATE;
+};
