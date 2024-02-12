@@ -59,3 +59,10 @@ teardown_file() {
 	result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"session.id\").value.stringValue")
 	assert_not_empty "$result"
 }
+
+@test "Agent includes SampleRate key on all spans" {
+  result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"SampleRate\").value.intValue")
+  assert_equal "$result" '"1"
+"1"
+"1"'
+}
