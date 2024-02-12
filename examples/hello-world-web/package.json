@@ -19,7 +19,7 @@
     "@opentelemetry/auto-instrumentations-web": "~0.36.0"
   },
   "devDependencies": {
-    "chokidar": "^3.5.3",
+    "chokidar": "^3.6.0",
     "chokidar-cli": "^3.0.0",
     "esbuild": "0.20.0",
     "serve": "^14.2.1"
