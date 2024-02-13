@@ -12,8 +12,8 @@ export class HoneycombWebSDK extends WebSDK {
     super({
       ...options,
       resource: mergeResources([
-        configureEntryPageResource(),
         configureBrowserAttributesResource(),
+        configureEntryPageResource(options?.entryPageAttributes),
         options?.resource,
         configureHoneycombResource(),
       ]),
