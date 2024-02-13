@@ -88,7 +88,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   debug?: boolean;
 
-  /** Any additional attributes to add to the resource */
+  /** Additional attributes, will be included as fields on all data */
   resourceAttributes?: ResourceAttributes;
 
   /** The local visualizations flag enables logging Honeycomb URLs for completed traces. Do not use in production.
