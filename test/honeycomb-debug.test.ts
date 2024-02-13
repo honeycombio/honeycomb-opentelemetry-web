@@ -32,6 +32,9 @@ describe('when debug is set to true', () => {
       expect(consoleSpy.mock.calls[4][0]).toContain(
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${defaultOptions.tracesEndpoint}'`,
       );
+      expect(consoleSpy.mock.calls[5][0]).toContain(
+        `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${defaultOptions.sampleRate}'`,
+      );
     });
   });
   describe('when options are provided', () => {
@@ -41,6 +44,7 @@ describe('when debug is set to true', () => {
         endpoint: 'http://shenanigans:1234',
         apiKey: 'my-key',
         serviceName: 'my-service',
+        sampleRate: 2,
       };
       new HoneycombWebSDK(testConfig);
       expect(consoleSpy.mock.calls[1][0]).toContain(
@@ -54,6 +58,9 @@ describe('when debug is set to true', () => {
       );
       expect(consoleSpy.mock.calls[4][0]).toContain(
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${testConfig.endpoint}/${TRACES_PATH}'`,
+      );
+      expect(consoleSpy.mock.calls[5][0]).toContain(
+        `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${testConfig.sampleRate}'`,
       );
     });
   });
