@@ -138,8 +138,10 @@ workflows:
           context: Honeycomb Secrets for Public Repos
           requires:
             - build
+            - smoke_test
       - publish_npm:
           <<: *filters_publish
           context: Honeycomb Secrets for Public Repos
           requires:
             - build
+            - smoke_test

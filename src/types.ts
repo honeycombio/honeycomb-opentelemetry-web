@@ -1,4 +1,3 @@
-// This code will eventually be packaged upstream into a WebSDK package.
 // Once it is released as a package, this distro will depend directly on the upstream package.
 // https://github.com/open-telemetry/opentelemetry-js/pull/4325
 /*
@@ -95,7 +94,23 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * TODO: Not yet implemented
    */
   // skipOptionsValidation?: boolean;
-  //
+
+  /** Configuration for entry page attributes: set to false to disable entirely, or pass in a custom config
+   * to fine-tune the included attributes.
+   *
+   * Defaults to
+   * ```
+   * {
+   *  path: true,
+   *  hash: true,
+   *  hostname: true,
+   *  referrer: true,
+   *  url: false,
+   *  search: false
+   * }
+   * ```
+   */
+  entryPageAttributes?: false | EntryPageConfig;
 
   webVitals?: false | WebVitalsConfig;
 }
@@ -113,3 +128,33 @@ interface WebVitalsConfig {
   // onLCP?: LCPReportCallbackWithAttribution;
   // onTTFB?: TTFBReportCallbackWithAttribution;
 }
+
+/* Configure which fields to include in the `entry_page` resource attributes. By default,
+ * does not include attributes that could expose search params (url, search) */
+export type EntryPageConfig = {
+  /** Include the path: '/working-with-your-data/overview/'
+   * Defaults to 'true' */
+  path?: boolean;
+
+  /** Include the hash: '#view-events'
+   * Defaults to 'true' */
+  hash?: boolean;
+
+  /** Include the hostname: 'docs.honeycomb.io'
+   * Defaults to 'true' */
+  hostname?: boolean;
+
+  /** Include the document.referrer: 'https://example.com/page-with-referring-link'
+   * Defaults to 'true' */
+  referrer?: boolean;
+
+  /** Include the full url.
+   * 'https://docs.honeycomb.io/working-with-your-data/overview/#view-events?page=2'
+   *
+   * Defaults to 'false' */
+  url?: boolean;
+
+  /** Include the search params: '?page=2'
+   * Defaults to 'false' */
+  search?: boolean;
+};
