@@ -14,19 +14,19 @@ teardown_file() {
 
 # TESTS
 
-@test "Agent includes service.name in resource attributes" {
+@test "SDK telemetry includes service.name in resource attributes" {
   result=$(resource_attributes_received | jq "select(.key == \"service.name\").value.stringValue")
   assert_equal "$result" '"web-distro"'
 }
 
-@test "Agent includes Honeycomb distro version" {
+@test "SDK telemetry includes Honeycomb distro version" {
   version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.version\").value.stringValue")
   assert_not_empty "$version"
   runtime_version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.runtime_version\").value.stringValue")
   assert_equal "$runtime_version" '"browser"'
 }
 
-@test "Agent includes browser attributes" {
+@test "SDK telemetry includes browser attributes" {
   platform=$(resource_attributes_received | jq "select(.key == \"browser.platform\").value.stringValue")
   assert_not_empty "$platform"
 
@@ -37,7 +37,7 @@ teardown_file() {
   assert_equal "$language" '"en-US"'
 }
 
-@test "Agent includes entry_page attributes" {
+@test "SDK telemetry includes entry_page attributes" {
   url=$(resource_attributes_received | jq "select(.key == \"entry_page.url\").value.stringValue")
   assert_not_empty "$url"
 
@@ -60,7 +60,7 @@ teardown_file() {
 	assert_not_empty "$result"
 }
 
-@test "Agent includes SampleRate key on all spans" {
+@test "SDK telemetry includes SampleRate key on all spans" {
   result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"SampleRate\").value.intValue")
   assert_equal "$result" '"1"
 "1"
