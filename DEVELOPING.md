@@ -87,3 +87,45 @@ npm run dev
 ```
 
 To see output in the console in the browser, be sure to enable the console level Verbose in Console Dev Tools.
+
+### Running with Docker-Compose
+
+You can also use the docker-compose file to run in Docker.
+
+```sh
+docker-compose up --build app-hello-world-web
+```
+
+To run the app with a collector (also included in docker-compose here):
+
+```sh
+docker-compose up --build
+```
+
+When finished:
+
+```sh
+docker-compose down
+```
+
+## Building a Tarball for Local Development
+
+To get a tarball to use as a local dependency:
+
+```sh
+npm run build
+npm pack
+```
+
+This creates a file in the root directory like this: `honeycombio-opentelemetry-web-0.1.42.tgz`
+To use as a dependency in another project, install it with `npm`:
+
+`npm install honeycombio-opentelemetry-web-0.1.1.tgz`
+
+This will create a dependency in your `package.json` like this:
+
+```json
+  "dependencies": {
+    "@honeycombio/opentelemetry-web": "file:honeycombio-opentelemetry-web-0.1.42.tgz",
+  }
+```
