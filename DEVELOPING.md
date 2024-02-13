@@ -18,7 +18,7 @@
 
 ## Main Commands
 
-```shell
+```sh
 # install all dependencies from package.json
 npm install
 
