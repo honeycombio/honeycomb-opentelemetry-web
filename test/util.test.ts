@@ -103,33 +103,33 @@ describe('traces api key', () => {
 });
 
 describe('sample rate', () => {
-  test('should default to 1', () => {
+  it('should default to 1', () => {
     const options = {};
     expect(getSampleRate(options)).toBe(1);
   });
 
-  test('should use provided sample rate if valid', () => {
+  it('should use provided sample rate if valid', () => {
     const options = {
       sampleRate: 2,
     };
     expect(getSampleRate(options)).toBe(2);
   });
 
-  test('should use default sample rate if provided with 0', () => {
+  it('should use default sample rate if provided with 0', () => {
     const options = {
       sampleRate: 0,
     };
     expect(getSampleRate(options)).toBe(1);
   });
 
-  test('should use default sample rate if provided with negative', () => {
+  it('should use default sample rate if provided with negative', () => {
     const options = {
       sampleRate: -42,
     };
     expect(getSampleRate(options)).toBe(1);
   });
 
-  test('should use default sample rate if provided with float', () => {
+  it('should use default sample rate if provided with float', () => {
     const options = {
       sampleRate: 3.14,
     };
