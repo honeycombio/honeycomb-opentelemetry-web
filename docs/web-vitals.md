@@ -1,6 +1,6 @@
 # Web Vitals
 
-By default, Honeycomb includes events for all web vitals except first-input-delay. First-input-delay is set to be replaced by interaction-to-next-paint as a core web vital in March 2024.
+By default, Honeycomb includes events for all web vitals except [first-input-delay](https://web.dev/articles/fid). First-input-delay is set to be replaced by interaction-to-next-paint as a core web vital in March 2024.
 
 ## Vitals Attributes
 
