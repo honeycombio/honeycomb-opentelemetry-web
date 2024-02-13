@@ -12,8 +12,9 @@
   - ESLint (dbaeumer.vscode-eslint)
   - Prettier (esbenp.prettier-vscode)
   - Prettier ESLint (rvest.vs-code-prettier-eslint)
-- Docker & Docker Compose - Required for running smoke-tests.
+- Docker & Docker Compose - Required for running smoke tests.
   - [Docker Desktop](https://www.docker.com/products/docker-desktop/) is a reliable choice if you don't have your own preference.
+- bats-core and jq - Required for running smoke tests
 
 ## Main Commands
 
@@ -36,8 +37,17 @@ npm run test
 
 ## Smoke Tests
 
-Smoke tests use Cypress and Docker with `docker-compose`, exporting telemetry to a local collector.
-They can be run with either `npm` scripts or with `make` targets (the latter works better in CI).
+Smoke tests use Cypress and Docker using `docker-compose`, exporting telemetry to a local collector.
+Tests are run using `bats-core` and `jq`, bash tools to make assertions against the telemetry output.
+
+Install `bats-core` and `jq` for local testing:
+
+```sh
+brew install bats-core
+brew install jq
+```
+
+Smoke tests can be run with either `npm` scripts or with `make` targets (the latter works better in CI).
 
 ```sh
 # run smoke tests with cypress and docker
