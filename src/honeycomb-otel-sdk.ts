@@ -18,7 +18,7 @@ export class HoneycombWebSDK extends WebSDK {
         options?.resource,
         configureHoneycombResource(),
       ]),
-      sampler: configureDeterministicSampler(options?.sampleRate),
+      sampler: configureDeterministicSampler(options),
       // Exporter is configured through the span processor because
       // the base SDK does not allow having both a spanProcessor and a
       // traceExporter configured at the same time.

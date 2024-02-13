@@ -1,19 +1,27 @@
 import { Attributes, Context, Link, SpanKind } from '@opentelemetry/api';
 import {
-  AlwaysOffSampler,
   AlwaysOnSampler,
   Sampler,
   SamplingResult,
   TraceIdRatioBasedSampler,
 } from '@opentelemetry/sdk-trace-base';
-import { DEFAULT_SAMPLE_RATE } from './util';
+import { getSampleRate } from './util';
+import { HoneycombOptions } from './types';
 
-export function configureDeterministicSampler(sampleRate?: number) {
-  return new DeterministicSampler(
-    sampleRate === undefined ? DEFAULT_SAMPLE_RATE : sampleRate,
-  );
-}
+/**
+ * Builds and returns a Deterministic Sampler that uses the provided sample rate to
+ * configure the inner sampler.
+ * @param options The {@link HoneycombOptions}
+ * @returns a {@link DeterministicSampler}
+ */
+export const configureDeterministicSampler = (options?: HoneycombOptions) => {
+  const sampleRate = getSampleRate(options);
+  return new DeterministicSampler(sampleRate);
+};
 
+/**
+ * A {@link Sampler} that uses a deterministic sample rate to configure the sampler.
+ */
 export class DeterministicSampler implements Sampler {
   private _sampleRate: number;
   private _sampler: Sampler;
@@ -21,9 +29,7 @@ export class DeterministicSampler implements Sampler {
   constructor(sampleRate: number) {
     this._sampleRate = sampleRate;
     switch (sampleRate) {
-      case 0:
-        this._sampler = new AlwaysOffSampler();
-        break;
+      // sample rate of 1 is default, send everything
       case 1:
         this._sampler = new AlwaysOnSampler();
         break;
