@@ -74,7 +74,7 @@ export const getSampleRate = (options?: HoneycombOptions) => {
     // sample rate must be a whole integer greater than 0
     options?.sampleRate &&
     options?.sampleRate > 0 &&
-    options?.sampleRate % 1 === 0
+    Number.isSafeInteger(options?.sampleRate)
   ) {
     return options?.sampleRate;
   }
