@@ -2,13 +2,13 @@
 
 By default, Honeycomb includes events for all web vitals except first-input-delay. First-input-delay is set to be replaced by interaction-to-next-paint as a core web vital in March 2024.
 
-## Metric Attributes
+## Vitals Attributes
 
-All metrics have the following attributes: `web_vital.name`, `web_vital.rating`, `web_vital.id`
+All vitals have the following attributes: `web_vital.name`, `web_vital.rating`, `web_vital.id`
 
 ```
 /**
- * The name of the metric (in acronym form).
+ * The name of the vital (in acronym form).
  */
 "web_vital.name": 'CLS' | 'FCP' | 'INP' | 'LCP' | 'TTFB';
 
@@ -24,7 +24,7 @@ All metrics have the following attributes: `web_vital.name`, `web_vital.rating`,
  * metric instance, or to group multiple deltas together and calculate a
  * total. It can also be used to differentiate multiple different metric
  * instances sent from the same page, which can happen if the page is
- * restored from the back/forward cache (in that case new metrics object
+ * restored from the back/forward cache (in that case new vital object
  * get created).
  */
 
