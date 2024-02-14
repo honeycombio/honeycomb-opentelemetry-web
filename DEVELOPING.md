@@ -38,7 +38,7 @@ npm run test
 ## Smoke Tests
 
 Smoke tests use Cypress and Docker using `docker-compose`, exporting telemetry to a local collector.
-Tests are run using [`bats-core`](https://bats-core.readthedocs.io/en/stable/) and [`jq`](https://jqlang.github.io/jq/), bash tools to make assertions against the telemetry output.
+Tests are run using `bats-core` and `jq`, bash tools to make assertions against the telemetry output.
 
 Install `bats-core` and `jq` for local testing:
 
