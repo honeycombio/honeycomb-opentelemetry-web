@@ -1,4 +1,5 @@
 import { HoneycombOptions } from './types';
+import { BaggageSpanProcessor } from './baggage-span-processor';
 import { BrowserAttributesSpanProcessor } from './browser-attributes-span-processor';
 import {
   BatchSpanProcessor,
@@ -18,11 +19,14 @@ import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-expor
 export const configureSpanProcessors = (options?: HoneycombOptions) => {
   const honeycombSpanProcessor = new CompositeSpanProcessor();
 
-  // We have to configure the exporter here becuase the way the base SDK is setup
+  // We have to configure the exporter here because the way the base SDK is setup
   // does not allow having both a `spanProcessor` and `traceExporter` configured.
   honeycombSpanProcessor.addProcessor(
     new BatchSpanProcessor(configureHoneycombHttpJsonTraceExporter(options)),
   );
+
+  // we always want to add the baggage span processor
+  honeycombSpanProcessor.addProcessor(new BaggageSpanProcessor());
 
   // we always want to add the browser attrs span processor
   honeycombSpanProcessor.addProcessor(new BrowserAttributesSpanProcessor());
