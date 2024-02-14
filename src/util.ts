@@ -71,10 +71,11 @@ export const getTracesApiKey = (options?: HoneycombOptions) => {
 
 export const getSampleRate = (options?: HoneycombOptions) => {
   if (
-    // sample rate must be a whole integer greater than 0
-    options?.sampleRate &&
-    options?.sampleRate > 0 &&
-    Number.isSafeInteger(options?.sampleRate)
+    // must be a whole positive integer
+    options?.sampleRate !== null &&
+    options?.sampleRate !== undefined &&
+    options?.sampleRate >= 0 &&
+    Number.isSafeInteger(options?.sampleRate) === true
   ) {
     return options?.sampleRate;
   }

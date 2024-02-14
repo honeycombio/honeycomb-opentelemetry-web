@@ -115,11 +115,11 @@ describe('sample rate', () => {
     expect(getSampleRate(options)).toBe(2);
   });
 
-  it('should use default sample rate if provided with 0', () => {
+  it('should use 0 sample rate if provided with 0', () => {
     const options = {
       sampleRate: 0,
     };
-    expect(getSampleRate(options)).toBe(1);
+    expect(getSampleRate(options)).toBe(0);
   });
 
   it('should use default sample rate if provided with negative', () => {
