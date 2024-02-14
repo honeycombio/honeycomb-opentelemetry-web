@@ -14,7 +14,7 @@
   - Prettier ESLint (rvest.vs-code-prettier-eslint)
 - Docker & Docker Compose - Required for running smoke tests.
   - [Docker Desktop](https://www.docker.com/products/docker-desktop/) is a reliable choice if you don't have your own preference.
-- bats-core and jq - Required for running smoke tests
+- [`bats-core`](https://bats-core.readthedocs.io/en/stable/) and [`jq`](https://jqlang.github.io/jq/) - Required for running smoke tests
 
 ## Main Commands
 
