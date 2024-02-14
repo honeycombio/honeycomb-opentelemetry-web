@@ -16,6 +16,7 @@ export class HoneycombWebSDK extends WebSDK {
         configureBrowserAttributesResource(),
         configureEntryPageResource(options?.entryPageAttributes),
         options?.resource,
+        options?.resourceAttributes,
         configureHoneycombResource(),
       ]),
       sampler: configureDeterministicSampler(options),
