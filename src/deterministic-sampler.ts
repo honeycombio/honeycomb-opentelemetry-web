@@ -1,5 +1,6 @@
 import { Attributes, Context, Link, SpanKind } from '@opentelemetry/api';
 import {
+  AlwaysOffSampler,
   AlwaysOnSampler,
   Sampler,
   SamplingResult,
@@ -29,6 +30,10 @@ export class DeterministicSampler implements Sampler {
   constructor(sampleRate: number) {
     this._sampleRate = sampleRate;
     switch (sampleRate) {
+      // sample rate of 0 means send nothing
+      case 0:
+        this._sampler = new AlwaysOffSampler();
+        break;
       // sample rate of 1 is default, send everything
       case 1:
         this._sampler = new AlwaysOnSampler();

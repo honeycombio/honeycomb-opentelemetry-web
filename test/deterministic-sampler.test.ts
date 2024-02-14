@@ -65,22 +65,22 @@ describe('configureDeterministicSampler', () => {
     expect(result.attributes).toEqual({ SampleRate: 1 });
   });
 
-  test('sample rate of 0 configures inner AlwaysOnSampler', () => {
+  test('sample rate of 0 configures inner AlwaysOffSampler', () => {
     const options = {
       sampleRate: 0,
     };
     const sampler = configureDeterministicSampler(options);
     expect(sampler).toBeInstanceOf(DeterministicSampler);
-    expect(sampler.toString()).toBe('DeterministicSampler(AlwaysOnSampler)');
+    expect(sampler.toString()).toBe('DeterministicSampler(AlwaysOffSampler)');
 
     const result = getSamplingResult(sampler);
-    expect(result.decision).toBe(SamplingDecision.RECORD_AND_SAMPLED);
-    expect(result.attributes).toEqual({ SampleRate: 1 });
+    expect(result.decision).toBe(SamplingDecision.NOT_RECORD);
+    expect(result.attributes).toEqual({ SampleRate: 0 });
   });
 
   test('sample rate of -42 configures inner AlwaysOn Sampler', () => {
     const options = {
-      sampleRate: 0,
+      sampleRate: -42,
     };
     const sampler = configureDeterministicSampler(options);
     expect(sampler).toBeInstanceOf(DeterministicSampler);
