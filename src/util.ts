@@ -23,8 +23,8 @@ export const defaultOptions: HoneycombOptions = {
   // localVisualizations: false,
 };
 
-export const MISSING_API_KEY_ERROR = `❌ @honeycombio/opentelemetry-web: Missing API Key. Set \`apiKey\` in HoneycombOptions. Telemetry will not be exported.`;
-export const MISSING_SERVICE_NAME_ERROR = `❌ @honeycombio/opentelemetry-web: Missing Service Name. Set \`serviceName\` in HoneycombOptions. Defaulting to '${defaultOptions.serviceName}'`;
+export const createHoneycombSDKLogMessage = (message: string) =>
+  `@honeycombio/opentelemetry-web: ${message}`;
 
 /**
  * Determines whether the passed in apikey is classic (32 chars) or not.

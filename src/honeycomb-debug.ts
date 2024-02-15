@@ -1,13 +1,16 @@
 import { HoneycombOptions } from './types';
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import {
+  createHoneycombSDKLogMessage,
   defaultOptions,
   getSampleRate,
   getTracesApiKey,
   getTracesEndpoint,
+} from './util';
+import {
   MISSING_API_KEY_ERROR,
   MISSING_SERVICE_NAME_ERROR,
-} from './util';
+} from './validate-options';
 
 /**
  * Configures the Honeycomb Web SDK to log debug information to the console.
@@ -21,7 +24,9 @@ export function configureDebug(options?: HoneycombOptions): void {
     return;
   }
   diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
-  diag.debug('🐝 Honeycomb Web SDK Debug Mode Enabled 🐝');
+  diag.debug(
+    createHoneycombSDKLogMessage('🐝 Honeycomb Web SDK Debug Mode Enabled 🐝'),
+  );
 
   // traces endpoint must be computed from provided options
   const tracesEndpoint = getTracesEndpoint(options);

@@ -1,11 +1,12 @@
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
 import {
   IGNORED_DATASET_ERROR,
+  MISSING_API_KEY_ERROR,
   MISSING_DATASET_ERROR,
+  MISSING_SERVICE_NAME_ERROR,
   SAMPLER_OVERRIDE_WARNING,
   SKIPPING_OPTIONS_VALIDATION_MSG,
 } from '../src/validate-options';
-import { MISSING_API_KEY_ERROR, MISSING_SERVICE_NAME_ERROR } from '../src/util';
 import { AlwaysOnSampler } from '@opentelemetry/sdk-trace-base';
 const debugSpy = jest
   .spyOn(console, 'debug')

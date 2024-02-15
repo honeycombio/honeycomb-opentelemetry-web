@@ -1,10 +1,9 @@
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
+import { defaultOptions, TRACES_PATH } from '../src/util';
 import {
-  defaultOptions,
   MISSING_API_KEY_ERROR,
   MISSING_SERVICE_NAME_ERROR,
-  TRACES_PATH,
-} from '../src/util';
+} from '../src/validate-options';
 
 const consoleSpy = jest
   .spyOn(console, 'debug')
@@ -26,7 +25,7 @@ describe('when debug is set to true', () => {
       });
       expect(consoleSpy).toHaveBeenNthCalledWith(
         2,
-        '🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
+        '@honeycombio/opentelemetry-web: 🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
       );
       expect(consoleSpy).toHaveBeenNthCalledWith(3, MISSING_API_KEY_ERROR);
       expect(consoleSpy).toHaveBeenNthCalledWith(4, MISSING_SERVICE_NAME_ERROR);
@@ -51,7 +50,7 @@ describe('when debug is set to true', () => {
       new HoneycombWebSDK(testConfig);
       expect(consoleSpy).toHaveBeenNthCalledWith(
         2,
-        '🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
+        '@honeycombio/opentelemetry-web: 🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
       );
       expect(consoleSpy).toHaveBeenNthCalledWith(
         3,
