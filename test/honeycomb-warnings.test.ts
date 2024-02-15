@@ -36,7 +36,8 @@ describe('console warnings', () => {
       new HoneycombWebSDK({
         skipOptionsValidation: true,
       });
-      expect(debugSpy.mock.calls[0][0]).toContain(
+      expect(debugSpy).toHaveBeenNthCalledWith(
+        1,
         SKIPPING_OPTIONS_VALIDATION_MSG,
       );
     });
