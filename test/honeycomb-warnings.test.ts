@@ -46,12 +46,12 @@ describe('console warnings', () => {
       new HoneycombWebSDK({
         serviceName: 'test-service',
       });
-      expect(warningSpy.mock.calls[0][0]).toBe(MISSING_API_KEY_ERROR);
+      expect(warningSpy).toHaveBeenNthCalledWith(1, MISSING_API_KEY_ERROR);
     });
 
     it('should show the missing service name warning', () => {
       new HoneycombWebSDK({});
-      expect(warningSpy.mock.calls[1][0]).toBe(MISSING_SERVICE_NAME_ERROR);
+      expect(warningSpy).toHaveBeenNthCalledWith(2, MISSING_SERVICE_NAME_ERROR);
     });
 
     it('should show ignored dataset warning', () => {
@@ -60,7 +60,7 @@ describe('console warnings', () => {
         dataset: 'test-dataset',
         serviceName: 'test-servicename',
       });
-      expect(warningSpy.mock.calls[0][0]).toBe(IGNORED_DATASET_ERROR);
+      expect(warningSpy).toHaveBeenLastCalledWith(IGNORED_DATASET_ERROR);
     });
 
     it('should show dataset missing warning if using a classic key', () => {
@@ -68,7 +68,7 @@ describe('console warnings', () => {
         apiKey: classicApiKey,
       });
 
-      expect(warningSpy.mock.calls[1][0]).toBe(MISSING_DATASET_ERROR);
+      expect(warningSpy).toHaveBeenLastCalledWith(MISSING_DATASET_ERROR);
     });
 
     it('should sampler override warning', () => {
@@ -79,7 +79,7 @@ describe('console warnings', () => {
         sampler: customSampler,
       });
 
-      expect(warningSpy.mock.calls[0][0]).toBe(SAMPLER_OVERRIDE_WARNING);
+      expect(warningSpy).toHaveBeenLastCalledWith(SAMPLER_OVERRIDE_WARNING);
     });
   });
 });

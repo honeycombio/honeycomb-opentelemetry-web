@@ -24,12 +24,14 @@ describe('when debug is set to true', () => {
       new HoneycombWebSDK({
         debug: true,
       });
-      expect(consoleSpy.mock.calls[1][0]).toContain(
-        'Honeycomb Web SDK Debug Mode Enabled',
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        2,
+        '🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
       );
-      expect(consoleSpy.mock.calls[2][0]).toContain(MISSING_API_KEY_ERROR);
-      expect(consoleSpy.mock.calls[3][0]).toContain(MISSING_SERVICE_NAME_ERROR);
-      expect(consoleSpy.mock.calls[4][0]).toContain(
+      expect(consoleSpy).toHaveBeenNthCalledWith(3, MISSING_API_KEY_ERROR);
+      expect(consoleSpy).toHaveBeenNthCalledWith(4, MISSING_SERVICE_NAME_ERROR);
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        5,
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${defaultOptions.tracesEndpoint}'`,
       );
       expect(consoleSpy.mock.calls[5][0]).toContain(
@@ -47,16 +49,20 @@ describe('when debug is set to true', () => {
         sampleRate: 2,
       };
       new HoneycombWebSDK(testConfig);
-      expect(consoleSpy.mock.calls[1][0]).toContain(
-        'Honeycomb Web SDK Debug Mode Enabled',
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        2,
+        '🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
       );
-      expect(consoleSpy.mock.calls[2][0]).toContain(
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        3,
         `@honeycombio/opentelemetry-web: API Key configured for traces: '${testConfig.apiKey}'`,
       );
-      expect(consoleSpy.mock.calls[3][0]).toContain(
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        4,
         `@honeycombio/opentelemetry-web: Service Name configured for traces: '${testConfig.serviceName}'`,
       );
-      expect(consoleSpy.mock.calls[4][0]).toContain(
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        5,
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${testConfig.endpoint}/${TRACES_PATH}'`,
       );
       expect(consoleSpy.mock.calls[5][0]).toContain(
