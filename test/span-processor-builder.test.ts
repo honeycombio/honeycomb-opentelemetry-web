@@ -11,7 +11,12 @@ import {
   Span,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
-import { ROOT_CONTEXT, SpanKind, TraceFlags } from '@opentelemetry/api';
+import {
+  propagation,
+  ROOT_CONTEXT,
+  SpanKind,
+  TraceFlags,
+} from '@opentelemetry/api';
 
 class TestSpanProcessorOne implements SpanProcessor {
   onStart(span: Span): void {
@@ -97,15 +102,19 @@ describe('configureSpanProcessors', () => {
       SpanKind.CLIENT,
     );
   });
-  test('Configures BatchSpanProcessor & BrowserAttributesSpanProcessor by default', () => {
+  test('Configures BatchSpanProcessor, BaggageSpanProcessor, & BrowserAttributesSpanProcessor by default', () => {
     const honeycombSpanProcessors = configureSpanProcessors({});
-    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(2);
+    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(3);
     expect(honeycombSpanProcessors.getSpanProcessors()[0]).toBeInstanceOf(
       BatchSpanProcessor,
     );
-
-    honeycombSpanProcessors.onStart(span, ROOT_CONTEXT);
+    const bag = propagation.createBaggage({
+      'app.message': { value: 'heygirl' },
+    });
+    const ctx = propagation.setBaggage(ROOT_CONTEXT, bag);
+    honeycombSpanProcessors.onStart(span, ctx);
     expect(span.attributes).toEqual({
+      'app.message': 'heygirl',
       'browser.width': 1024,
       'browser.height': 768,
       'page.hash': '#the-hash',
@@ -120,7 +129,7 @@ describe('configureSpanProcessors', () => {
     const honeycombSpanProcessors = configureSpanProcessors({
       spanProcessor: new TestSpanProcessorOne(),
     });
-    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(3);
+    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(4);
     expect(honeycombSpanProcessors.getSpanProcessors()[0]).toBeInstanceOf(
       BatchSpanProcessor,
     );
