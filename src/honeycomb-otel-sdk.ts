@@ -7,7 +7,7 @@ import { mergeResources } from './merge-resources';
 import { configureDebug } from './honeycomb-debug';
 import { configureSpanProcessors } from './span-processor-builder';
 import { configureDeterministicSampler } from './deterministic-sampler';
-import { showWarnings } from './honeycomb-warnings';
+import { validateOptionsWarnings } from './validate-options';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
@@ -27,7 +27,7 @@ export class HoneycombWebSDK extends WebSDK {
       spanProcessor: configureSpanProcessors(options),
     });
 
-    showWarnings(options);
+    validateOptionsWarnings(options);
 
     if (options?.debug) {
       configureDebug(options);
