@@ -1,4 +1,4 @@
-import { Context, propagation, Span } from '@opentelemetry/api';
+import { Context, diag, propagation, Span } from '@opentelemetry/api';
 import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
 
 /**
@@ -27,6 +27,9 @@ export class BaggageSpanProcessor implements SpanProcessor {
     (propagation.getBaggage(parentContext)?.getAllEntries() ?? []).forEach(
       (entry) => {
         span.setAttribute(entry[0], entry[1].value);
+        diag.debug(
+          `@honeycombio/opentelemetry-web: 🚨 Baggage in all outgoing headers: ${entry[0]}=${entry[1].value} `,
+        );
       },
     );
   }
