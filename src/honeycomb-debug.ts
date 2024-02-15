@@ -49,7 +49,9 @@ function debugTracesApiKey(options: HoneycombOptions): void {
     return;
   }
   diag.debug(
-    `@honeycombio/opentelemetry-web: API Key configured for traces: '${tracesApiKey}'`,
+    createHoneycombSDKLogMessage(
+      `API Key configured for traces: '${tracesApiKey}'`,
+    ),
   );
 }
 
@@ -67,11 +69,15 @@ function debugServiceName(options: HoneycombOptions): void {
 function debugTracesEndpoint(options: HoneycombOptions): void {
   const tracesEndpoint = getTracesEndpoint(options);
   if (!tracesEndpoint) {
-    diag.debug('No endpoint configured for traces');
+    diag.debug(
+      createHoneycombSDKLogMessage('No endpoint configured for traces'),
+    );
     return;
   }
   diag.debug(
-    `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${tracesEndpoint}'`,
+    createHoneycombSDKLogMessage(
+      `Endpoint configured for traces: '${tracesEndpoint}'`,
+    ),
   );
 }
 
@@ -83,6 +89,8 @@ function debugSampleRate(options: HoneycombOptions): void {
     return;
   }
   diag.debug(
-    `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${sampleRate}'`,
+    createHoneycombSDKLogMessage(
+      `Sample Rate configured for traces: '${sampleRate}'`,
+    ),
   );
 }
