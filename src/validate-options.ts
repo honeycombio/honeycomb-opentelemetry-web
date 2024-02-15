@@ -41,7 +41,7 @@ export const validateOptionsWarnings = (options?: HoneycombOptions) => {
 
   // warn if custom sampler provided
   if (options?.sampler) {
-    console.warn(SAMPLER_OVERRIDE_WARNING);
+    console.debug(SAMPLER_OVERRIDE_WARNING);
   }
 
   return options;

@@ -80,7 +80,7 @@ describe('console warnings', () => {
         sampler: customSampler,
       });
 
-      expect(warningSpy).toHaveBeenLastCalledWith(SAMPLER_OVERRIDE_WARNING);
+      expect(debugSpy).toHaveBeenLastCalledWith(SAMPLER_OVERRIDE_WARNING);
     });
   });
 });
