@@ -9,7 +9,7 @@ For fine-tuned event processing, pass in a custom callback functions for each of
 ```js
 
 const sdk = new HoneycombWebSDK({
-  webVitals: {
+  webVitalsInstrumentation: {
     onCLS: (clsWithAttribution) => {//custom event processor },
   }
 });
@@ -41,7 +41,7 @@ Sometimes the element selector (used by LCP, INP & CLS events) is not very human
 ```js
 const sdk = new HoneycombWebSDK({
   serviceName: 'my-app',
-  webVitals: {
+  webVitalsInstrumentation: {
     elementDataAttribute: 'human-id',
   },
 });
@@ -68,7 +68,7 @@ By default, each metric value is namespaced under the metric name, `lcp.value` |
 ```js
 const sdk = new HoneycombWebSDK({
   serviceName: 'my-app',
-  webVitals: {
+  webVitalsInstrumentation: {
     includeValueInTopLevelNamespace: true,
   },
 });
@@ -76,12 +76,12 @@ const sdk = new HoneycombWebSDK({
 
 ## Disable web vitals reporting
 
-To disable collection of web vitals, set `webVitals` to false in the config
+To disable collection of web vitals, set `webVitalsInstrumentation` to false in the config
 
 ```js
 const sdk = new HoneycombWebSDK({
   serviceName: 'my-app',
-  webVitals: false,
+  webVitalsInstrumentation: false,
 });
 ```
 

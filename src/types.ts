@@ -119,7 +119,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   entryPageAttributes?: false | EntryPageConfig;
 
-  webVitals?: false | WebVitalsConfig;
+  webVitalsInstrumentation?: false | WebVitalsConfig;
 }
 
 interface WebVitalsConfig {
