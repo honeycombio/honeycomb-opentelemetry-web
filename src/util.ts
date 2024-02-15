@@ -18,9 +18,9 @@ export const defaultOptions: HoneycombOptions = {
   serviceName: DEFAULT_SERVICE_NAME,
   debug: false,
   sampleRate: 1,
+  skipOptionsValidation: false,
   // TODO: Not yet implemented
   // localVisualizations: false,
-  // skipOptionsValidation: false,
 };
 
 export const MISSING_API_KEY_ERROR = `❌ @honeycombio/opentelemetry-web: Missing API Key. Set \`apiKey\` in HoneycombOptions. Telemetry will not be exported.`;
