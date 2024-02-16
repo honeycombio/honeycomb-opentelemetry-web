@@ -23,6 +23,14 @@ export const SKIPPING_OPTIONS_VALIDATION_MSG = createHoneycombSDKLogMessage(
 export const SAMPLER_OVERRIDE_WARNING = createHoneycombSDKLogMessage(
   '🔨 Default deterministic sampler has been overridden. Honeycomb requires a resource attribute called SampleRate to properly show weighted values. Non-deterministic sampleRate could lead to missing spans in Honeycomb. See our docs for more details. https://docs.honeycomb.io/getting-data-in/opentelemetry/node-distro/#sampling-without-the-honeycomb-sdk',
 );
+export const MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS =
+  createHoneycombSDKLogMessage(
+    '🔕 Disabling local visualizations - must have both service name and API key configured.',
+  );
+export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
+  createHoneycombSDKLogMessage(
+    '🔕 Failed to get proper auth response from Honeycomb. No local visualization available.',
+  );
 
 export const validateOptionsWarnings = (options?: HoneycombOptions) => {
   if (options?.skipOptionsValidation) {

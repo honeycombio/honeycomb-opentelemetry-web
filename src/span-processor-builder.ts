@@ -9,20 +9,37 @@ import {
 } from '@opentelemetry/sdk-trace-base';
 import { Context } from '@opentelemetry/api';
 import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
+import { configureCompositeExporter } from './composite-exporter';
+import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter';
 
 /**
  * Builds and returns Span Processor that combines the BatchSpanProcessor, BrowserSpanProcessor,
- * and optionally a user provided Span Processor.
+ * BaggageSpanProcessor, and optionally a user provided Span Processor.
  * @param options The {@link HoneycombOptions}
  * @returns a {@link CompositeSpanProcessor}
  */
 export const configureSpanProcessors = (options?: HoneycombOptions) => {
   const honeycombSpanProcessor = new CompositeSpanProcessor();
 
+  const honeycombTraceExporters = [];
+  if (options?.localVisualizations) {
+    honeycombTraceExporters.push(configureConsoleTraceLinkExporter(options));
+  }
+
+  // if there is a user-provided exporter, add to the composite exporter
+  if (options?.traceExporter) {
+    honeycombTraceExporters.push(options?.traceExporter);
+  }
+
   // We have to configure the exporter here because the way the base SDK is setup
   // does not allow having both a `spanProcessor` and `traceExporter` configured.
   honeycombSpanProcessor.addProcessor(
-    new BatchSpanProcessor(configureHoneycombHttpJsonTraceExporter(options)),
+    new BatchSpanProcessor(
+      configureCompositeExporter([
+        configureHoneycombHttpJsonTraceExporter(options),
+        ...honeycombTraceExporters,
+      ]),
+    ),
   );
 
   // we always want to add the baggage span processor

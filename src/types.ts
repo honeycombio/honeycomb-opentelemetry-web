@@ -93,9 +93,8 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
 
   /** The local visualizations flag enables logging Honeycomb URLs for completed traces. Do not use in production.
    * Defaults to 'false'.
-   * TODO: Not yet implemented
    */
-  // localVisualizations?: boolean;
+  localVisualizations?: boolean;
 
   /** Skip options validation warnings (eg no API key configured). This is useful when the SDK is being
    * used in conjunction with an OpenTelemetry Collector (which will handle the API key and dataset configuration).
