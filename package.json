@@ -46,6 +46,7 @@
     "@opentelemetry/semantic-conventions": "~1.21.0",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.20.0",
+    "axios": "^1.6.7",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.2.4"
   }
