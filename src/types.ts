@@ -100,9 +100,8 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   /** Skip options validation warnings (eg no API key configured). This is useful when the SDK is being
    * used in conjunction with an OpenTelemetry Collector (which will handle the API key and dataset configuration).
    * Defaults to 'false'.
-   * TODO: Not yet implemented
    */
-  // skipOptionsValidation?: boolean;
+  skipOptionsValidation?: boolean;
 
   /** Configuration for entry page attributes: set to false to disable entirely, or pass in a custom config
    * to fine-tune the included attributes.
