@@ -19,8 +19,7 @@ export const defaultOptions: HoneycombOptions = {
   debug: false,
   sampleRate: 1,
   skipOptionsValidation: false,
-  // TODO: Not yet implemented
-  // localVisualizations: false,
+  localVisualizations: false,
 };
 
 export const createHoneycombSDKLogMessage = (message: string) =>
