@@ -1,7 +1,11 @@
 import { ExportResult, ExportResultCode } from '@opentelemetry/core';
 import { ReadableSpan, SpanExporter } from '@opentelemetry/sdk-trace-base';
 import { HoneycombOptions } from './types';
-import { getTracesApiKey, isClassic } from './util';
+import {
+  createHoneycombSDKLogMessage,
+  getTracesApiKey,
+  isClassic,
+} from './util';
 import {
   FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS,
   MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS,
@@ -72,7 +76,9 @@ class ConsoleTraceLinkExporter implements SpanExporter {
         // only log root spans (ones without a parent span)
         if (!span.parentSpanId) {
           console.log(
-            `Honeycomb link: ${this._traceUrl}=${span.spanContext().traceId}`,
+            createHoneycombSDKLogMessage(
+              `Honeycomb link: ${this._traceUrl}=${span.spanContext().traceId}`,
+            ),
           );
         }
       });
