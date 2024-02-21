@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc --build",
     "check-format": "prettier --list-different \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
+    "format": "prettier --write \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "clean": "tsc --build --clean",
     "lint": "eslint .",
     "lint:ci": "npm run lint:ci-prep && npm run lint",

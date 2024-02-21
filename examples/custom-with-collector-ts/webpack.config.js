@@ -1,6 +1,6 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import path from "path";
-import { fileURLToPath } from "url";
+import path from 'path';
+import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
@@ -9,7 +9,7 @@ export default {
   performance: {
     hints: false,
     maxEntrypointSize: 512000,
-    maxAssetSize: 512000
+    maxAssetSize: 512000,
   },
   cache: false,
   module: {
@@ -31,8 +31,8 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'heygirl',
-      template: './src/index.html'
-    })
+      template: './src/index.html',
+    }),
   ],
   devServer: {
     static: path.join(__dirname, 'dist'),
