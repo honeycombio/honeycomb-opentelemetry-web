@@ -1,0 +1,27 @@
+{
+  "name": "custom-with-collector-ts",
+  "version": "1.0.0",
+  "description": "An example web app written in TypeScript sending to a Collector",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "webpack",
+    "clean": "rm -rf dist/",
+    "start": "webpack-dev-server --progress --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@honeycombio/opentelemetry-web": "file:../../",
+    "@opentelemetry/auto-instrumentations-web": "~0.36.0"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.5.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}
