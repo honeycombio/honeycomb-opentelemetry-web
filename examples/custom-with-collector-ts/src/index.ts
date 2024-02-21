@@ -56,8 +56,8 @@ const onClick = () => {
   });
 };
 
-const main = async () => {
-  await tracing();
+const main = () => {
+  tracing();
   createButton('click me!', onClick);
 };
 main();
