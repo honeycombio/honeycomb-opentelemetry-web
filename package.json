@@ -9,7 +9,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc --build",
+    "build:module": "tsc --build",
+    "build:bundle": "esbuild src/init-honeycomb-tracing.ts --bundle --outfile=dist/init-honeycomb-tracing.js --minify --target=chrome120,firefox120",
+    "build": "npm run build:module && npm run build:bundle",
     "check-format": "prettier --list-different \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "clean": "tsc --build --clean",
     "lint": "eslint .",
@@ -30,6 +32,7 @@
     "@types/jest": "^29.5.11",
     "cypress": "^13.6.4",
     "eslint-plugin-import": "^2.29.1",
+    "esbuild": "^0.20.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.1.2",
