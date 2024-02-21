@@ -13,13 +13,13 @@ smoke-docker: smoke-tests/collector/data.json
 	@echo ""
 	@echo "+++ Spinning up the smokers."
 	@echo ""
-	docker-compose up --build --detach
+	docker-compose up --build collector app-custom-with-collector-ts --detach
 
 smoke-cypress: smoke-tests/collector/data.json
 	@echo ""
 	@echo "+++ Running Cypress in chrome browser."
 	@echo ""
-	npx cypress run --headed --browser chrome
+	npx cypress run --browser chrome
 
 smoke-bats: smoke-tests/collector/data.json
 	@echo ""
