@@ -24,9 +24,19 @@ import {
   InstrumentationConfig,
 } from '@opentelemetry/instrumentation';
 
+export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
+  vitalsToTrack: Array<Metric['name']>;
+}
+
 export class WebVitalsInstrumentation extends InstrumentationBase {
-  constructor(config: InstrumentationConfig) {
+  readonly vitalsToTrack: Array<Metric['name']>;
+  constructor(
+    config: WebVitalsInstrumentationConfig = {
+      vitalsToTrack: ['CLS', 'LCP', 'INP'],
+    },
+  ) {
     super('@honeycombio/instrumentation-web-vitals', '0.0.1', config);
+    this.vitalsToTrack = config.vitalsToTrack;
   }
 
   init() {}
@@ -47,7 +57,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     };
   }
 
-  private onReportCLS(cls: CLSMetricWithAttribution) {
+  private onReportCLS = (cls: CLSMetricWithAttribution) => {
     const { name, attribution } = cls;
     const {
       largestShiftTarget,
@@ -70,9 +80,9 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     });
 
     span.end();
-  }
+  };
 
-  private onReportLCP(lcp: LCPMetricWithAttribution) {
+  private onReportLCP = (lcp: LCPMetricWithAttribution) => {
     const { name, attribution } = lcp;
     const {
       element,
@@ -96,9 +106,9 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     });
 
     span.end();
-  }
+  };
 
-  private onReportINP(inp: INPMetricWithAttribution) {
+  private onReportINP = (inp: INPMetricWithAttribution) => {
     const { name, attribution } = inp;
     const { eventTarget, eventType, loadState }: INPAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -113,9 +123,9 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     });
 
     span.end();
-  }
+  };
 
-  private onReportFCP(fcp: FCPMetricWithAttribution) {
+  private onReportFCP = (fcp: FCPMetricWithAttribution) => {
     const { name, attribution } = fcp;
     const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
       attribution;
@@ -131,9 +141,9 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     });
 
     span.end();
-  }
+  };
 
-  private onReportFID(fid: FIDMetricWithAttribution) {
+  private onReportFID = (fid: FIDMetricWithAttribution) => {
     const { name, attribution } = fid;
     const { eventTarget, eventType, loadState }: FIDAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -148,9 +158,9 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     });
 
     span.end();
-  }
+  };
 
-  private onReportTTFB(ttfb: TTFBMetricWithAttribution) {
+  private onReportTTFB = (ttfb: TTFBMetricWithAttribution) => {
     const { name, attribution } = ttfb;
     const {
       waitingTime,
@@ -170,29 +180,47 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     });
 
     span.end();
-  }
+  };
 
   enable(): void {
     if (!this._config.enabled) {
       return;
     }
-    onCLS((vital) => {
-      this.onReportCLS(vital);
-    });
-    onFID((vital) => {
-      this.onReportFID(vital);
-    });
-    onLCP((vital) => {
-      this.onReportLCP(vital);
-    });
-    onINP((vital) => {
-      this.onReportINP(vital);
-    });
-    onTTFB((vital) => {
-      this.onReportTTFB(vital);
-    });
-    onFCP((vital) => {
-      this.onReportFCP(vital);
-    });
+
+    if (this.vitalsToTrack.includes('CLS')) {
+      onCLS((vital) => {
+        this.onReportCLS(vital);
+      });
+    }
+
+    if (this.vitalsToTrack.includes('LCP')) {
+      onLCP((vital) => {
+        this.onReportLCP(vital);
+      });
+    }
+
+    if (this.vitalsToTrack.includes('INP')) {
+      onINP((vital) => {
+        this.onReportINP(vital);
+      });
+    }
+
+    if (this.vitalsToTrack.includes('FID')) {
+      onFID((vital) => {
+        this.onReportFID(vital);
+      });
+    }
+
+    if (this.vitalsToTrack.includes('TTFB')) {
+      onTTFB((vital) => {
+        this.onReportTTFB(vital);
+      });
+    }
+
+    if (this.vitalsToTrack.includes('FCP')) {
+      onFCP((vital) => {
+        this.onReportFCP(vital);
+      });
+    }
   }
 }
