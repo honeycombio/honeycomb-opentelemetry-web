@@ -27,14 +27,19 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   }
   init() {}
 
+  private getAttrPrefix(name: string) {
+    return name.toLowerCase();
+  }
+
   private getSharedAttributes(vital: Metric) {
     const { name, id, delta, rating, value, navigationType } = vital;
+    const attrPrefix = this.getAttrPrefix(name);
     return {
-      [`${name}.id`]: id,
-      [`${name}.delta`]: delta,
-      [`${name}.value`]: value,
-      [`${name}.rating`]: rating,
-      [`${name}.navigation_type`]: navigationType,
+      [`${attrPrefix}.id`]: id,
+      [`${attrPrefix}.delta`]: delta,
+      [`${attrPrefix}.value`]: value,
+      [`${attrPrefix}.rating`]: rating,
+      [`${attrPrefix}.navigation_type`]: navigationType,
     };
   }
 
@@ -47,16 +52,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       loadState,
       largestShiftEntry,
     }: CLSAttribution = attribution;
+    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
     span.setAttributes({
       ...this.getSharedAttributes(cls),
-      [`${name}.largest_shift_target`]: largestShiftTarget,
-      [`${name}.element`]: largestShiftTarget,
-      [`${name}.largest_shift_time`]: largestShiftTime,
-      [`${name}.largest_shift_value`]: largestShiftValue,
-      [`${name}.load_state`]: loadState,
-      [`${name}.had_recent_input`]: largestShiftEntry?.hadRecentInput,
+      [`${attrPrefix}.largest_shift_target`]: largestShiftTarget,
+      [`${attrPrefix}.element`]: largestShiftTarget,
+      [`${attrPrefix}.largest_shift_time`]: largestShiftTime,
+      [`${attrPrefix}.largest_shift_value`]: largestShiftValue,
+      [`${attrPrefix}.load_state`]: loadState,
+      [`${attrPrefix}.had_recent_input`]: largestShiftEntry?.hadRecentInput,
     });
 
     span.end();
@@ -72,16 +78,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       resourceLoadTime,
       elementRenderDelay,
     }: LCPAttribution = attribution;
+    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
     span.setAttributes({
       ...this.getSharedAttributes(lcp),
-      [`${name}.element`]: element,
-      [`${name}.url`]: url,
-      [`${name}.time_to_first_byte`]: timeToFirstByte,
-      [`${name}.resource_load_delay`]: resourceLoadDelay,
-      [`${name}.resource_load_time`]: resourceLoadTime,
-      [`${name}.element_render_delay`]: elementRenderDelay,
+      [`${attrPrefix}.element`]: element,
+      [`${attrPrefix}.url`]: url,
+      [`${attrPrefix}.time_to_first_byte`]: timeToFirstByte,
+      [`${attrPrefix}.resource_load_delay`]: resourceLoadDelay,
+      [`${attrPrefix}.resource_load_time`]: resourceLoadTime,
+      [`${attrPrefix}.element_render_delay`]: elementRenderDelay,
     });
 
     span.end();
@@ -90,14 +97,15 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   private onReportINP(inp: INPMetricWithAttribution) {
     const { name, attribution } = inp;
     const { eventTarget, eventType, loadState }: INPAttribution = attribution;
+    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
 
     span.setAttributes({
       ...this.getSharedAttributes(inp),
-      [`${name}.element`]: eventTarget,
-      [`${name}.event_type`]: eventType,
-      [`${name}.load_state`]: loadState,
+      [`${attrPrefix}.element`]: eventTarget,
+      [`${attrPrefix}.event_type`]: eventType,
+      [`${attrPrefix}.load_state`]: loadState,
     });
 
     span.end();
@@ -107,14 +115,15 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     const { name, attribution } = fcp;
     const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
       attribution;
+    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
 
     span.setAttributes({
       ...this.getSharedAttributes(fcp),
-      [`${name}.time_to_first_byte`]: timeToFirstByte,
-      [`${name}.time_since_first_byte`]: firstByteToFCP,
-      [`${name}.load_state`]: loadState,
+      [`${attrPrefix}.time_to_first_byte`]: timeToFirstByte,
+      [`${attrPrefix}.time_since_first_byte`]: firstByteToFCP,
+      [`${attrPrefix}.load_state`]: loadState,
     });
 
     span.end();
@@ -123,14 +132,15 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   private onReportFID(fid: FIDMetricWithAttribution) {
     const { name, attribution } = fid;
     const { eventTarget, eventType, loadState }: FIDAttribution = attribution;
+    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
 
     span.setAttributes({
       ...this.getSharedAttributes(fid),
-      [`${name}.element`]: eventTarget,
-      [`${name}.event_type`]: eventType,
-      [`${name}.load_state`]: loadState,
+      [`${attrPrefix}.element`]: eventTarget,
+      [`${attrPrefix}.event_type`]: eventType,
+      [`${attrPrefix}.load_state`]: loadState,
     });
 
     span.end();
@@ -144,14 +154,15 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       connectionTime,
       requestTime,
     }: TTFBAttribution = attribution;
+    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
 
     span.setAttributes({
-      [`${name}.waiting_time`]: waitingTime,
-      [`${name}.dns_time`]: dnsTime,
-      [`${name}.connection_time`]: connectionTime,
-      [`${name}.request_time`]: requestTime,
+      [`${attrPrefix}.waiting_time`]: waitingTime,
+      [`${attrPrefix}.dns_time`]: dnsTime,
+      [`${attrPrefix}.connection_time`]: connectionTime,
+      [`${attrPrefix}.request_time`]: requestTime,
     });
 
     span.end();
