@@ -19,12 +19,16 @@ import {
   TTFBAttribution,
   TTFBMetricWithAttribution,
 } from 'web-vitals/attribution';
-import { InstrumentationBase } from '@opentelemetry/instrumentation';
+import {
+  InstrumentationBase,
+  InstrumentationConfig,
+} from '@opentelemetry/instrumentation';
 
 export class WebVitalsInstrumentation extends InstrumentationBase {
-  constructor() {
-    super('@honeycombio/instrumentation-web-vitals', '0.0.1');
+  constructor(config: InstrumentationConfig) {
+    super('@honeycombio/instrumentation-web-vitals', '0.0.1', config);
   }
+
   init() {}
 
   private getAttrPrefix(name: string) {
@@ -169,6 +173,9 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   }
 
   enable(): void {
+    if (!this._config.enabled) {
+      return;
+    }
     onCLS((vital) => {
       this.onReportCLS(vital);
     });
