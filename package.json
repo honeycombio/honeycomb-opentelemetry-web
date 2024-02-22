@@ -11,10 +11,11 @@
   "scripts": {
     "build": "tsc --build",
     "check-format": "prettier --list-different \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
+    "format": "prettier --write \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "clean": "tsc --build --clean",
     "lint": "eslint .",
     "lint:ci": "npm run lint:ci-prep && npm run lint",
-    "lint:ci-prep": "cd ./examples/hello-world-web && npm ci",
+    "lint:ci-prep": "cd ./examples/hello-world-web && npm ci && cd ../custom-with-collector-ts/ && npm ci",
     "lint:fix": "eslint . --fix",
     "test:smoke-docker": "docker-compose up --build --detach",
     "test:smoke-cypress": "npx cypress run --headed --browser chrome",

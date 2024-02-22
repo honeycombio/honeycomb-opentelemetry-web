@@ -16,3 +16,11 @@ services:
     image: hny/hello-world-web:local
     ports:
       - '3000:3000'
+
+  app-custom-with-collector-ts:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.smoke
+    image: hny/custom-with-collector-ts:local
+    ports:
+      - '1234:1234'

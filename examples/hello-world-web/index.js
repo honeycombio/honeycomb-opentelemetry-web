@@ -4,9 +4,9 @@ import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations
 const main = () => {
   // Initialize base OTel WebSDK
   const sdk = new HoneycombWebSDK({
-    // To send direct to Honeycomb, set API Key and comment out endpoint
-    // apiKey: 'api-key',
-    endpoint: 'http://localhost:4318', // send to local collector
+    // endpoint: 'http://localhost:4318', // send to collector
+    // To send to collector, comment out API Key
+    apiKey: 'api-key',
     serviceName: 'web-distro',
     debug: true,
     instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation

@@ -4,15 +4,17 @@ load test_helpers/utilities
 
 CONTAINER_NAME="app-hello-world-web"
 DOCUMENT_LOAD_SCOPE="@opentelemetry/instrumentation-document-load"
+USER_INTERACTION_SCOPE="@opentelemetry/instrumentation-user-interaction"
+CUSTOM_TRACER_NAME="click-tracer"
 
 setup_file() {
-  echo "# 🚧" >&3
+  echo "# 🚧 preparing test" >&3
 }
 teardown_file() {
   cp collector/data.json collector/data-results/data-${CONTAINER_NAME}.json
 }
 
-# TESTS
+## mostly automatic tests first ##
 
 @test "SDK telemetry includes service.name in resource attributes" {
   result=$(resource_attributes_received | jq "select(.key == \"service.name\").value.stringValue")
@@ -48,9 +50,22 @@ teardown_file() {
   assert_not_empty "$hostname"
 }
 
+@test "SDK telemetry includes SampleRate key on spans" {
+  result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"SampleRate\").value.intValue")
+  assert_equal "$result" '"1"
+"1"
+"1"
+"1"'
+}
+
+@test "Auto instrumentation produces user interaction click span" {
+  result=$(span_names_for ${USER_INTERACTION_SCOPE})
+  assert_equal "$result" '"click"'
+}
 @test "Auto instrumentation produces 4 document load spans" {
   result=$(span_names_for ${DOCUMENT_LOAD_SCOPE})
   assert_equal "$result" '"documentFetch"
+"resourceFetch"
 "resourceFetch"
 "documentLoad"'
 }
@@ -60,9 +75,27 @@ teardown_file() {
 	assert_not_empty "$result"
 }
 
-@test "SDK telemetry includes SampleRate key on all spans" {
-  result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"SampleRate\").value.intValue")
-  assert_equal "$result" '"1"
-"1"
-"1"'
+## tests on custom instrumentation ##
+
+@test "SDK telemetry includes custom resource attributes" {
+  result=$(resource_attributes_received | jq "select(.key == \"app.environment\").value.stringValue")
+  assert_equal "$result" '"development"'
+}
+
+@test "Custom instrumentation produces spans with custom names" {
+  result=$(span_names_for ${CUSTOM_TRACER_NAME})
+  assert_equal "$result" '"calculating stuff"
+"did a thing"
+"clicked the button"'
+}
+
+@test "Custom instrumentation adds custom attribute" {
+	result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"message\").value.stringValue")
+	assert_equal "$result" '"important message"'
+}
+
+@test "BaggageSpanProcessor: key-values added to baggage appear on child spans" {
+	result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"username\").value.stringValue")
+	assert_equal "$result" '"alice"
+"alice"'
 }
