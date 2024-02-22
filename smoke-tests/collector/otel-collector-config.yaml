@@ -6,7 +6,7 @@ receivers:
         cors:
           allowed_origins:
             - 'http://localhost:3000'
-            - 'http://localhost:8080'
+            - 'http://localhost:1234'
 
 processors:
   batch:

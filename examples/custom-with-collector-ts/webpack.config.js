@@ -36,7 +36,7 @@ export default {
   ],
   devServer: {
     static: path.join(__dirname, 'dist'),
-    port: 8080,
+    port: 1234,
     open: true,
     hot: true,
     compress: true,

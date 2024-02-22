@@ -23,4 +23,4 @@ services:
       dockerfile: ./Dockerfile.smoke
     image: hny/custom-with-collector-ts:local
     ports:
-      - '8080:8080'
+      - '1234:1234'
