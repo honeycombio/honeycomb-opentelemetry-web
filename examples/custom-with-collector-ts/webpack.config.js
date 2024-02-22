@@ -30,7 +30,7 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'heygirl',
+      title: 'example',
       template: './src/index.html',
     }),
   ],

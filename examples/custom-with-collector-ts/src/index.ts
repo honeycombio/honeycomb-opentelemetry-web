@@ -16,11 +16,11 @@ const tracing = () => {
   sdk.start();
 };
 
-const createButton = (text: string, onClick: { (): void; (): void }) => {
-  const button = document.createElement('button');
+const trackButton = (onClick: { (): void; (): void }) => {
+  const button = document.getElementById(
+    'button-important',
+  ) as HTMLButtonElement;
   const tracer = trace.getTracer('click-tracer');
-  button.textContent = text;
-  button.setAttribute('data-cy', 'button'); // attribute for testing
   button.addEventListener('click', () => {
     console.log(
       'click event is automatically captured by the auto-instrumentation',
@@ -32,7 +32,6 @@ const createButton = (text: string, onClick: { (): void; (): void }) => {
       onClick();
       span.end();
     });
-  document.body.appendChild(button);
 };
 
 const onClick = () => {
@@ -58,6 +57,6 @@ const onClick = () => {
 
 const main = () => {
   tracing();
-  createButton('click me!', onClick);
+  trackButton(onClick);
 };
 main();
