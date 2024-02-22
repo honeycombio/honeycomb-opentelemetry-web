@@ -30,13 +30,31 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
 
 export class WebVitalsInstrumentation extends InstrumentationBase {
   readonly vitalsToTrack: Array<Metric['name']>;
+
   constructor(
     config: WebVitalsInstrumentationConfig = {
       vitalsToTrack: ['CLS', 'LCP', 'INP'],
+      enabled: true,
     },
   ) {
-    super('@honeycombio/instrumentation-web-vitals', '0.0.1', config);
-    this.vitalsToTrack = config.vitalsToTrack;
+    super('@honeycombio/instrumentation-web-vitals', '0.0.1', {
+      // NOTE: this is an unfortunate necessity to initially set
+      // the enabled state of the instrumentation to false because
+      // super gets called before anything else and in the parent class
+      // if enabled is true, it will call `this.enable()` and the `enable`
+      // function will run before any of the config options (e.g. vitalsToTrack)
+      // can become available. So we're setting this explicitly to false, making config options available,
+      // and then enabling the instrumentation in this constructor.
+
+      // This is usually not an issue when instrumentation is patching functions and not calling them
+      // directly, this instrumentation is a bit of a special case.
+      enabled: false,
+    });
+    this.vitalsToTrack = config?.vitalsToTrack;
+
+    if (config.enabled === true) {
+      this.enable();
+    }
   }
 
   init() {}
@@ -183,9 +201,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   };
 
   enable(): void {
-    if (!this._config.enabled) {
-      return;
-    }
+    this._diag.debug(`Sending spans for ${this.vitalsToTrack.join(',')}`);
 
     if (this.vitalsToTrack.includes('CLS')) {
       onCLS((vital) => {
