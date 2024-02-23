@@ -1,0 +1,25 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - no-changelog
+  categories:
+    - title: 💥 Breaking Changes 💥
+      labels:
+        - "version: bump major"
+        - breaking-change
+    - title: 💡 Enhancements
+      labels:
+        - "type: enhancement"
+    - title: 🐛 Fixes
+      labels:
+        - "type: bug"
+    - title: 🛠 Maintenance
+      labels:
+        - "type: maintenance"
+        - "type: dependencies"
+        - "type: documentation"
+    - title: 🤷 Other Changes
+      labels:
+        - "*"
