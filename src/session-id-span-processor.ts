@@ -17,10 +17,12 @@
  * limitations under the License.
  */
 
+import { Context, context, propagation, trace } from '@opentelemetry/api';
 import { Span, SpanProcessor } from '@opentelemetry/sdk-trace-base';
 
 const SESSION_ID_BYTES = 16;
 const SHARED_CHAR_CODES_ARRAY = Array(32);
+const SESSION_ID_FIELD = 'session.id';
 
 export class SessionIdSpanProcessor implements SpanProcessor {
   private _sessionId;
@@ -30,8 +32,28 @@ export class SessionIdSpanProcessor implements SpanProcessor {
     this._sessionId = this._idGenerator();
   }
 
-  onStart(span: Span): void {
-    span.setAttribute('session.id', this._sessionId);
+  onStart(span: Span, parentContext: Context = context.active()): void {
+    const previouslyExistingBaggage = propagation
+      .getBaggage(parentContext)
+      ?.getEntry(SESSION_ID_FIELD);
+    console.log(
+      'is there a session id already in baggage?',
+      previouslyExistingBaggage,
+    ); // spoiler, no
+
+    const sessionId = this._sessionId;
+    const ctx = propagation.setBaggage(
+      parentContext,
+      propagation.createBaggage({
+        SESSION_ID_FIELD: { value: sessionId },
+        fancy: { value: 'pants' },
+      }),
+    );
+    trace.setSpan(ctx, span);
+    console.log('ctx', ctx); // confirmed sessionid and fancy is in context/baggage
+    span.setAttribute(SESSION_ID_FIELD, sessionId);
+    // but how to make this context automatically used going forward?
+    // doesn't seem possible because context is scoped and requires a callback
   }
 
   onEnd(): void {}
