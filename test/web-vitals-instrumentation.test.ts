@@ -2,7 +2,6 @@ import { WebVitalsInstrumentation } from '../src/web-vitals-autoinstrumentation'
 import {
   BasicTracerProvider,
   InMemorySpanExporter,
-  ReadableSpan,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
 
