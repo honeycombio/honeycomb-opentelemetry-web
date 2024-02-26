@@ -25,7 +25,7 @@ import {
 } from '@opentelemetry/instrumentation';
 
 export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
-  vitalsToTrack: Array<Metric['name']>;
+  vitalsToTrack?: Array<Metric['name']>;
 }
 
 export class WebVitalsInstrumentation extends InstrumentationBase {
@@ -33,7 +33,6 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
 
   constructor(
     config: WebVitalsInstrumentationConfig = {
-      vitalsToTrack: ['CLS', 'LCP', 'INP'],
       enabled: true,
     },
   ) {
@@ -50,7 +49,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       // directly, this instrumentation is a bit of a special case.
       enabled: false,
     });
-    this.vitalsToTrack = config?.vitalsToTrack;
+    this.vitalsToTrack = config?.vitalsToTrack || ['CLS', 'LCP', 'INP'];
 
     if (config.enabled === true) {
       this.enable();
@@ -75,7 +74,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     };
   }
 
-  private onReportCLS = (cls: CLSMetricWithAttribution) => {
+  onReportCLS = (cls: CLSMetricWithAttribution) => {
     const { name, attribution } = cls;
     const {
       largestShiftTarget,
@@ -100,7 +99,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     span.end();
   };
 
-  private onReportLCP = (lcp: LCPMetricWithAttribution) => {
+  onReportLCP = (lcp: LCPMetricWithAttribution) => {
     const { name, attribution } = lcp;
     const {
       element,
@@ -126,7 +125,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     span.end();
   };
 
-  private onReportINP = (inp: INPMetricWithAttribution) => {
+  onReportINP = (inp: INPMetricWithAttribution) => {
     const { name, attribution } = inp;
     const { eventTarget, eventType, loadState }: INPAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -143,7 +142,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     span.end();
   };
 
-  private onReportFCP = (fcp: FCPMetricWithAttribution) => {
+  onReportFCP = (fcp: FCPMetricWithAttribution) => {
     const { name, attribution } = fcp;
     const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
       attribution;
@@ -161,7 +160,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     span.end();
   };
 
-  private onReportFID = (fid: FIDMetricWithAttribution) => {
+  onReportFID = (fid: FIDMetricWithAttribution) => {
     const { name, attribution } = fid;
     const { eventTarget, eventType, loadState }: FIDAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -178,7 +177,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     span.end();
   };
 
-  private onReportTTFB = (ttfb: TTFBMetricWithAttribution) => {
+  onReportTTFB = (ttfb: TTFBMetricWithAttribution) => {
     const { name, attribution } = ttfb;
     const {
       waitingTime,
@@ -191,6 +190,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     const span = this.tracer.startSpan(name);
 
     span.setAttributes({
+      ...this.getSharedAttributes(ttfb),
       [`${attrPrefix}.waiting_time`]: waitingTime,
       [`${attrPrefix}.dns_time`]: dnsTime,
       [`${attrPrefix}.connection_time`]: connectionTime,
