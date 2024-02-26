@@ -21,7 +21,7 @@
   "devDependencies": {
     "chokidar": "^3.6.0",
     "chokidar-cli": "^3.0.0",
-    "esbuild": "0.20.0",
+    "esbuild": "0.20.1",
     "serve": "^14.2.1"
   }
 }
