@@ -49,6 +49,7 @@
     "@typescript-eslint/parser": "^7.0.2",
     "axios": "^1.6.7",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.2.4"
+    "prettier": "^3.2.4",
+    "web-vitals": "^3.5.2"
   }
 }
