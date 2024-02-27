@@ -44,6 +44,12 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
 
 export class WebVitalsInstrumentation extends InstrumentationBase {
   readonly vitalsToTrack: Array<Metric['name']>;
+  readonly lcpOpts?: VitalOpts;
+  readonly clsOpts?: VitalOpts;
+  readonly inpOpts?: VitalOpts;
+  readonly fidOpts?: VitalOpts;
+  readonly fcpOpts?: VitalOpts;
+  readonly ttfbOpts?: VitalOpts;
 
   constructor(
     config: WebVitalsInstrumentationConfig = {
@@ -64,6 +70,12 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       enabled: false,
     });
     this.vitalsToTrack = config?.vitalsToTrack || ['CLS', 'LCP', 'INP'];
+    this.lcpOpts = config?.lcp;
+    this.clsOpts = config?.cls;
+    this.inpOpts = config?.inp;
+    this.fidOpts = config?.fid;
+    this.fcpOpts = config?.fcp;
+    this.ttfbOpts = config?.ttfb;
 
     if (config.enabled === true) {
       this.enable();
@@ -88,7 +100,10 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     };
   }
 
-  onReportCLS = (cls: CLSMetricWithAttribution) => {
+  onReportCLS = (
+    cls: CLSMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = cls;
     const {
       largestShiftTarget,
@@ -109,6 +124,10 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.load_state`]: loadState,
       [`${attrPrefix}.had_recent_input`]: largestShiftEntry?.hadRecentInput,
     });
+
+    if (applyCustomAttributes) {
+      applyCustomAttributes(cls, span);
+    }
 
     span.end();
   };
@@ -219,8 +238,8 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
 
     if (this.vitalsToTrack.includes('CLS')) {
       onCLS((vital) => {
-        this.onReportCLS(vital);
-      });
+        this.onReportCLS(vital, this.clsOpts?.applyCustomAttributes);
+      }, this.clsOpts);
     }
 
     if (this.vitalsToTrack.includes('LCP')) {
