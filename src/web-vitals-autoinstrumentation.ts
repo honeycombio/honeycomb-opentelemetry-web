@@ -132,7 +132,10 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     span.end();
   };
 
-  onReportLCP = (lcp: LCPMetricWithAttribution) => {
+  onReportLCP = (
+    lcp: LCPMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = lcp;
     const {
       element,
@@ -155,10 +158,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.element_render_delay`]: elementRenderDelay,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(lcp, span);
+    }
+
     span.end();
   };
 
-  onReportINP = (inp: INPMetricWithAttribution) => {
+  onReportINP = (
+    inp: INPMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = inp;
     const { eventTarget, eventType, loadState }: INPAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -172,10 +182,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(inp, span);
+    }
+
     span.end();
   };
 
-  onReportFCP = (fcp: FCPMetricWithAttribution) => {
+  onReportFCP = (
+    fcp: FCPMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = fcp;
     const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
       attribution;
@@ -190,10 +207,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(fcp, span);
+    }
+
     span.end();
   };
 
-  onReportFID = (fid: FIDMetricWithAttribution) => {
+  onReportFID = (
+    fid: FIDMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = fid;
     const { eventTarget, eventType, loadState }: FIDAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -207,10 +231,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(fid, span);
+    }
+
     span.end();
   };
 
-  onReportTTFB = (ttfb: TTFBMetricWithAttribution) => {
+  onReportTTFB = (
+    ttfb: TTFBMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = ttfb;
     const {
       waitingTime,
@@ -230,6 +261,10 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.request_time`]: requestTime,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(ttfb, span);
+    }
+
     span.end();
   };
 
@@ -244,32 +279,32 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
 
     if (this.vitalsToTrack.includes('LCP')) {
       onLCP((vital) => {
-        this.onReportLCP(vital);
-      });
+        this.onReportLCP(vital, this.lcpOpts?.applyCustomAttributes);
+      }, this.lcpOpts);
     }
 
     if (this.vitalsToTrack.includes('INP')) {
       onINP((vital) => {
-        this.onReportINP(vital);
-      });
+        this.onReportINP(vital, this.inpOpts?.applyCustomAttributes);
+      }, this.inpOpts);
     }
 
     if (this.vitalsToTrack.includes('FID')) {
       onFID((vital) => {
-        this.onReportFID(vital);
-      });
+        this.onReportFID(vital, this.fidOpts?.applyCustomAttributes);
+      }, this.fidOpts);
     }
 
     if (this.vitalsToTrack.includes('TTFB')) {
       onTTFB((vital) => {
-        this.onReportTTFB(vital);
-      });
+        this.onReportTTFB(vital, this.ttfbOpts?.applyCustomAttributes);
+      }, this.ttfbOpts);
     }
 
     if (this.vitalsToTrack.includes('FCP')) {
       onFCP((vital) => {
-        this.onReportFCP(vital);
-      });
+        this.onReportFCP(vital, this.fcpOpts?.applyCustomAttributes);
+      }, this.fcpOpts);
     }
   }
 }
