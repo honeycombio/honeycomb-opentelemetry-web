@@ -16,6 +16,7 @@ import {
   onINP,
   onLCP,
   onTTFB,
+  ReportOpts,
   TTFBAttribution,
   TTFBMetricWithAttribution,
 } from 'web-vitals/attribution';
@@ -23,9 +24,22 @@ import {
   InstrumentationBase,
   InstrumentationConfig,
 } from '@opentelemetry/instrumentation';
+import { Span } from '@opentelemetry/api';
+
+type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
+
+interface VitalOpts extends ReportOpts {
+  applyCustomAttributes: ApplyCustomAttributesFn;
+}
 
 export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   vitalsToTrack?: Array<Metric['name']>;
+  lcp?: VitalOpts;
+  cls?: VitalOpts;
+  inp?: VitalOpts;
+  fid?: VitalOpts;
+  fcp?: VitalOpts;
+  ttfb?: VitalOpts;
 }
 
 export class WebVitalsInstrumentation extends InstrumentationBase {
