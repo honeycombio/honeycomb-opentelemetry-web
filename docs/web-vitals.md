@@ -4,19 +4,19 @@ By default, Honeycomb includes events for all web vitals except [first-input-del
 
 ## Vitals Attributes
 
-All vitals have the following attributes: `web_vital.name`, `web_vital.rating`, `web_vital.id`
+All vitals have the following attributes, they will each be namespaced by the name of the vital:
 
 ```ts
 /**
  * The name of the vital (in acronym form).
  */
-"web_vital.name": 'CLS' | 'FCP' | 'INP' | 'LCP' | 'TTFB';
+"<vital-name>.name": 'CLS' | 'FCP' | 'INP' | 'LCP' | 'TTFB';
 
 /**
  * The rating as to whether the metric value is within the "good",
  * "needs improvement", or "poor" thresholds of the metric.
  */
-"web_vital.rating": "good" | "needs-improvement" | "poor"
+"<vital-rating>.rating": "good" | "needs-improvement" | "poor"
 
 /**
  * A unique ID representing this particular metric instance. This ID can
@@ -28,19 +28,16 @@ All vitals have the following attributes: `web_vital.name`, `web_vital.rating`, 
  * get created).
  */
 
-"web_vital.id": string;
+"<vital-id>.id": string;
 ```
 
 ### [Cumulative Layout Score](https://web.dev/articles/cls) attributes
 
 ```ts
 /* Shared fields */
-"web_vital.name": "CLS",
-"web_vital.rating": "good" | "needs-improvement" | "poor",
-"web_vital.id": string;
-
-
-/* CLS specific fields */
+"cls.name": "CLS",
+"cls.rating": "good" | "needs-improvement" | "poor",
+"cls.id": string;
 "cls.value": number;
 "cls.delta": number;
 
@@ -88,12 +85,9 @@ The event time is when the single largest layout shift contributing to the page'
 
 ```ts
 /** Shared fields */
-"web_vital.name": "LCP",
-"web_vital.rating": "good" | "needs-improvement" | "poor",
-"web_vital.id": string;
-
-/** LCP specific fields */
-
+"lcp.name": "LCP",
+"lcp.rating": "good" | "needs-improvement" | "poor",
+"lcp.id": string;
 "lcp.value": number;
 "lcp.delta": number;
 
@@ -145,12 +139,9 @@ The event time is the start of the page load (performance.timeOrigin), the durat
 
 ```ts
 /** Shared fields */
-"web_vital.name": "INP",
-"web_vital.rating": "good" | "needs-improvement" | "poor",
-"web_vital.id": string;
-
-/** INP specific fields */
-
+"inp.name": "INP",
+"inp.rating": "good" | "needs-improvement" | "poor",
+"inp.id": string;
 /* How long from the user interaction until the next paint */
 "inp.value": number;
 "inp.delta": number;
@@ -186,12 +177,10 @@ The event time is equal to the time the interaction began {[TODO] `attribution.e
 
 ```ts
 /** Shared fields */
-"web_vital.name": "FCP",
-"web_vital.rating": "good" | "needs-improvement" | "poor",
-"web_vital.id": string;
-
+"fcp.name": "FCP",
+"fcp.rating": "good" | "needs-improvement" | "poor",
+"fcp.id": string;
 /** FCP specific fields */
-
 "fcp.value": number;
 "fcp.delta": number;
 /**
@@ -220,12 +209,10 @@ The event time is equal to the start of the page load, the duration is equal to 
 
 ```js
 /** Shared fields */
-"web_vital.name": "TTFB",
-"web_vital.rating": "good" | "needs-improvement" | "poor",
-"web_vital.id": string;
-
+"ttfb.name": "TTFB",
+"ttfb.rating": "good" | "needs-improvement" | "poor",
+"ttfb.id": string;
 /** TTFB specific fields */
-
 "ttfb.value": number;
 "ttfb.delta": number;
 
