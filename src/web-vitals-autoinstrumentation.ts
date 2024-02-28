@@ -25,23 +25,54 @@ import {
   InstrumentationConfig,
 } from '@opentelemetry/instrumentation';
 import { Span } from '@opentelemetry/api';
+import { VERSION } from './version';
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
 interface VitalOpts extends ReportOpts {
+  /**
+   * Callback function to add custom attributes to web vitals span.
+   * @example
+   * (vital, span) => {
+   *   // a value under 3000ms is acceptable as a 'good' rating for our team
+   *   // this would otherwise show up as 'needs-improvement' if the value is less than 2500 in 'lcp.rating' according to the
+   *   // set standards but we want to record this as well.
+   *   if (vital.value < 3000) {
+   *     span.setAttribute('lcp.custom_rating', 'good');
+   *  }
+   * }
+   */
   applyCustomAttributes: ApplyCustomAttributesFn;
 }
 
 export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
+  /** Array of web vitals to send spans for, defaults to ["CLS", "LCP", "INP"] if not specified. */
   vitalsToTrack?: Array<Metric['name']>;
+
+  /** Config specific to LCP (Largest Contentful Paint) */
   lcp?: VitalOpts;
+
+  /** Config specific to CLS (Cumulative Layout Shift) */
   cls?: VitalOpts;
+
+  /** Config specific to INP (Interaction to Next Paint) */
   inp?: VitalOpts;
+
+  /** Config specific to FID (First Input Delay) */
   fid?: VitalOpts;
+
+  /** Config specific to FCP (First Contentful Paint) */
   fcp?: VitalOpts;
+
+  /** Config specific to TTFB (Time To First Byte) */
   ttfb?: VitalOpts;
 }
 
+/**
+ * Web vitals auto-instrumentation, sends spans automatically for CLS, LCP, INP, FCP, FID, TTFB.
+ * Defaults to sending spans for CLS, LCP and INP only.
+ * @param config The {@link WebVitalsInstrumentationConfig }
+ */
 export class WebVitalsInstrumentation extends InstrumentationBase {
   readonly vitalsToTrack: Array<Metric['name']>;
   readonly lcpOpts?: VitalOpts;
@@ -56,17 +87,19 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       enabled: true,
     },
   ) {
-    super('@honeycombio/instrumentation-web-vitals', '0.0.1', {
-      // NOTE: this is an unfortunate necessity to initially set
-      // the enabled state of the instrumentation to false because
-      // super gets called before anything else and in the parent class
-      // if enabled is true, it will call `this.enable()` and the `enable`
-      // function will run before any of the config options (e.g. vitalsToTrack)
-      // can become available. So we're setting this explicitly to false, making config options available,
-      // and then enabling the instrumentation in this constructor.
-
-      // This is usually not an issue when instrumentation is patching functions and not calling them
-      // directly, this instrumentation is a bit of a special case.
+    super('@honeycombio/instrumentation-web-vitals', VERSION, {
+      /**
+       * NOTE: this is an unfortunate necessity to initially set
+       * the enabled state of the instrumentation to false because
+       * super gets called before anything else and in the parent class
+       * if enabled is true, it will call `this.enable()` and the `enable`
+       * function will run before any of the config options (e.g. vitalsToTrack)
+       * can become available. So we're setting this explicitly to false, making config options available,
+       * and then enabling the instrumentation in this constructor.
+       *
+       * This is usually not an issue when instrumentation is patching functions and not calling them
+       * directly, this instrumentation is a bit of a special case.
+       **/
       enabled: false,
     });
     this.vitalsToTrack = config?.vitalsToTrack || ['CLS', 'LCP', 'INP'];
