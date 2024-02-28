@@ -1,5 +1,20 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.0.3 [alpha] - 2024-02-28
+
+### Enhancements
+
+- docs: add JS docs for web vitals instrumentation (#92) | @pkanal @JamieDanielson
+- feat: ✨ Config for web vitals (#91) | @pkanal
+- feat: initial web vitals instrumentation  (#84) | @pkanal
+
+### Maintenance
+
+- fix: update version and add version change to releasing doc (#90) | @JamieDanielson
+- maint(deps-dev): bump the example-deps group in /examples/hello-world-web with 1 update (#82) | @dependabot
+- maint(deps): bump the dev-dependencies group with 3 updates (#89) | @dependabot
+- maint: add releaseyml for generated release notes (#88) | @JamieDanielson
+
 ## v0.0.2 [alpha] - 2024-02-23
 
 ### Enhancements
