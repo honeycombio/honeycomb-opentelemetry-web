@@ -16,6 +16,7 @@ import {
   onINP,
   onLCP,
   onTTFB,
+  ReportOpts,
   TTFBAttribution,
   TTFBMetricWithAttribution,
 } from 'web-vitals/attribution';
@@ -23,13 +24,32 @@ import {
   InstrumentationBase,
   InstrumentationConfig,
 } from '@opentelemetry/instrumentation';
+import { Span } from '@opentelemetry/api';
+
+type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
+
+interface VitalOpts extends ReportOpts {
+  applyCustomAttributes: ApplyCustomAttributesFn;
+}
 
 export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   vitalsToTrack?: Array<Metric['name']>;
+  lcp?: VitalOpts;
+  cls?: VitalOpts;
+  inp?: VitalOpts;
+  fid?: VitalOpts;
+  fcp?: VitalOpts;
+  ttfb?: VitalOpts;
 }
 
 export class WebVitalsInstrumentation extends InstrumentationBase {
   readonly vitalsToTrack: Array<Metric['name']>;
+  readonly lcpOpts?: VitalOpts;
+  readonly clsOpts?: VitalOpts;
+  readonly inpOpts?: VitalOpts;
+  readonly fidOpts?: VitalOpts;
+  readonly fcpOpts?: VitalOpts;
+  readonly ttfbOpts?: VitalOpts;
 
   constructor(
     config: WebVitalsInstrumentationConfig = {
@@ -50,6 +70,12 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       enabled: false,
     });
     this.vitalsToTrack = config?.vitalsToTrack || ['CLS', 'LCP', 'INP'];
+    this.lcpOpts = config?.lcp;
+    this.clsOpts = config?.cls;
+    this.inpOpts = config?.inp;
+    this.fidOpts = config?.fid;
+    this.fcpOpts = config?.fcp;
+    this.ttfbOpts = config?.ttfb;
 
     if (config.enabled === true) {
       this.enable();
@@ -74,7 +100,10 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     };
   }
 
-  onReportCLS = (cls: CLSMetricWithAttribution) => {
+  onReportCLS = (
+    cls: CLSMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = cls;
     const {
       largestShiftTarget,
@@ -96,10 +125,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.had_recent_input`]: largestShiftEntry?.hadRecentInput,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(cls, span);
+    }
+
     span.end();
   };
 
-  onReportLCP = (lcp: LCPMetricWithAttribution) => {
+  onReportLCP = (
+    lcp: LCPMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = lcp;
     const {
       element,
@@ -122,10 +158,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.element_render_delay`]: elementRenderDelay,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(lcp, span);
+    }
+
     span.end();
   };
 
-  onReportINP = (inp: INPMetricWithAttribution) => {
+  onReportINP = (
+    inp: INPMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = inp;
     const { eventTarget, eventType, loadState }: INPAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -139,10 +182,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(inp, span);
+    }
+
     span.end();
   };
 
-  onReportFCP = (fcp: FCPMetricWithAttribution) => {
+  onReportFCP = (
+    fcp: FCPMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = fcp;
     const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
       attribution;
@@ -157,10 +207,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(fcp, span);
+    }
+
     span.end();
   };
 
-  onReportFID = (fid: FIDMetricWithAttribution) => {
+  onReportFID = (
+    fid: FIDMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = fid;
     const { eventTarget, eventType, loadState }: FIDAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -174,10 +231,17 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(fid, span);
+    }
+
     span.end();
   };
 
-  onReportTTFB = (ttfb: TTFBMetricWithAttribution) => {
+  onReportTTFB = (
+    ttfb: TTFBMetricWithAttribution,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
+  ) => {
     const { name, attribution } = ttfb;
     const {
       waitingTime,
@@ -197,6 +261,10 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
       [`${attrPrefix}.request_time`]: requestTime,
     });
 
+    if (applyCustomAttributes) {
+      applyCustomAttributes(ttfb, span);
+    }
+
     span.end();
   };
 
@@ -205,38 +273,38 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
 
     if (this.vitalsToTrack.includes('CLS')) {
       onCLS((vital) => {
-        this.onReportCLS(vital);
-      });
+        this.onReportCLS(vital, this.clsOpts?.applyCustomAttributes);
+      }, this.clsOpts);
     }
 
     if (this.vitalsToTrack.includes('LCP')) {
       onLCP((vital) => {
-        this.onReportLCP(vital);
-      });
+        this.onReportLCP(vital, this.lcpOpts?.applyCustomAttributes);
+      }, this.lcpOpts);
     }
 
     if (this.vitalsToTrack.includes('INP')) {
       onINP((vital) => {
-        this.onReportINP(vital);
-      });
+        this.onReportINP(vital, this.inpOpts?.applyCustomAttributes);
+      }, this.inpOpts);
     }
 
     if (this.vitalsToTrack.includes('FID')) {
       onFID((vital) => {
-        this.onReportFID(vital);
-      });
+        this.onReportFID(vital, this.fidOpts?.applyCustomAttributes);
+      }, this.fidOpts);
     }
 
     if (this.vitalsToTrack.includes('TTFB')) {
       onTTFB((vital) => {
-        this.onReportTTFB(vital);
-      });
+        this.onReportTTFB(vital, this.ttfbOpts?.applyCustomAttributes);
+      }, this.ttfbOpts);
     }
 
     if (this.vitalsToTrack.includes('FCP')) {
       onFCP((vital) => {
-        this.onReportFCP(vital);
-      });
+        this.onReportFCP(vital, this.fcpOpts?.applyCustomAttributes);
+      }, this.fcpOpts);
     }
   }
 }
