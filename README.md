@@ -42,7 +42,9 @@ This project provides a convenient distribution of all the code required to get 
 
 Install this library:
 
-`npm install @honeycombio/opentelemetry-web @opentelemetry/auto-instrumentations-web`
+```sh
+npm install @honeycombio/opentelemetry-web @opentelemetry/auto-instrumentations-web
+```
 
 [Get a Honeycomb API key](https://docs.honeycomb.io/quickstart/#create-a-honeycomb-account).
 
