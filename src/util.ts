@@ -37,10 +37,9 @@ const ingestClassicKeyRegex = /^hc[a-z]ic_[a-z0-9]*$/;
 export function isClassic(apikey?: string): boolean {
   if (apikey == null || apikey.length === 0) {
     return false;
-  }
-  else if(apikey.length === 32) {
+  } else if (apikey.length === 32) {
     return classicKeyRegex.test(apikey);
-  } else if(apikey.length === 64) {
+  } else if (apikey.length === 64) {
     return ingestClassicKeyRegex.test(apikey);
   }
   return false;
