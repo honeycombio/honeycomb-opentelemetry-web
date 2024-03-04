@@ -35,7 +35,7 @@ const ingestClassicKeyRegex = /^hc[a-z]ic_[a-z0-9]*$/;
  * @returns a boolean to indicate if the apikey was a classic key
  */
 export function isClassic(apikey?: string): boolean {
-  if (apikey === null || apikey === undefined || apikey.length === 0) {
+  if (apikey == null || apikey.length === 0) {
     return false;
   }
   else if(apikey.length === 32) {
