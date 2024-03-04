@@ -6,22 +6,47 @@ import {
   maybeAppendTracesPath,
 } from '../src/util';
 
-// classic keys are 32 chars long
-const classicApiKey = 'this is a string that is 32 char';
-// non-classic keys are 22 chars log
-const apiKey = 'an api key for 22 char';
 
 describe('isClassic', () => {
-  it('should return true for a classic key', () => {
-    expect(isClassic(classicApiKey)).toBe(true);
-  });
+  it.each([
+    {
+      testString: "hcxik_01hqk4k20cjeh63wca8vva5stw70nft6m5n8wr8f5mjx3762s8269j50wc",
+      name: "full ingest key string, non classic",
+      expected: false
+    },
+    {
+      testString: "hcxik_01hqk4k20cjeh63wca8vva5stw",
+      name: "ingest key id, non classic",
+      expected: false
+    },
+    {
+      testString: "hcaic_1234567890123456789012345678901234567890123456789012345678",
+      name: "full ingest key string, classic",
+      expected: true
+    },
+    {
+      testString: "hcaic_12345678901234567890123456",
+      name: "ingest key id, classic",
+      expected: false
+    },
+    {
+      testString: "kgvSpPwegJshQkuowXReLD",
+      name: "v2 configuration key",
+      expected: false
+    },
+    {
+      testString: "12345678901234567890123456789012",
+      name: "classic key",
+      expected: true
+    },
+    {
+      testString: undefined,
+      name: "undefined",
+      expected: false
+    }
 
-  it('should return false for a non-classic key', () => {
-    expect(isClassic(apiKey)).toBe(false);
-  });
-
-  it('should return false for an undefined key', () => {
-    expect(isClassic(undefined)).toBe(false);
+  ])("test case $name", (testCase) => {
+    expect(isClassic(testCase.testString)).toEqual(testCase.expected);
   });
 });
 

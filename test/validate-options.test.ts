@@ -27,9 +27,9 @@ afterAll(() => {
 });
 
 // classic keys are 32 chars long
-const classicApiKey = 'this is a string that is 32 char';
+const classicApiKey = '12345678901234567890123456789012';
 // non-classic keys are 22 chars log
-const apiKey = 'an api key for 22 char';
+const apiKey = 'kgvSpPwegJshQkuowXReLD';
 
 describe('console warnings', () => {
   describe('when skipOptionsValidation is true', () => {

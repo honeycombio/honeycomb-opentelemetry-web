@@ -25,14 +25,25 @@ export const defaultOptions: HoneycombOptions = {
 export const createHoneycombSDKLogMessage = (message: string) =>
   `@honeycombio/opentelemetry-web: ${message}`;
 
+const classicKeyRegex = /^[a-f0-9]*$/;
+const ingestClassicKeyRegex = /^hc[a-z]ic_[a-z0-9]*$/;
+
 /**
- * Determines whether the passed in apikey is classic (32 chars) or not.
+ * Determines whether the passed in apikey is classic or not.
  *
  * @param apikey the apikey
  * @returns a boolean to indicate if the apikey was a classic key
  */
 export function isClassic(apikey?: string): boolean {
-  return apikey?.length === 32;
+  if (apikey === null || apikey === undefined || apikey.length === 0) {
+    return false;
+  }
+  else if(apikey.length === 32) {
+    return classicKeyRegex.test(apikey);
+  } else if(apikey.length === 64) {
+    return ingestClassicKeyRegex.test(apikey);
+  }
+  return false;
 }
 
 /**
