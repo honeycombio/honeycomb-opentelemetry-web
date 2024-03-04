@@ -23,23 +23,13 @@ All vitals have the following attributes, they will each be namespaced by the na
 /**
  * The name of the vital (in acronym form).
  */
-"<vital-name>.name": 'CLS' | 'FCP' | 'INP' | 'LCP' | 'TTFB';
+"name": 'CLS' | 'FCP' | 'INP' | 'LCP' | 'TTFB';
 
 /**
  * The rating as to whether the metric value is within the "good",
  * "needs improvement", or "poor" thresholds of the metric.
  */
 "<vital-rating>.rating": "good" | "needs-improvement" | "poor"
-
-/**
- * A unique ID representing this particular metric instance. This ID can
- * be used by an analytics tool to dedupe multiple values sent for the same
- * metric instance, or to group multiple deltas together and calculate a
- * total. It can also be used to differentiate multiple different metric
- * instances sent from the same page, which can happen if the page is
- * restored from the back/forward cache (in that case new vital object
- * get created).
- */
 
 "<vital-id>.id": string;
 ```
