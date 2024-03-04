@@ -45,7 +45,7 @@ describe('isClassic', () => {
       expected: false
     }
 
-  ])("test case $name", (testCase) => {
+  ])("test case $name", (testCase: {testString?: string, name: string, expected: boolean}) => {
     expect(isClassic(testCase.testString)).toEqual(testCase.expected);
   });
 });
