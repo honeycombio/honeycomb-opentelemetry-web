@@ -70,7 +70,7 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
 
 /**
  * Web vitals auto-instrumentation, sends spans automatically for CLS, LCP, INP, FCP, FID, TTFB.
- * Defaults to sending spans for CLS, LCP and INP only.
+ * Defaults to sending spans for CLS, LCP, INP, FCP and TTFB.
  * @param config The {@link WebVitalsInstrumentationConfig }
  */
 export class WebVitalsInstrumentation extends InstrumentationBase {
@@ -102,7 +102,13 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
        **/
       enabled: false,
     });
-    this.vitalsToTrack = config?.vitalsToTrack || ['CLS', 'LCP', 'INP'];
+    this.vitalsToTrack = config?.vitalsToTrack || [
+      'CLS',
+      'LCP',
+      'INP',
+      'FCP',
+      'TTFB',
+    ];
     this.lcpOpts = config?.lcp;
     this.clsOpts = config?.cls;
     this.inpOpts = config?.inp;
