@@ -26,10 +26,10 @@ afterAll(() => {
   warningSpy.mockRestore();
 });
 
-// classic keys are 32 chars long
-const classicApiKey = 'this is a string that is 32 char';
-// non-classic keys are 22 chars log
-const apiKey = 'an api key for 22 char';
+// non-ingest classic keys are 32 chars long
+const classicApiKey = '12345678901234567890123456789012';
+// non-ingest non-classic keys are 22 chars log
+const apiKey = 'kgvSpPwegJshQkuowXReLD';
 
 describe('console warnings', () => {
   describe('when skipOptionsValidation is true', () => {
