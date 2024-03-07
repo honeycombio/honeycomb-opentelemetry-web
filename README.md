@@ -38,6 +38,7 @@ We test this library, with its combination of OpenTelemetry dependencies, so tha
 
 This project provides a convenient distribution of all the code required to get traces from the browser.
 
+
 ## Getting started
 
 Install this library:
@@ -51,13 +52,13 @@ npm install @honeycombio/opentelemetry-web @opentelemetry/auto-instrumentations-
 Initialize tracing at the start of your application:
 
 ```js
-import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
+import { HoneycombWebSDK, WebVitalsInstrumentation } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 const sdk = new HoneycombWebSDK({
   apiKey: 'api-key-goes-here',
   serviceName: 'your-great-browser-application',
-  instrumentations: [getWebAutoInstrumentations()], // add automatic instrumentation
+  instrumentations: [getWebAutoInstrumentations(), new WebVitalsInstrumentation()], // add automatic instrumentation
 });
 sdk.start();
 ```
@@ -95,6 +96,16 @@ Your OpenTelemetry Collector can send the traces on to Honeycomb, and your API k
   skipOptionsValidation: true // because we are not including apiKey
 }
 ```
+
+## Auto-instrumentation
+
+Here is a list of what gets instrumented automatically by including `getWebAutoInstrumentations` and `WebVitalsInstrumentation` in the list of instrumentations while initializing the SDK:
+
+* [Document & resource loading instrumentation](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-document-load#readme)
+* [Fetch request instrumentation](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-fetch)
+* [XML HTTP request instrumentation](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-xml-http-request)
+* [User interaction instrumentation](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-user-interaction)
+* [Web vitals instrumentation](./docs/web-vitals.md)
 
 ## Fields emitted
 
