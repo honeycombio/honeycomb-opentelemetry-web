@@ -1,5 +1,13 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.0.4 [alpha] - 2024-03-07
+
+### Enhancements
+
+- feat: add support for classic ingest keys (#101) | @cewkrupa @JamieDanielson
+- docs: Web Vitals Readme (#99) | @pkanal
+- docs: make this line c&p-able (#96) | @jessitron
+
 ## v0.0.3 [alpha] - 2024-02-28
 
 ### Enhancements
