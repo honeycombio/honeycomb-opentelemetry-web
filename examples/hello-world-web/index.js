@@ -10,6 +10,9 @@ const main = () => {
     serviceName: 'web-distro',
     debug: true,
     instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
+    // webVitalsInstrumentationConfig: {
+    //   enabled: false,
+    // },
   });
   sdk.start();
 };
