@@ -15,7 +15,7 @@ export class HoneycombWebSDK extends WebSDK {
     super({
       ...options,
       instrumentations: [
-        new WebVitalsInstrumentation(),
+        new WebVitalsInstrumentation(options?.webVitalsInstrumentationConfig),
         ...(options?.instrumentations || []),
       ],
       resource: mergeResources([

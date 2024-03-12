@@ -32,6 +32,7 @@ import {
   SpanLimits,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { WebVitalsInstrumentationConfig } from './web-vitals-autoinstrumentation';
 
 export interface WebSDKConfiguration {
   autoDetectResources: boolean;
@@ -118,6 +119,9 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * ```
    */
   entryPageAttributes?: false | EntryPageConfig;
+
+  /** Config options for web vitals instrumentation. Enabled by default. */
+  webVitalsInstrumentationConfig?: WebVitalsInstrumentationConfig;
 }
 
 /* Configure which fields to include in the `entry_page` resource attributes. By default,
