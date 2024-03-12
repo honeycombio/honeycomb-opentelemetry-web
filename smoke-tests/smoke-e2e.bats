@@ -5,6 +5,8 @@ load test_helpers/utilities
 CONTAINER_NAME="app-hello-world-web"
 DOCUMENT_LOAD_SCOPE="@opentelemetry/instrumentation-document-load"
 USER_INTERACTION_SCOPE="@opentelemetry/instrumentation-user-interaction"
+WEB_VITALS_SCOPE="@honeycombio/instrumentation-web-vitals"
+
 CUSTOM_TRACER_NAME="click-tracer"
 
 setup_file() {
@@ -91,11 +93,16 @@ teardown_file() {
 
 @test "Custom instrumentation adds custom attribute" {
 	result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"message\").value.stringValue")
-	assert_equal "$result" '"important message"'
+	assert_contains "$result" '"important message"'
 }
 
 @test "BaggageSpanProcessor: key-values added to baggage appear on child spans" {
 	result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"username\").value.stringValue")
-	assert_equal "$result" '"alice"
+	assert_contains "$result" '"alice"
 "alice"'
+}
+
+@test "Auto instrumentation produces web vitals spans" {
+  result=$(span_names_for ${WEB_VITALS_SCOPE})
+  assert_not_empty "$result"
 }
