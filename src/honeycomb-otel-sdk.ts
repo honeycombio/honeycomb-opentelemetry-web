@@ -12,12 +12,17 @@ import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
+    const instrumentations = [...(options?.instrumentations || [])];
+    // Automatically include web vitals instrumentation unless explicitly set to false
+    if (options?.webVitalsInstrumentationConfig?.enabled !== false) {
+      instrumentations.push(
+        new WebVitalsInstrumentation(options?.webVitalsInstrumentationConfig),
+      );
+    }
+
     super({
       ...options,
-      instrumentations: [
-        new WebVitalsInstrumentation(options?.webVitalsInstrumentationConfig),
-        ...(options?.instrumentations || []),
-      ],
+      instrumentations,
       resource: mergeResources([
         configureBrowserAttributesResource(),
         configureEntryPageResource(options?.entryPageAttributes),
