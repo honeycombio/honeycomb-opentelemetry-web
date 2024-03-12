@@ -8,11 +8,16 @@ import { configureDebug } from './honeycomb-debug';
 import { configureSpanProcessors } from './span-processor-builder';
 import { configureDeterministicSampler } from './deterministic-sampler';
 import { validateOptionsWarnings } from './validate-options';
+import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
     super({
       ...options,
+      instrumentations: [
+        new WebVitalsInstrumentation(),
+        ...(options?.instrumentations || []),
+      ],
       resource: mergeResources([
         configureBrowserAttributesResource(),
         configureEntryPageResource(options?.entryPageAttributes),
