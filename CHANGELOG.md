@@ -1,5 +1,14 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.1.0 [beta] - 2024-03-13
+
+- maint(deps): bump the example-deps group in /examples/hello-world-web with 1 update (#104) | @dependabot
+- maint(deps): bump the dev-dependencies group with 3 updates (#108) | @dependabot
+- maint(deps): bump the otel group with 8 updates (#97) | @dependabot
+- docs: add auto-instrumentation details (#103) |@pkanal
+- feat: Auto-enable web vitals instrumentation (#106) | @pkanal @wolfgangcodes
+- maint: Update ubuntu image in workflows to latest (#107) | @MikeGoldsmith
+
 ## v0.0.4 [alpha] - 2024-03-07
 
 ### Enhancements
