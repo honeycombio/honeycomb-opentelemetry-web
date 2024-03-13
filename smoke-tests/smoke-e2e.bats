@@ -93,12 +93,12 @@ teardown_file() {
 
 @test "Custom instrumentation adds custom attribute" {
 	result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"message\").value.stringValue")
-	assert_contains "$result" '"important message"'
+	assert_equal "$result" '"important message"'
 }
 
 @test "BaggageSpanProcessor: key-values added to baggage appear on child spans" {
 	result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"username\").value.stringValue")
-	assert_contains "$result" '"alice"
+	assert_equal "$result" '"alice"
 "alice"'
 }
 

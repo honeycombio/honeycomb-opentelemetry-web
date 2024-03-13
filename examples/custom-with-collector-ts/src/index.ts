@@ -21,11 +21,6 @@ const trackButton = (onClick: { (): void; (): void }) => {
     'button-important',
   ) as HTMLButtonElement;
   const tracer = trace.getTracer('click-tracer');
-  button.addEventListener('click', () => {
-    console.log(
-      'click event is automatically captured by the auto-instrumentation',
-    );
-  });
 
   button.onclick = () =>
     tracer.startActiveSpan(`clicked the button`, (span) => {
