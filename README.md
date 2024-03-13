@@ -18,11 +18,12 @@ This package sets up OpenTelemetry for tracing, using our recommended practices,
 
 * Useful extra attributes, or fields, related to the browser
 * Easy configuration to send to Honeycomb
-* Basic sampler to control event volume (coming soon)
-* Multi span attributes (coming soon)
+* Basic sampler to control event volume
+* Multi span attributes
 * Convenient packaging
 * An informative debug mode
-* Links to traces in Honeycomb (coming soon)
+* Links to traces in Honeycomb
+* Automatically enabled Web Vitals instrumentation
 
 <!-- TODO: determine whether we must call this a distro instead of a wrapper. -->
 
