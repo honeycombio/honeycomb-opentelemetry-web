@@ -20,6 +20,9 @@ export const defaultOptions: HoneycombOptions = {
   sampleRate: 1,
   skipOptionsValidation: false,
   localVisualizations: false,
+  webVitalsInstrumentationConfig: {
+    enabled: true,
+  },
 };
 
 export const createHoneycombSDKLogMessage = (message: string) =>

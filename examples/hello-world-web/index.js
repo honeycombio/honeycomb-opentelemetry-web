@@ -1,7 +1,4 @@
-import {
-  HoneycombWebSDK,
-  WebVitalsInstrumentation,
-} from '@honeycombio/opentelemetry-web';
+import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 const main = () => {
@@ -12,10 +9,10 @@ const main = () => {
     apiKey: 'api-key',
     serviceName: 'web-distro',
     debug: true,
-    instrumentations: [
-      getWebAutoInstrumentations(),
-      new WebVitalsInstrumentation(),
-    ], // add auto-instrumentation
+    instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
+    // webVitalsInstrumentationConfig: {
+    //   enabled: false,
+    // },
   });
   sdk.start();
 };

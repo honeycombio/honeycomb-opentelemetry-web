@@ -81,6 +81,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   readonly fidOpts?: VitalOpts;
   readonly fcpOpts?: VitalOpts;
   readonly ttfbOpts?: VitalOpts;
+  readonly enabled?: boolean;
 
   constructor(
     config: WebVitalsInstrumentationConfig = {
@@ -115,10 +116,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     this.fidOpts = config?.fid;
     this.fcpOpts = config?.fcp;
     this.ttfbOpts = config?.ttfb;
-
-    if (config.enabled === true) {
-      this.enable();
-    }
+    this.enabled = config?.enabled;
   }
 
   init() {}
@@ -308,6 +306,10 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   };
 
   enable(): void {
+    if (!this.enabled) {
+      this._diag.debug(`Instrumentation disabled`);
+      return;
+    }
     this._diag.debug(`Sending spans for ${this.vitalsToTrack.join(',')}`);
 
     if (this.vitalsToTrack.includes('CLS')) {
