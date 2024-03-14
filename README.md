@@ -11,18 +11,19 @@ Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser.
 
 Latest release:
 
-* built with OpenTelemetry JS [Stable v1.21.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.21.0), [Experimental v0.48.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.48.0), [API v1.7.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.7.0)
-* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.36.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-node-v0.36.0)
+* built with OpenTelemetry JS [Stable v1.22.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.22.0), [Experimental v0.49.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.49.1), [API v1.8.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.8.0)
+* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.37.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.37.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
 * Useful extra attributes, or fields, related to the browser
 * Easy configuration to send to Honeycomb
-* Basic sampler to control event volume (coming soon)
-* Multi span attributes (coming soon)
+* Basic sampler to control event volume
+* Multi span attributes
 * Convenient packaging
 * An informative debug mode
-* Links to traces in Honeycomb (coming soon)
+* Links to traces in Honeycomb
+* Automatically enabled Web Vitals instrumentation
 
 <!-- TODO: determine whether we must call this a distro instead of a wrapper. -->
 
