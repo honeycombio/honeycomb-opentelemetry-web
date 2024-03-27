@@ -7,7 +7,7 @@
 Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser.
 <!-- TODO: happy badges of the OTel versions we are using -->
 <!-- TODO: evergreen question of whether to use fields or attributes -->
-**STATUS: this library is ALPHA.**
+**STATUS: this library is in BETA.** Data shapes are stable and safe for production. We are actively seeking feedback to ensure usability.
 
 Latest release:
 
