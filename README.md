@@ -68,6 +68,8 @@ Build and run your application, and then look for data in Honeycomb. On the Home
 
 ![Honeycomb screen, with "Home" circled on the left, and the dropdown circled at the top.](docs/honeycomb-home.png)
 
+Refer to our [Honeycomb documentation](https://docs.honeycomb.io/get-started/start-building/rum/) for more information on instrumentation and troubleshooting.
+
 ## SDK Configuration
 
 Pass these options to the HoneycombWebSDK:
