@@ -48,7 +48,7 @@ This project provides a convenient distribution of all the code required to get 
 npm install @honeycombio/opentelemetry-web @opentelemetry/auto-instrumentations-web
 ```
 
-2. [Get a Honeycomb API key]([https://docs.honeycomb.io/quickstart/#create-a-honeycomb-account).
+2. [Get a Honeycomb API key](https://docs.honeycomb.io/get-started/configure/environments/manage-api-keys/#find-api-keys).
 
 3. Initialize tracing at the start of your application:
 
