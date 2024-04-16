@@ -2,6 +2,7 @@
 
 ## v0.1.1 [beta] - 2024-04-16
 
+- maint(deps): bump the otel group with 7 updates (#122) | @dependabot
 - maint(deps): bump the dev-dependencies group with 4 updates (#123) | @dependabot
 - maint(deps): bump the example-deps group in /examples/hello-world-web with 2 updates (#120) | @dependabot
 - maint(deps): bump axios from 1.6.7 to 1.6.8 (#112) | @dependabot
