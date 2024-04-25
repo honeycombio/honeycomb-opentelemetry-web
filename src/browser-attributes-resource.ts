@@ -1,5 +1,15 @@
 import { Resource } from '@opentelemetry/resources';
 
+type ScreenSize = 'small' | 'medium' | 'large' | 'unknown';
+
+export const computeScreenSize = (screenWidth: number): ScreenSize => {
+  if (screenWidth <= 768) return 'small';
+  else if (screenWidth > 768 && screenWidth <= 1024) return 'medium';
+  else if (screenWidth > 1024) return 'large';
+
+  return 'unknown';
+};
+
 export function configureBrowserAttributesResource(): Resource {
   return new Resource({
     'user_agent.original': navigator.userAgent,
@@ -9,5 +19,6 @@ export function configureBrowserAttributesResource(): Resource {
     'browser.language': navigator.language,
     'screen.width': window.screen.width,
     'screen.height': window.screen.height,
+    'screen.size': computeScreenSize(window.screen.width),
   });
 }
