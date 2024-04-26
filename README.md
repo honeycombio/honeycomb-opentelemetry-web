@@ -120,6 +120,7 @@ The SDK adds these fields to all telemetry:
 | `browser.height` | planned | per-span | [window.innerHeight](https://developer.mozilla.org/en-US/docs/Web/API/Window/innerHeight), the height of the layout viewport in pixels | 287 |
 | `browser.width` | planned | per-span | [window.innerWidth](https://developer.mozilla.org/en-US/docs/Web/API/Window/innerWidth), the height of the layout viewport in pixels | 1720 |
 | `browser.brands` | stable | static | [NavigatorUAData: brands](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/brands) | ["Not_A Brand 8", "Chromium 120", "Google Chrome 120"] |
+| `browser.name` | custom | static | Best guess of browser type | "Chrome", "Chromium", "Firefox", "Safari", etc. |
 | `browser.platform` | stable | static | [NavigatorUAData: platform](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/platform) | "Windows" |
 | `browser.mobile` | stable | static | [NavigatorUAData: mobile](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/mobile) | true |
 | `browser.language` | stable | static | [Navigator: language](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language) | "fr-FR" |

@@ -1,4 +1,5 @@
 import { Resource } from '@opentelemetry/resources';
+import UAParser from 'ua-parser-js';
 
 type ScreenSize = 'small' | 'medium' | 'large' | 'unknown';
 
@@ -10,6 +11,11 @@ export const computeScreenSize = (screenWidth: number): ScreenSize => {
   return 'unknown';
 };
 
+export const computeBrowserName = (userAgent: string) => {
+  const uaParser = new UAParser(userAgent);
+  return uaParser.getBrowser().name ?? 'unknown';
+};
+
 export function configureBrowserAttributesResource(): Resource {
   return new Resource({
     'user_agent.original': navigator.userAgent,
@@ -17,6 +23,7 @@ export function configureBrowserAttributesResource(): Resource {
     'browser.mobile': navigator.userAgent.includes('Mobi'),
     'browser.touch_screen_enabled': navigator.maxTouchPoints > 0,
     'browser.language': navigator.language,
+    'browser.name': computeBrowserName(navigator.userAgent),
     'screen.width': window.screen.width,
     'screen.height': window.screen.height,
     'screen.size': computeScreenSize(window.screen.width),
