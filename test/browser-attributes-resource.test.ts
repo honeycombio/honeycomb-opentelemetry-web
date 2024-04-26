@@ -14,6 +14,7 @@ test('it should have location attributes', () => {
   const resource = configureBrowserAttributesResource();
   expect(resource.attributes).toEqual({
     'browser.name': 'WebKit',
+    'browser.version': '537.36',
     'browser.language': 'en-US',
     'browser.mobile': false,
     'browser.touch_screen_enabled': false,
@@ -102,7 +103,7 @@ describe('compute broweser type', () => {
   Object.entries(USER_AGENTS).forEach(([type, userAgents]) => {
     test(`determines ${type}`, () => {
       userAgents.forEach((userAgent) => {
-        expect(computeBrowserName(userAgent)).toBe(type);
+        expect(computeBrowserName(userAgent).name).toBe(type);
       });
     });
   });
