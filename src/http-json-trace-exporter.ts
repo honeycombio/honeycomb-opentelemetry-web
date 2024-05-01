@@ -19,6 +19,7 @@ export function configureHoneycombHttpJsonTraceExporter(
     headers: {
       [TEAM_HEADER_KEY]: apiKey,
       [DATASET_HEADER_KEY]: isClassic(apiKey) ? options?.dataset : undefined,
+      ...options?.headers,
     },
   });
 }

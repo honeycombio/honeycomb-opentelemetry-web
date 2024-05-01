@@ -64,6 +64,9 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   endpoint?: string;
 
+  /** Optionally pass extra headers to the exporter. Commonly used if sending to a collector that requires authentication */
+  headers?: { [key: string]: string | number };
+
   /** The API endpoint where traces telemetry is sent. Defaults to endpoint if not set. */
   tracesEndpoint?: string;
 
