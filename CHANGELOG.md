@@ -1,5 +1,14 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.2.0 [beta] - 2024-05-01
+- fix: add opentelemetry/core as a peerdependency to package.json (#136) | @Aghassi
+- feat: Add headers option to main SDK config (#135) | @pkanal
+- maint(deps): bump the otel group with 7 updates (#133) | @dependabot
+- maint(deps): bump the dev-dependencies group across 1 directory with 3 updates (#132) | @dependabot
+- maint(deps): bump the example-deps group in /examples/hello-world-web with 2 updates (#131) | @dependabot
+- feat: add browser.name attribute (#130) | @mustafahaddara
+- feat: Add s/m/l screen size resource attribute (#129) | @pkanal
+
 ## v0.1.1 [beta] - 2024-04-16
 
 - maint(deps): bump the otel group with 7 updates (#122) | @dependabot
