@@ -10,13 +10,13 @@ const dataset = 'my-dataset';
 const apikey = '0000000000000000000000'; // 22 chars
 const classicApikey = '00000000000000000000000000000000'; // 32 chars
 
-test('it should return an OTLPTraceExporter', () => {
-  const traceExporter = configureHoneycombHttpJsonTraceExporter();
-  expect(traceExporter).toBeInstanceOf(OTLPTraceExporter);
-});
+describe('HTTP JSON Trace Exporter Tests', () => {
+  test('it should return an OTLPTraceExporter', () => {
+    const traceExporter = configureHoneycombHttpJsonTraceExporter();
+    expect(traceExporter).toBeInstanceOf(OTLPTraceExporter);
+  });
 
-describe('with a regular apikey', () => {
-  test('it should set the team and not the dataset headers', () => {
+  test('it should set the team and not the dataset headers for a regular api key', () => {
     const traceExporter = configureHoneycombHttpJsonTraceExporter({
       apiKey: apikey,
       dataset: dataset,
@@ -25,10 +25,8 @@ describe('with a regular apikey', () => {
     expect(traceExporter.headers[TEAM_HEADER_KEY]).toBe(apikey);
     expect(traceExporter.headers[DATASET_HEADER_KEY]).toBeUndefined();
   });
-});
 
-describe('with a classic apikey', () => {
-  test('it should set the team and dataset headers', () => {
+  test('it should set the team and dataset headers for a classic api key', () => {
     const traceExporter = configureHoneycombHttpJsonTraceExporter({
       apiKey: classicApikey,
       dataset: dataset,
@@ -36,5 +34,14 @@ describe('with a classic apikey', () => {
     expect(traceExporter.url).toBe(DEFAULT_API_ENDPOINT + '/v1/traces');
     expect(traceExporter.headers[TEAM_HEADER_KEY]).toBe(classicApikey);
     expect(traceExporter.headers[DATASET_HEADER_KEY]).toBe(dataset);
+  });
+
+  test('it adds custom headers', () => {
+    const traceExporter = configureHoneycombHttpJsonTraceExporter({
+      headers: {
+        'x-test-header': 'my-cool-header',
+      },
+    });
+    expect(traceExporter.headers['x-test-header']).toBe('my-cool-header');
   });
 });
