@@ -437,7 +437,7 @@ describe('Web Vitals Instrumentation Tests', () => {
       const instr = new WebVitalsInstrumentation();
       expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP']);
     });
-    
+
     it(`should default to ['CLS', 'LCP', 'INP'] when OTHER configuration options`, () => {
       const instr = new WebVitalsInstrumentation({ enabled: false });
       expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP']);
