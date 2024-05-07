@@ -79,7 +79,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   readonly fidOpts?: VitalOpts;
   readonly fcpOpts?: VitalOpts;
   readonly ttfbOpts?: VitalOpts;
-  private _setupCallbacks: boolean;
   private _isEnabled: boolean;
 
   constructor({
@@ -110,7 +109,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     this.fidOpts = fid;
     this.fcpOpts = fcp;
     this.ttfbOpts = ttfb;
-    this._setupCallbacks = false;
     this._isEnabled = enabled;
     this._setupWebVitalsCallbacks();
   }
@@ -118,9 +116,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   init() {}
 
   private _setupWebVitalsCallbacks() {
-    if (this._setupCallbacks) return;
-    this._setupCallbacks = true;
-
     if (this.vitalsToTrack.includes('CLS')) {
       onCLS((vital) => {
         this.onReportCLS(vital, this.clsOpts?.applyCustomAttributes);
