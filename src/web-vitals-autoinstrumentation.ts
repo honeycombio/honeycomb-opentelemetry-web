@@ -92,7 +92,17 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     fcp,
     ttfb,
   }: WebVitalsInstrumentationConfig = {}) {
-    super('@honeycombio/instrumentation-web-vitals', VERSION, { enabled });
+    const config: WebVitalsInstrumentationConfig = {
+      enabled,
+      vitalsToTrack,
+      lcp,
+      cls,
+      inp,
+      fid,
+      fcp,
+      ttfb,
+    };
+    super('@honeycombio/instrumentation-web-vitals', VERSION, config);
     this.vitalsToTrack = [...vitalsToTrack];
     this.lcpOpts = lcp;
     this.clsOpts = cls;
