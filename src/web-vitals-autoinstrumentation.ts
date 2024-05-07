@@ -20,12 +20,10 @@ import {
   TTFBAttribution,
   TTFBMetricWithAttribution,
 } from 'web-vitals/attribution';
-import {
-  InstrumentationBase,
-  InstrumentationConfig,
-} from '@opentelemetry/instrumentation';
+import { InstrumentationConfig } from '@opentelemetry/instrumentation';
 import { Span } from '@opentelemetry/api';
 import { VERSION } from './version';
+import { InstrumentationAbstract } from '@opentelemetry/instrumentation/build/src/instrumentation';
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
@@ -73,7 +71,7 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
  * Defaults to sending spans for CLS, LCP, INP, FCP and TTFB.
  * @param config The {@link WebVitalsInstrumentationConfig }
  */
-export class WebVitalsInstrumentation extends InstrumentationBase {
+export class WebVitalsInstrumentation extends InstrumentationAbstract {
   readonly vitalsToTrack: Array<Metric['name']>;
   readonly lcpOpts?: VitalOpts;
   readonly clsOpts?: VitalOpts;
@@ -82,6 +80,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   readonly fcpOpts?: VitalOpts;
   readonly ttfbOpts?: VitalOpts;
   private _setupCallbacks: boolean;
+  private _isEnabled: boolean;
 
   constructor({
     enabled = true,
@@ -93,21 +92,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     fcp,
     ttfb,
   }: WebVitalsInstrumentationConfig = {}) {
-    super('@honeycombio/instrumentation-web-vitals', VERSION, {
-      /**
-       * NOTE: this is an unfortunate necessity to initially set
-       * the enabled state of the instrumentation to false because
-       * super gets called before anything else and in the parent class
-       * if enabled is true, it will call `this.enable()` and the `enable`
-       * function will run before any of the config options (e.g. vitalsToTrack)
-       * can become available. So we're setting this explicitly to false, making config options available,
-       * and then enabling the instrumentation in this constructor.
-       *
-       * This is usually not an issue when instrumentation is patching functions and not calling them
-       * directly, this instrumentation is a bit of a special case.
-       **/
-      enabled: false,
-    });
+    super('@honeycombio/instrumentation-web-vitals', VERSION, { enabled });
     this.vitalsToTrack = [...vitalsToTrack];
     this.lcpOpts = lcp;
     this.clsOpts = cls;
@@ -116,9 +101,10 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     this.fcpOpts = fcp;
     this.ttfbOpts = ttfb;
     this._setupCallbacks = false;
+    this._isEnabled = enabled;
 
-    if (enabled) {
-      super.enable();
+    if (this._isEnabled) {
+      this.enable();
     }
   }
 
@@ -185,7 +171,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     cls: CLSMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
-    if (!super.isEnabled()) return;
+    if (!this.isEnabled()) return;
 
     const { name, attribution } = cls;
     const {
@@ -219,7 +205,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     lcp: LCPMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
-    if (!super.isEnabled()) return;
+    if (!this.isEnabled()) return;
 
     const { name, attribution } = lcp;
     const {
@@ -254,7 +240,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     inp: INPMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
-    if (!super.isEnabled()) return;
+    if (!this.isEnabled()) return;
 
     const { name, attribution } = inp;
     const { eventTarget, eventType, loadState }: INPAttribution = attribution;
@@ -280,7 +266,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     fcp: FCPMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
-    if (!super.isEnabled()) return;
+    if (!this.isEnabled()) return;
 
     const { name, attribution } = fcp;
     const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
@@ -307,7 +293,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     fid: FIDMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
-    if (!super.isEnabled()) return;
+    if (!this.isEnabled()) return;
 
     const { name, attribution } = fid;
     const { eventTarget, eventType, loadState }: FIDAttribution = attribution;
@@ -333,7 +319,7 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
     ttfb: TTFBMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
-    if (!super.isEnabled()) return;
+    if (!this.isEnabled()) return;
 
     const { name, attribution } = ttfb;
     const {
@@ -362,22 +348,25 @@ export class WebVitalsInstrumentation extends InstrumentationBase {
   };
 
   disable(): void {
-    if (!super.isEnabled()) {
+    if (!this.isEnabled()) {
       this._diag.debug(`Instrumentation already disabled`);
       return;
     }
-    super.disable();
+    this._isEnabled = false;
     this._diag.debug(`Instrumentation  disabled`);
   }
 
   enable(): void {
-    if (super.isEnabled()) {
+    if (this.isEnabled()) {
       this._diag.debug(`Instrumentation already enabled`);
       return;
     }
-    super.enable();
+    this._isEnabled = true;
     this.setupWebVitalsCallbacks();
     this._diag.debug(`Instrumentation  enabled`);
     this._diag.debug(`Sending spans for ${this.vitalsToTrack.join(',')}`);
+  }
+  public isEnabled() {
+    return this._isEnabled;
   }
 }
