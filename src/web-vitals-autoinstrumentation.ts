@@ -120,7 +120,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   init() {}
 
-  setupWebVitalsCallbacks() {
+  private _setupWebVitalsCallbacks() {
     if (this._setupCallbacks) return;
     this._setupCallbacks = true;
 
@@ -372,7 +372,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       return;
     }
     this._isEnabled = true;
-    this.setupWebVitalsCallbacks();
+    this._setupWebVitalsCallbacks();
     this._diag.debug(`Instrumentation  enabled`);
     this._diag.debug(`Sending spans for ${this.vitalsToTrack.join(',')}`);
   }
