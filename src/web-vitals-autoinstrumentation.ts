@@ -112,10 +112,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     this.ttfbOpts = ttfb;
     this._setupCallbacks = false;
     this._isEnabled = enabled;
-
-    if (this._isEnabled) {
-      this.enable();
-    }
+    this._setupWebVitalsCallbacks();
   }
 
   init() {}
@@ -372,7 +369,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       return;
     }
     this._isEnabled = true;
-    this._setupWebVitalsCallbacks();
     this._diag.debug(`Instrumentation  enabled`);
     this._diag.debug(`Sending spans for ${this.vitalsToTrack.join(',')}`);
   }

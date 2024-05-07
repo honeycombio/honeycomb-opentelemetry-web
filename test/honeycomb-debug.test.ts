@@ -49,23 +49,23 @@ describe('when debug is set to true', () => {
       };
       new HoneycombWebSDK(testConfig);
       expect(consoleSpy).toHaveBeenNthCalledWith(
-        3,
+        2,
         '@honeycombio/opentelemetry-web: 🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
       );
       expect(consoleSpy).toHaveBeenNthCalledWith(
-        4,
+        3,
         `@honeycombio/opentelemetry-web: API Key configured for traces: '${testConfig.apiKey}'`,
       );
       expect(consoleSpy).toHaveBeenNthCalledWith(
-        5,
+        4,
         `@honeycombio/opentelemetry-web: Service Name configured for traces: '${testConfig.serviceName}'`,
       );
       expect(consoleSpy).toHaveBeenNthCalledWith(
-        6,
+        5,
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${testConfig.endpoint}/${TRACES_PATH}'`,
       );
       expect(consoleSpy).toHaveBeenNthCalledWith(
-        7,
+        6,
         `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${testConfig.sampleRate}'`,
       );
     });
