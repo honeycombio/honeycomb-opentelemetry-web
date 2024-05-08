@@ -14,6 +14,7 @@
   - `git log --pretty='%C(green)%d%Creset- %s | %an'`
 - If the upstream OpenTelemetry package versions have changed, update README with new versions and links.
 - Commit changes, push, and open a release preparation pull request for review.
+  - add the `no-changelog`, `type: maintenance`, and `version: no bump` labels
 - Once the pull request is merged, fetch the updated `main` branch.
 - Apply a tag for the new version on the merged commit (e.g. `git tag -a v2.3.1 -m "v2.3.1"`)
 - Push the tag upstream (this will kick off the release pipeline in CI) e.g. `git push origin v2.3.1`
