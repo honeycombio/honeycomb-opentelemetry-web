@@ -20,10 +20,23 @@ import {
   TTFBAttribution,
   TTFBMetricWithAttribution,
 } from 'web-vitals/attribution';
-import { InstrumentationConfig } from '@opentelemetry/instrumentation';
+import {
+  Instrumentation,
+  InstrumentationConfig,
+} from '@opentelemetry/instrumentation';
 import { Span } from '@opentelemetry/api';
 import { VERSION } from './version';
-import { InstrumentationAbstract } from '@opentelemetry/instrumentation/build/src/instrumentation';
+import {
+  diag,
+  DiagLogger,
+  Meter,
+  MeterProvider,
+  metrics,
+  trace,
+  Tracer,
+  TracerProvider,
+} from '@opentelemetry/api';
+import * as shimmer from 'shimmer';
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
@@ -41,6 +54,116 @@ interface VitalOpts extends ReportOpts {
    * }
    */
   applyCustomAttributes: ApplyCustomAttributesFn;
+}
+
+// To avoid importing InstrumentationAbstract from:
+// import { InstrumentationAbstract } from '@opentelemetry/instrumentation/build/src/instrumentation';
+// When this is exposed we can import from there.
+export abstract class InstrumentationAbstract implements Instrumentation {
+  protected _config: InstrumentationConfig;
+
+  private _tracer: Tracer;
+  private _meter: Meter;
+  protected _diag: DiagLogger;
+
+  constructor(
+    public readonly instrumentationName: string,
+    public readonly instrumentationVersion: string,
+    config: InstrumentationConfig = {},
+  ) {
+    this._config = {
+      enabled: true,
+      ...config,
+    };
+
+    this._diag = diag.createComponentLogger({
+      namespace: instrumentationName,
+    });
+
+    this._tracer = trace.getTracer(instrumentationName, instrumentationVersion);
+
+    this._meter = metrics.getMeter(instrumentationName, instrumentationVersion);
+    this._updateMetricInstruments();
+  }
+
+  /* Api to wrap instrumented method */
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  protected _wrap = shimmer.wrap;
+  /* Api to unwrap instrumented methods */
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  protected _unwrap = shimmer.unwrap;
+  /* Api to mass wrap instrumented method */
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  protected _massWrap = shimmer.massWrap;
+  /* Api to mass unwrap instrumented methods */
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  protected _massUnwrap = shimmer.massUnwrap;
+
+  /* Returns meter */
+  protected get meter(): Meter {
+    return this._meter;
+  }
+
+  /**
+   * Sets MeterProvider to this plugin
+   * @param meterProvider
+   */
+  public setMeterProvider(meterProvider: MeterProvider): void {
+    this._meter = meterProvider.getMeter(
+      this.instrumentationName,
+      this.instrumentationVersion,
+    );
+
+    this._updateMetricInstruments();
+  }
+
+  /**
+   * Sets the new metric instruments with the current Meter.
+   */
+  protected _updateMetricInstruments(): void {
+    return;
+  }
+
+  /* Returns InstrumentationConfig */
+  public getConfig(): InstrumentationConfig {
+    return this._config;
+  }
+
+  /**
+   * Sets InstrumentationConfig to this plugin
+   * @param InstrumentationConfig
+   */
+  public setConfig(config: InstrumentationConfig = {}): void {
+    this._config = Object.assign({}, config);
+  }
+
+  /**
+   * Sets TraceProvider to this plugin
+   * @param tracerProvider
+   */
+  public setTracerProvider(tracerProvider: TracerProvider): void {
+    this._tracer = tracerProvider.getTracer(
+      this.instrumentationName,
+      this.instrumentationVersion,
+    );
+  }
+
+  /* Returns tracer */
+  protected get tracer(): Tracer {
+    return this._tracer;
+  }
+
+  /* Disable plugin */
+  public abstract enable(): void;
+
+  /* Enable plugin */
+  public abstract disable(): void;
+
+  /**
+   * Init method in which plugin should define _modules and patches for
+   * methods
+   */
+  protected abstract init(): void;
 }
 
 export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
