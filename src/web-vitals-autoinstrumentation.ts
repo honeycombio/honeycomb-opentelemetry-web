@@ -24,7 +24,6 @@ import {
   Instrumentation,
   InstrumentationConfig,
 } from '@opentelemetry/instrumentation';
-import { Span } from '@opentelemetry/api';
 import { VERSION } from './version';
 import {
   diag,
@@ -32,6 +31,7 @@ import {
   Meter,
   MeterProvider,
   metrics,
+  Span,
   trace,
   Tracer,
   TracerProvider,
