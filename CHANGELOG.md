@@ -1,4 +1,8 @@
 # honeycomb-opentelemetry-web changelog
+## v0.2.1 [beta] - 2024-05-10
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 3 updates (#144) | @dependabot
+- fix: Add ability to disable, don't clobber defaults when passing other config params. (#140) | @wolfgangcodes
+- fix: properly declare devDependencies (#143) | @mustafahaddara
 
 ## v0.2.0 [beta] - 2024-05-01
 - fix: add opentelemetry/core as a peerdependency to package.json (#136) | @Aghassi
