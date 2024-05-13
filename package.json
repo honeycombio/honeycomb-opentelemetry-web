@@ -52,6 +52,7 @@
     "@opentelemetry/sdk-trace-web": "~1.24.0",
     "@opentelemetry/semantic-conventions": "~1.24.0",
     "axios": "^1.6.7",
+    "shimmer": "^1.2.1",
     "ua-parser-js": "^1.0.37",
     "web-vitals": "^3.5.2"
   }
