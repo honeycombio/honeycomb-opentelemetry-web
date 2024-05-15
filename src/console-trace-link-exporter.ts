@@ -61,7 +61,7 @@ class ConsoleTraceLinkExporter implements SpanExporter {
             respData.environment?.slug,
           );
         } else {
-          console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
+          throw new Error();
         }
       })
       .catch(() => {
