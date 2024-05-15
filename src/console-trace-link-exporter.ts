@@ -10,7 +10,6 @@ import {
   FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS,
   MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS,
 } from './validate-options';
-import axios from 'axios';
 
 /**
  * Builds and returns a {@link SpanExporter} that logs Honeycomb URLs for completed traces
@@ -45,26 +44,29 @@ class ConsoleTraceLinkExporter implements SpanExporter {
         'x-honeycomb-team': apikey,
       },
     };
-    axios.get('https://api.honeycomb.io/1/auth', options).then(
-      (resp) => {
-        if (resp.status === 200) {
-          const respData: AuthResponse = resp.data;
-          if (respData.team?.slug) {
-            this._traceUrl = buildTraceUrl(
-              apikey,
-              serviceName,
-              respData.team?.slug,
-              respData.environment?.slug,
-            );
-          } else {
-            console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
-          }
+    fetch('https://api.honeycomb.io/1/auth', options)
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.json();
         }
-      },
-      () => {
+        throw new Error();
+      })
+      .then((data) => {
+        const respData: AuthResponse = data;
+        if (respData.team?.slug) {
+          this._traceUrl = buildTraceUrl(
+            apikey,
+            serviceName,
+            respData.team?.slug,
+            respData.environment?.slug,
+          );
+        } else {
+          console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
+        }
+      })
+      .catch(() => {
         console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
-      },
-    );
+      });
   }
 
   export(
