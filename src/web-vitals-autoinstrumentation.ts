@@ -351,8 +351,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.time_to_first_byte`]: timeToFirstByte,
       [`${attrPrefix}.resource_load_delay`]: resourceLoadDelay,
       [`${attrPrefix}.resource_load_duration`]: resourceLoadDuration,
-      // [`${attrPrefix}.resource_load_time`]: resourceLoadDuration, // TODO:  Deprecate instead?
       [`${attrPrefix}.element_render_delay`]: elementRenderDelay,
+      // This will be deprecated in a future version
+      [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
     if (applyCustomAttributes) {
@@ -393,7 +394,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.next_paint_time`]: nextPaintTime,
       [`${attrPrefix}.presentation_delay`]: presentationDelay,
       [`${attrPrefix}.processing_duration`]: processingDuration,
-      // [`${attrPrefix}.event_type`]: interactionType, // TODO:  Deprecate instead?
+      // This will be deprecated in a future version
+      [`${attrPrefix}.event_type`]: interactionType,
     });
 
     if (applyCustomAttributes) {
@@ -481,10 +483,11 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.connection_duration`]: connectionDuration,
       [`${attrPrefix}.request_duration`]: requestDuration,
       [`${attrPrefix}.cache_duration`]: cacheDuration,
-      // [`${attrPrefix}.waiting_time`]: waitingDuration, // TODO:  Deprecate instead?
-      // [`${attrPrefix}.dns_time`]: dnsDuration,
-      // [`${attrPrefix}.connection_time`]: connectionDuration,
-      // [`${attrPrefix}.request_time`]: requestDuration,
+      // These will be deprecated ina future version
+      [`${attrPrefix}.waiting_time`]: waitingDuration,
+      [`${attrPrefix}.dns_time`]: dnsDuration,
+      [`${attrPrefix}.connection_time`]: connectionDuration,
+      [`${attrPrefix}.request_time`]: requestDuration,
     });
 
     if (applyCustomAttributes) {

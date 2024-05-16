@@ -89,6 +89,7 @@ const LCPAttr = {
   'lcp.element_render_delay': 20,
   'lcp.entries': '',
   'lcp.my_custom_attr': 'custom_attr',
+  'lcp.resource_load_time': 20,
 };
 
 const INP: INPMetricWithAttribution = {
@@ -130,6 +131,7 @@ const INPAttr = {
   'inp.processing_duration': 600,
   'inp.interaction_time': 10,
   'inp.input_delay': 42,
+  'inp.event_type': 'pointer',
 };
 
 const FCP: FCPMetricWithAttribution = {
@@ -190,6 +192,10 @@ const TTFBAttr = {
   'ttfb.request_duration': 300,
   'ttfb.entries': '',
   'ttfb.my_custom_attr': 'custom_attr',
+  'ttfb.waiting_time': 100,
+  'ttfb.connection_time': 200,
+  'ttfb.dns_time': 1000,
+  'ttfb.request_time': 300,
 };
 
 const FID: FIDMetricWithAttribution = {
