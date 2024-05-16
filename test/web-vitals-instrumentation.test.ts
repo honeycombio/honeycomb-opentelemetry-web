@@ -69,7 +69,7 @@ const LCP: LCPMetricWithAttribution = {
     element: 'div#lcp-element',
     url: 'https://my-cool-image.stuff',
     timeToFirstByte: 30,
-    resourceLoadTime: 20,
+    resourceLoadDuration: 20,
     elementRenderDelay: 20,
     resourceLoadDelay: 100,
   },
@@ -85,7 +85,7 @@ const LCPAttr = {
   'lcp.url': 'https://my-cool-image.stuff',
   'lcp.time_to_first_byte': 30,
   'lcp.resource_load_delay': 100,
-  'lcp.resource_load_time': 20,
+  'lcp.resource_load_duration': 20,
   'lcp.element_render_delay': 20,
   'lcp.entries': '',
   'lcp.my_custom_attr': 'custom_attr',
@@ -100,9 +100,17 @@ const INP: INPMetricWithAttribution = {
   entries: [],
   navigationType: 'back-forward',
   attribution: {
-    eventTarget: 'div#inp-element',
-    eventType: 'input-delay',
+    interactionTarget: 'div#inp-element',
+    interactionType: 'pointer',
     loadState: 'complete',
+    interactionTargetElement: undefined,
+    interactionTime: 10,
+    nextPaintTime: 400,
+    processedEventEntries: [],
+    longAnimationFrameEntries: [],
+    inputDelay: 42,
+    processingDuration: 600,
+    presentationDelay: 500,
   },
 };
 
@@ -112,11 +120,16 @@ const INPAttr = {
   'inp.delta': 200,
   'inp.rating': 'good',
   'inp.navigation_type': 'back-forward',
-  'inp.element': 'div#inp-element',
-  'inp.event_type': 'input-delay',
+  'inp.interaction_target': 'div#inp-element',
+  'inp.interaction_type': 'pointer',
   'inp.load_state': 'complete',
   'inp.entries': '',
   'inp.my_custom_attr': 'custom_attr',
+  'inp.next_paint_time': 400,
+  'inp.presentation_delay': 500,
+  'inp.processing_duration': 600,
+  'inp.interaction_time': 10,
+  'inp.input_delay': 42,
 };
 
 const FCP: FCPMetricWithAttribution = {
@@ -156,10 +169,11 @@ const TTFB: TTFBMetricWithAttribution = {
   navigationType: 'back-forward',
   entries: [],
   attribution: {
-    waitingTime: 100,
-    dnsTime: 1000,
-    connectionTime: 200,
-    requestTime: 300,
+    waitingDuration: 100,
+    dnsDuration: 1000,
+    requestDuration: 300,
+    cacheDuration: 100,
+    connectionDuration: 200,
   },
 };
 
@@ -169,10 +183,11 @@ const TTFBAttr = {
   'ttfb.delta': 2500,
   'ttfb.rating': 'good',
   'ttfb.navigation_type': 'back-forward',
-  'ttfb.waiting_time': 100,
-  'ttfb.dns_time': 1000,
-  'ttfb.connection_time': 200,
-  'ttfb.request_time': 300,
+  'ttfb.waiting_duration': 100,
+  'ttfb.dns_duration': 1000,
+  'ttfb.connection_duration': 200,
+  'ttfb.cache_duration': 100,
+  'ttfb.request_duration': 300,
   'ttfb.entries': '',
   'ttfb.my_custom_attr': 'custom_attr',
 };
@@ -201,6 +216,8 @@ const FID: FIDMetricWithAttribution = {
       toJSON() {
         return '';
       },
+      processingEnd: 600,
+      interactionId: 42,
     },
   },
 };
