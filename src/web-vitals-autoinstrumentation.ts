@@ -394,7 +394,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.next_paint_time`]: nextPaintTime,
       [`${attrPrefix}.presentation_delay`]: presentationDelay,
       [`${attrPrefix}.processing_duration`]: processingDuration,
-      // This will be deprecated in a future version
+      // These will be deprecated in a future version
+      [`${attrPrefix}.element`]: interactionTarget,
       [`${attrPrefix}.event_type`]: interactionType,
     });
 

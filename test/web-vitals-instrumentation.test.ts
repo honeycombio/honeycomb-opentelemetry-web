@@ -131,6 +131,7 @@ const INPAttr = {
   'inp.processing_duration': 600,
   'inp.interaction_time': 10,
   'inp.input_delay': 42,
+  'inp.element': 'div#inp-element',
   'inp.event_type': 'pointer',
 };
 
