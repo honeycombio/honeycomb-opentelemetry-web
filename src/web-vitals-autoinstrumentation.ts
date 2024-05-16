@@ -433,6 +433,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     span.end();
   };
 
+  /**
+   *  @deprecated this will be removed in the next major version, use INP instead.
+   */
   onReportFID = (
     fid: FIDMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,

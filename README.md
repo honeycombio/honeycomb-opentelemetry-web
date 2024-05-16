@@ -133,7 +133,7 @@ The SDK adds these fields to all telemetry:
 | `page.hostname` | custom | per-span |   | `docs.honeycomb.io`   |
 | `screen.width` | custom | static | Total available screen width in pixels.   | `780`   |
 | `screen.height` | custom | static |  Total available screen height in pixels | `1000`   |
-| `screen.size` | custom | static |  `small` (less than 768px), `medium` (769px - 1024px) or `large` (greater than 1024px), `unknown` if the size is missing. | 
+| `screen.size` | custom | static |  `small` (less than 768px), `medium` (769px - 1024px) or `large` (greater than 1024px), `unknown` if the size is missing. |
 | `honeycomb.distro.version` | stable | static | package version | "1.2.3" |
 | `honeycomb.distro.runtime_version` | stable | static | | "browser" |
 | `entry_page.url`      | custom | static |   | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2` |
