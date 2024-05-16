@@ -38,7 +38,7 @@ import {
   WebTracerConfig,
   WebTracerProvider,
 } from '@opentelemetry/sdk-trace-web';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { WebSDKConfiguration } from './types';
 import { SessionIdSpanProcessor } from './session-id-span-processor';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
@@ -135,7 +135,7 @@ export class WebSDK {
         ? this._resource
         : this._resource.merge(
             new Resource({
-              [SemanticResourceAttributes.SERVICE_NAME]: this._serviceName,
+              [SEMRESATTRS_SERVICE_NAME]: this._serviceName,
             }),
           );
 
