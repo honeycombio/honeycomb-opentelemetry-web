@@ -11,22 +11,35 @@ export const computeScreenSize = (screenWidth: number): ScreenSize => {
   return 'unknown';
 };
 
-export const computeDeviceProperties = (userAgent: string) => {
-  const uaParser = new UAParser(userAgent);
-  const { name, version } = uaParser.getBrowser();
-
+const computeDeviceType = (
+  detectedDeviceType?: string,
+  detectedBrowserName?: string,
+): string => {
   // ua-parser-js doesn't fill in device type unless it's in the user agent directly
   // which means that desktops/laptops show up as undefined
   // https://github.com/faisalman/ua-parser-js/issues/182
-  const deviceType = uaParser.getDevice().type ?? 'desktop';
+  //
+  // we're going to do this:
+  // browser name & device type both undefined -> unknown
+  // browser name defined & device type undefined -> desktop
+  // device type defined -> use that
+  if (!detectedDeviceType && !detectedBrowserName) {
+    return 'unknown';
+  }
+  if (!detectedDeviceType) {
+    return 'desktop';
+  }
+  return detectedDeviceType;
+};
+
+export const computeDeviceProperties = (userAgent: string) => {
+  const uaParser = new UAParser(userAgent);
+  const { name: browserName, version: browserVersion } = uaParser.getBrowser();
 
   return {
-    browserName: name ?? 'unknown',
-    browserVersion: version ?? 'unknown',
-
-    // if we can't determine the browser name then
-    // we just set the deviceType to unknown as well
-    deviceType: name ? deviceType : 'unknown',
+    browserName: browserName ?? 'unknown',
+    browserVersion: browserVersion ?? 'unknown',
+    deviceType: computeDeviceType(uaParser.getDevice().type, browserName),
   };
 };
 

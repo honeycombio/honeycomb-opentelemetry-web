@@ -116,6 +116,14 @@ describe('compute device type', () => {
   // https://explore.whatismybrowser.com/useragents/explore/software_name/
   // https://useragents.io/explore
   const USER_AGENTS = {
+    console: [
+      'Mozilla/5.0 (Nintendo Switch; WifiWebAuthApplet) AppleWebKit/609.4 (KHTML, like Gecko) NF/6.0.2.20.5 NintendoBrowser/5.1.0.22023',
+      'Opera/9.50 (Nintendo DSi; Opera/446; U; ja)',
+      'Mozilla/5.0 (Nintendo 3DS; U; ; pt) Version/1.7630.EU',
+      'Mozilla/5.0 (PlayStation Vita 3.73) AppleWebKit/537.73 (KHTML, like Gecko) Silk/3.2',
+      'Mozilla/5.0 (PlayStation; PlayStation 4/11.00) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Xbox; Xbox One) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17742',
+    ],
     desktop: [
       'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36',
       'Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.64 Safari/537.36',
@@ -145,6 +153,11 @@ describe('compute device type', () => {
       'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 EdgiOS/46.2.5 Mobile/15E148 Safari/605.1.15',
       'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/114.1 Mobile/15E148 Safari/605.1.15',
       'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+      'Dalvik/2.1.0 (Linux; U; Android 13; SM-A326B Build/TP1A.220624.014)',
+    ],
+    smarttv: [
+      'AppleCoreMedia/1.0.0.17J586 (Apple TV; U; CPU OS 13_0 like Mac OS X; en_us)',
+      'Mozilla/5.0 (SMART-TV; Linux; Tizen 6.5) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/5.0 Chrome/85.0.4183.93 TV Safari/537.36',
     ],
     tablet: [
       'Mozilla/5.0 (iPad; CPU OS 15_8_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6.6 Mobile/15E148 Safari/604.1',
@@ -153,7 +166,6 @@ describe('compute device type', () => {
       'blah blah blah',
       'DeathStar/1.0 (X11; Linux x86_64) like StarDestroyer/12.11',
       'Hello World',
-      'Dalvik/2.1.0 (Linux; U; Android 13; SM-A326B Build/TP1A.220624.014)',
     ],
   };
 
