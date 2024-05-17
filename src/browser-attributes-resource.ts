@@ -11,26 +11,38 @@ export const computeScreenSize = (screenWidth: number): ScreenSize => {
   return 'unknown';
 };
 
-export const computeBrowserName = (userAgent: string) => {
+export const computeDeviceProperties = (userAgent: string) => {
   const uaParser = new UAParser(userAgent);
   const { name, version } = uaParser.getBrowser();
 
+  // ua-parser-js doesn't fill in device type unless it's in the user agent directly
+  // which means that desktops/laptops show up as undefined
+  // https://github.com/faisalman/ua-parser-js/issues/182
+  const deviceType = uaParser.getDevice().type ?? 'desktop';
+
   return {
-    name: name ?? 'unknown',
-    version: version ?? 'unknown',
+    browserName: name ?? 'unknown',
+    browserVersion: version ?? 'unknown',
+
+    // if we can't determine the browser name then
+    // we just set the deviceType to unknown as well
+    deviceType: name ? deviceType : 'unknown',
   };
 };
 
 export function configureBrowserAttributesResource(): Resource {
-  const { name, version } = computeBrowserName(navigator.userAgent);
+  const { browserName, browserVersion, deviceType } = computeDeviceProperties(
+    navigator.userAgent,
+  );
   return new Resource({
     'user_agent.original': navigator.userAgent,
     //https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#mobile_tablet_or_desktop
     'browser.mobile': navigator.userAgent.includes('Mobi'),
     'browser.touch_screen_enabled': navigator.maxTouchPoints > 0,
     'browser.language': navigator.language,
-    'browser.name': name,
-    'browser.version': version,
+    'browser.name': browserName,
+    'browser.version': browserVersion,
+    'device.type': deviceType,
     'screen.width': window.screen.width,
     'screen.height': window.screen.height,
     'screen.size': computeScreenSize(window.screen.width),

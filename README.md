@@ -126,6 +126,7 @@ The SDK adds these fields to all telemetry:
 | `browser.mobile` | stable | static | [NavigatorUAData: mobile](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/mobile) | true |
 | `browser.language` | stable | static | [Navigator: language](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language) | "fr-FR" |
 | `browser.touch_screen_enabled` | stable | static | [Navigator: maxTouchPoints](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/maxTouchPoints) | true |
+| `device.type` | custom | static | Best guess of device type | "desktop", "mobile", "tablet", etc. |
 | `page.url`      | custom | per-span |   | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2` |
 | `page.route`     | custom | per-span |   | `/getting-data-in/data-best-practices/`                                                              |
 | `page.search`   | custom | per-span |   | `?page=2`                                                                                            |
