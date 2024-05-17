@@ -127,6 +127,7 @@ The SDK adds these fields to all telemetry:
 | `browser.language` | stable | static | [Navigator: language](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language) | "fr-FR" |
 | `browser.touch_screen_enabled` | stable | static | [Navigator: maxTouchPoints](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/maxTouchPoints) | true |
 | `device.type` | custom | static | Best guess of device type | "desktop", "mobile", "tablet", etc. |
+| `network.effectiveType` | custom | static | [NetworkInformation: effectiveType](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/effectiveType). Best guess of user's "effective network type", which is based on their overall network speed. Only available on Chromium devices, and only computed once when the SDK is initialized. | "slow-2g", "2g", "3g", "4g" |
 | `page.url`      | custom | per-span |   | `https://docs.honeycomb.io/getting-data-in/data-best-practices/#datasets-group-data-together?page=2` |
 | `page.route`     | custom | per-span |   | `/getting-data-in/data-best-practices/`                                                              |
 | `page.search`   | custom | per-span |   | `?page=2`                                                                                            |

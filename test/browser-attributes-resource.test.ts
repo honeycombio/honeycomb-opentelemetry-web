@@ -1,5 +1,6 @@
 import {
   computeDeviceProperties,
+  computeNetworkType,
   computeScreenSize,
   configureBrowserAttributesResource,
 } from '../src/browser-attributes-resource';
@@ -19,6 +20,7 @@ test('it should have location attributes', () => {
     'browser.mobile': false,
     'browser.touch_screen_enabled': false,
     'device.type': 'desktop',
+    'network.effectiveType': 'unknown',
     'screen.height': 0,
     'screen.width': 0,
     // user agent will be different locally and on CI,
@@ -175,5 +177,20 @@ describe('compute device type', () => {
         expect(computeDeviceProperties(userAgent).deviceType).toBe(type);
       });
     });
+  });
+});
+
+describe('computeNetworkSpeed', () => {
+  it('handles undefined', () => {
+    expect(computeNetworkType()).toBe('unknown');
+  });
+  it('handles objects without the effectiveType property', () => {
+    expect(computeNetworkType({})).toBe('unknown');
+  });
+  it('computes network speed', () => {
+    expect(computeNetworkType({ effectiveType: 'slow-2g' })).toBe('slow-2g');
+    expect(computeNetworkType({ effectiveType: '2g' })).toBe('2g');
+    expect(computeNetworkType({ effectiveType: '3g' })).toBe('3g');
+    expect(computeNetworkType({ effectiveType: '4g' })).toBe('4g');
   });
 });

@@ -11,6 +11,17 @@ export const computeScreenSize = (screenWidth: number): ScreenSize => {
   return 'unknown';
 };
 
+type NetworkInformationEffectiveType = 'slow-2g' | '2g' | '3g' | '4g';
+type ExtendedNavigator = Navigator & {
+  connection: NetworkInformation;
+};
+type NetworkInformation = {
+  effectiveType?: NetworkInformationEffectiveType;
+};
+
+export const computeNetworkType = (networkInformation?: NetworkInformation) =>
+  networkInformation?.effectiveType ?? 'unknown';
+
 const computeDeviceType = (
   detectedDeviceType?: string,
   detectedBrowserName?: string,
@@ -56,6 +67,9 @@ export function configureBrowserAttributesResource(): Resource {
     'browser.name': browserName,
     'browser.version': browserVersion,
     'device.type': deviceType,
+    'network.effectiveType': computeNetworkType(
+      (navigator as ExtendedNavigator).connection,
+    ),
     'screen.width': window.screen.width,
     'screen.height': window.screen.height,
     'screen.size': computeScreenSize(window.screen.width),
