@@ -338,7 +338,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       url,
       timeToFirstByte,
       resourceLoadDelay,
-      resourceLoadTime,
+      resourceLoadDuration,
       elementRenderDelay,
     }: LCPAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
@@ -350,8 +350,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.url`]: url,
       [`${attrPrefix}.time_to_first_byte`]: timeToFirstByte,
       [`${attrPrefix}.resource_load_delay`]: resourceLoadDelay,
-      [`${attrPrefix}.resource_load_time`]: resourceLoadTime,
+      [`${attrPrefix}.resource_load_duration`]: resourceLoadDuration,
       [`${attrPrefix}.element_render_delay`]: elementRenderDelay,
+      // This will be deprecated in a future version
+      [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
     if (applyCustomAttributes) {
@@ -368,16 +370,33 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     if (!this.isEnabled()) return;
 
     const { name, attribution } = inp;
-    const { eventTarget, eventType, loadState }: INPAttribution = attribution;
+    const {
+      inputDelay,
+      interactionTarget,
+      interactionTime,
+      interactionType,
+      loadState,
+      nextPaintTime,
+      presentationDelay,
+      processingDuration,
+    }: INPAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
 
     span.setAttributes({
       ...this.getSharedAttributes(inp),
-      [`${attrPrefix}.element`]: eventTarget,
-      [`${attrPrefix}.event_type`]: eventType,
+      [`${attrPrefix}.input_delay`]: inputDelay,
+      [`${attrPrefix}.interaction_target`]: interactionTarget,
+      [`${attrPrefix}.interaction_time`]: interactionTime,
+      [`${attrPrefix}.interaction_type`]: interactionType,
       [`${attrPrefix}.load_state`]: loadState,
+      [`${attrPrefix}.next_paint_time`]: nextPaintTime,
+      [`${attrPrefix}.presentation_delay`]: presentationDelay,
+      [`${attrPrefix}.processing_duration`]: processingDuration,
+      // These will be deprecated in a future version
+      [`${attrPrefix}.element`]: interactionTarget,
+      [`${attrPrefix}.event_type`]: interactionType,
     });
 
     if (applyCustomAttributes) {
@@ -414,6 +433,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     span.end();
   };
 
+  /**
+   *  @deprecated this will be removed in the next major version, use INP instead.
+   */
   onReportFID = (
     fid: FIDMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
@@ -448,10 +470,11 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
     const { name, attribution } = ttfb;
     const {
-      waitingTime,
-      dnsTime,
-      connectionTime,
-      requestTime,
+      cacheDuration,
+      connectionDuration,
+      dnsDuration,
+      requestDuration,
+      waitingDuration,
     }: TTFBAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
 
@@ -459,10 +482,16 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
     span.setAttributes({
       ...this.getSharedAttributes(ttfb),
-      [`${attrPrefix}.waiting_time`]: waitingTime,
-      [`${attrPrefix}.dns_time`]: dnsTime,
-      [`${attrPrefix}.connection_time`]: connectionTime,
-      [`${attrPrefix}.request_time`]: requestTime,
+      [`${attrPrefix}.waiting_duration`]: waitingDuration,
+      [`${attrPrefix}.dns_duration`]: dnsDuration,
+      [`${attrPrefix}.connection_duration`]: connectionDuration,
+      [`${attrPrefix}.request_duration`]: requestDuration,
+      [`${attrPrefix}.cache_duration`]: cacheDuration,
+      // These will be deprecated ina future version
+      [`${attrPrefix}.waiting_time`]: waitingDuration,
+      [`${attrPrefix}.dns_time`]: dnsDuration,
+      [`${attrPrefix}.connection_time`]: connectionDuration,
+      [`${attrPrefix}.request_time`]: requestDuration,
     });
 
     if (applyCustomAttributes) {
