@@ -1,4 +1,16 @@
 # honeycomb-opentelemetry-web changelog
+## v0.3.0 [beta] - 2024-05-23
+- maint(deps): bump the otel group with 8 updates (#147) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group with 2 updates (#155) | @dependabot
+- maint(deps-dev): bump esbuild from 0.20.2 to 0.21.3 in /examples/hello-world-web in the example-deps group across 1 directory (#157) | @dependabot
+- maint(deps): bump web-vitals from 4.0.0 to 4.0.1 (#158) | @dependabot
+- feat: Upgrade to web-vitals@4.0.0 (#152) | @wolfgangcodes
+- feat: add device.type and network.effectiveType attributes (#154) | @mustafahaddara
+- fix: Use constant for `service.name` from semconv library (#153) | @pkanal
+- feat: drop axios requirement (#151) | @mustafahaddara
+- fix: Add missing dependency shimmer to package.json (#150) | @tayles
+- maint: adding more detail to the release guide (#146) | @mustafahaddara
+
 ## v0.2.1 [beta] - 2024-05-10
 - maint(deps-dev): bump the dev-dependencies group across 1 directory with 3 updates (#144) | @dependabot
 - fix: Add ability to disable, don't clobber defaults when passing other config params. (#140) | @wolfgangcodes
