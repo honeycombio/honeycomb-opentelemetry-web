@@ -3,6 +3,10 @@ import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 const tracing = () => {
+  const configDefaults = {
+    ignoreNetworkEvents: true,
+  };
+
   const sdk = new HoneycombWebSDK({
     // To send direct to Honeycomb, set API Key and comment out endpoint
     // apiKey: 'api-key',
@@ -11,7 +15,15 @@ const tracing = () => {
     debug: true,
     skipOptionsValidation: true,
     resourceAttributes: { 'app.environment': 'development' },
-    instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
+    instrumentations: [
+      // add auto-instrumentation
+      getWebAutoInstrumentations({
+        // load custom configuration for xml-http-request instrumentation
+        '@opentelemetry/instrumentation-xml-http-request': configDefaults,
+        '@opentelemetry/instrumentation-fetch': configDefaults,
+        '@opentelemetry/instrumentation-document-load': configDefaults,
+      }),
+    ],
   });
   sdk.start();
 };
@@ -50,8 +62,29 @@ const onClick = () => {
   });
 };
 
+const setupAPICall = () => {
+  document.getElementById('loadDadJoke')!.onclick = () => {
+    fetch('https://icanhazdadjoke.com/', {
+      headers: {
+        'content-type': 'application/json',
+        accept: 'application/json',
+      },
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        document.getElementById('dadJokeText')!.innerText = data.joke;
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+};
+
 const main = () => {
   tracing();
   trackButton(onClick);
+  setupAPICall();
 };
 main();
