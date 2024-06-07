@@ -18,7 +18,6 @@ const tracing = () => {
     instrumentations: [
       // add auto-instrumentation
       getWebAutoInstrumentations({
-        // load custom configuration for xml-http-request instrumentation
         '@opentelemetry/instrumentation-xml-http-request': configDefaults,
         '@opentelemetry/instrumentation-fetch': configDefaults,
         '@opentelemetry/instrumentation-document-load': configDefaults,
@@ -32,13 +31,14 @@ const trackButton = (onClick: { (): void; (): void }) => {
   const button = document.getElementById(
     'button-important',
   ) as HTMLButtonElement;
-  const tracer = trace.getTracer('click-tracer');
 
-  button.onclick = () =>
-    tracer.startActiveSpan(`clicked the button`, (span) => {
+  button.onclick = () => {
+    const tracer = trace.getTracer('click-tracer');
+    return tracer.startActiveSpan(`clicked the button`, (span) => {
       onClick();
       span.end();
     });
+  };
 };
 
 const onClick = () => {
