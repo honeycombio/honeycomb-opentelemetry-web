@@ -73,5 +73,9 @@ export function configureBrowserAttributesResource(): Resource {
     'screen.width': window.screen.width,
     'screen.height': window.screen.height,
     'screen.size': computeScreenSize(window.screen.width),
+
+    // this seems to be new in otel semantic conventions 1.26, which isn't out yet
+    // when it is, we can update @opentelemetry/semantic-conventions and ideally import this string from there?
+    'url.path': window.location.pathname,
   });
 }
