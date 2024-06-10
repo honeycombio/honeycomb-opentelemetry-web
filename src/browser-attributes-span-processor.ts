@@ -20,6 +20,8 @@ export class BrowserAttributesSpanProcessor implements SpanProcessor {
       'page.route': pathname,
       'page.hostname': hostname,
       'page.search': search,
+
+      'url.path': pathname,
     });
   }
 

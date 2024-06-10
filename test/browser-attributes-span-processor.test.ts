@@ -37,6 +37,7 @@ describe('BrowserAttributesSpanProcessor', () => {
       'page.search': '?search_params=yes&hello=hi',
       'page.url':
         'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
+      'url.path': '/some-page',
     });
   });
 });

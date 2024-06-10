@@ -27,7 +27,6 @@ test('it should have location attributes', () => {
     // we're really only testing to make sure it gets the value
     'user_agent.original': navigator.userAgent,
     'screen.size': 'small',
-    'url.path': '/',
   });
 });
 

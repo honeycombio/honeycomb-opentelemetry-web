@@ -123,6 +123,7 @@ describe('configureSpanProcessors', () => {
       'page.search': '?search_params=yes&hello=hi',
       'page.url':
         'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
+      'url.path': '/some-page',
     });
   });
   test('Configures additional user provided span processor', () => {
@@ -145,6 +146,7 @@ describe('configureSpanProcessors', () => {
       'page.url':
         'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
       'processor1.name': 'TestSpanProcessorOne',
+      'url.path': '/some-page',
     });
   });
 });
