@@ -42,4 +42,5 @@ export default {
     compress: true,
     host: '0.0.0.0',
   },
+  devtool: 'eval-source-map',
 };
