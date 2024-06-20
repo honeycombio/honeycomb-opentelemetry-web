@@ -1,0 +1,28 @@
+{
+  "name": "hello-world-web",
+  "version": "0.0.1",
+  "description": "An example vanilla web app that works with Honeycomb's OpenTelemetry Web Distro",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "esbuild index.cjs --bundle --sourcemap --outfile=build/bundle.js",
+    "start": "npm run build && serve .",
+    "build-src": "cd ../../ && npm run build",
+    "watch:build-bundle": "npm run build-src && npm run build",
+    "watch:build": "chokidar \"../../src/*.ts\" -c \"npm run watch:build-bundle\"",
+    "dev": "npm run start & npm run watch:build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@honeycombio/opentelemetry-web": "file:../../dist/src",
+    "@opentelemetry/auto-instrumentations-web": "~0.39.0"
+  },
+  "devDependencies": {
+    "chokidar": "^3.6.0",
+    "chokidar-cli": "^3.0.0",
+    "esbuild": "0.21.3",
+    "serve": "^14.2.3"
+  }
+}
