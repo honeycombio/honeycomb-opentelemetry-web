@@ -22,7 +22,8 @@ export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
   }
 
   onError = (event: ErrorEvent | PromiseRejectionEvent) => {
-    const error = 'reason' in event ? event.reason : event.error;
+    const error: Error | undefined =
+      'reason' in event ? event.reason : event.error;
     const message = error?.message;
     const type = error?.name;
     // otel spec requires at minimum these two
