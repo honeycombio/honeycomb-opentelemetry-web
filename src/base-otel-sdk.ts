@@ -19,7 +19,7 @@
 
 import { ContextManager, TextMapPropagator } from '@opentelemetry/api';
 import {
-  InstrumentationOption,
+  Instrumentation,
   registerInstrumentations,
 } from '@opentelemetry/instrumentation';
 import {
@@ -52,7 +52,7 @@ export class WebSDK {
     contextManager?: ContextManager;
     textMapPropagator?: TextMapPropagator;
   };
-  private _instrumentations: InstrumentationOption[];
+  private _instrumentations: (Instrumentation | Instrumentation[])[];
 
   private _resource: IResource;
   private _resourceDetectors: Array<Detector | DetectorSync>;
@@ -102,7 +102,7 @@ export class WebSDK {
       };
     }
 
-    let instrumentations: InstrumentationOption[] = [];
+    let instrumentations: (Instrumentation | Instrumentation[])[] = [];
     if (configuration.instrumentations) {
       instrumentations = configuration.instrumentations;
     }

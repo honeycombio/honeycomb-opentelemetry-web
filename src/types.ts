@@ -18,7 +18,7 @@
 
 import type { ContextManager } from '@opentelemetry/api';
 import { TextMapPropagator } from '@opentelemetry/api';
-import { InstrumentationOption } from '@opentelemetry/instrumentation';
+import { Instrumentation } from '@opentelemetry/instrumentation';
 import {
   Detector,
   DetectorSync,
@@ -38,7 +38,7 @@ export interface WebSDKConfiguration {
   autoDetectResources: boolean;
   contextManager: ContextManager;
   textMapPropagator: TextMapPropagator;
-  instrumentations: InstrumentationOption[];
+  instrumentations: (Instrumentation | Instrumentation[])[];
   resource: IResource;
   resourceDetectors: Array<Detector | DetectorSync>;
   sampler: Sampler;
