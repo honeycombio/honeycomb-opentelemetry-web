@@ -45,6 +45,7 @@ describe('Global Errors Instrumentation Tests', () => {
     // `unhandledrejection` is not dispatched in response to unhandled
     // rejections.
     it.skip('should create a span when a promise rejection is unhandled', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       timers
         .setTimeout()
         .then(() => Promise.reject(new Error('Something happened')));
