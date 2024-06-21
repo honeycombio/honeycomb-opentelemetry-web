@@ -9,6 +9,7 @@ import { configureSpanProcessors } from './span-processor-builder';
 import { configureDeterministicSampler } from './deterministic-sampler';
 import { validateOptionsWarnings } from './validate-options';
 import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
+import { GlobalErrorsInstrumentation } from './global-errors-autoinstrumentation';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
@@ -17,6 +18,14 @@ export class HoneycombWebSDK extends WebSDK {
     if (options?.webVitalsInstrumentationConfig?.enabled !== false) {
       instrumentations.push(
         new WebVitalsInstrumentation(options?.webVitalsInstrumentationConfig),
+      );
+    }
+    // Automatically include global errors instrumentation unless explicitly set to false
+    if (options?.globalErrorsInstrumentationConfig?.enabled !== false) {
+      instrumentations.push(
+        new GlobalErrorsInstrumentation(
+          options?.globalErrorsInstrumentationConfig,
+        ),
       );
     }
 
