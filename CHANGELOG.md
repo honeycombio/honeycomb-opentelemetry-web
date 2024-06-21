@@ -1,4 +1,13 @@
 # honeycomb-opentelemetry-web changelog
+## v0.4.0 [beta] - 2024-06-21
+- maint(deps): bump the otel group across 1 directory with 9 updates (#178) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#179) | @dependabot
+- maint(deps): bump web-vitals from 4.0.1 to 4.2.0 (#177) | @dependabot
+- maint(deps-dev): bump esbuild from 0.21.3 to 0.21.5 in /examples/hello-world-web in the example-deps group across 1 directory (#176) | @dependabot
+- maint(deps): bump ua-parser-js from 1.0.37 to 1.0.38 (#163) | @dependabot
+- docs: add example config & API calls for network events (#165) | @MustafaHaddara
+- feat: include url.path attribute (#171) | @MustafaHaddara
+
 ## v0.3.0 [beta] - 2024-05-23
 - maint(deps): bump the otel group with 8 updates (#147) | @dependabot
 - maint(deps-dev): bump the dev-dependencies group with 2 updates (#155) | @dependabot
