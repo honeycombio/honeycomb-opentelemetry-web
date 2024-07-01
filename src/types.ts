@@ -125,6 +125,9 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
 
   /** Config options for web vitals instrumentation. Enabled by default. */
   webVitalsInstrumentationConfig?: WebVitalsInstrumentationConfig;
+
+  /** When true, infers the route of the URL pathname by replacing UUID segments with "paramN" */
+  inferRoute?: boolean;
 }
 
 /* Configure which fields to include in the `entry_page` resource attributes. By default,

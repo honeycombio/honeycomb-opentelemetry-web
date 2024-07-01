@@ -1,5 +1,6 @@
 import { Span } from '@opentelemetry/api';
 import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { pathnameToRoute } from './pathname-to-route';
 
 /**
  * A {@link SpanProcessor} that adds browser specific attributes to each span
@@ -7,7 +8,7 @@ import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
  * Static attributes (e.g. User Agent) are added to the Resource.
  */
 export class BrowserAttributesSpanProcessor implements SpanProcessor {
-  constructor() {}
+  constructor(public inferRoute = false) {}
 
   onStart(span: Span) {
     const { href, pathname, search, hash, hostname } = window.location;
@@ -17,10 +18,9 @@ export class BrowserAttributesSpanProcessor implements SpanProcessor {
       'browser.height': window.innerHeight,
       'page.hash': hash,
       'page.url': href,
-      'page.route': pathname,
+      'page.route': this.inferRoute ? pathnameToRoute(pathname) : pathname,
       'page.hostname': hostname,
       'page.search': search,
-
       'url.path': pathname,
     });
   }
