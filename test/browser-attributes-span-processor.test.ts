@@ -7,7 +7,7 @@ import { ROOT_CONTEXT, SpanKind, TraceFlags } from '@opentelemetry/api';
 import { BasicTracerProvider, Span } from '@opentelemetry/sdk-trace-base';
 
 describe('BrowserAttributesSpanProcessor', () => {
-  const browserAttrsSpanProcessor = new BrowserAttributesSpanProcessor();
+  const browserAttrsSpanProcessor = new BrowserAttributesSpanProcessor(false);
 
   let span: Span;
 

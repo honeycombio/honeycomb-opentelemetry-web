@@ -46,7 +46,9 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
   honeycombSpanProcessor.addProcessor(new BaggageSpanProcessor());
 
   // we always want to add the browser attrs span processor
-  honeycombSpanProcessor.addProcessor(new BrowserAttributesSpanProcessor());
+  honeycombSpanProcessor.addProcessor(
+    new BrowserAttributesSpanProcessor(options?.inferRoute ?? false),
+  );
 
   // if there is a user provided span processor, add it to the composite span processor
   if (options?.spanProcessor) {
