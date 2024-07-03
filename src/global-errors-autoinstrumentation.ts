@@ -16,9 +16,14 @@ export interface GlobalErrorsInstrumentationConfig
  * @param config The {@link GlobalErrorsInstrumentationConfig}
  */
 export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
+  private _isEnabled: boolean;
   constructor({ enabled = true }: GlobalErrorsInstrumentationConfig = {}) {
     const config: GlobalErrorsInstrumentationConfig = { enabled };
     super('@honeycombio/instrumentation-global-errors', VERSION, config);
+    if (enabled) {
+      this.enable();
+    }
+    this._isEnabled = enabled;
   }
 
   onError = (event: ErrorEvent | PromiseRejectionEvent) => {
@@ -42,12 +47,27 @@ export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
   init() {}
 
   disable(): void {
+    if (!this.isEnabled()) {
+      this._diag.debug(`Instrumentation already disabled`);
+      return;
+    }
+    this._isEnabled = false;
     window.removeEventListener('error', this.onError);
     window.removeEventListener('unhandledrejection', this.onError);
+    this._diag.debug(`Instrumentation  disabled`);
   }
 
   enable(): void {
+    if (this.isEnabled()) {
+      this._diag.debug(`Instrumentation already enabled`);
+      return;
+    }
+    this._isEnabled = true;
     window.addEventListener('error', this.onError);
     window.addEventListener('unhandledrejection', this.onError);
+    this._diag.debug(`Instrumentation  enabled`);
+  }
+  public isEnabled() {
+    return this._isEnabled;
   }
 }
