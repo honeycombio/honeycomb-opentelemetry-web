@@ -1,8 +1,10 @@
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
+import { trace } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
+import { ZoneContextManager } from '@opentelemetry/context-zone';
 
 const configDefaults = {
-  ignoreNetworkEvents: true,
+  // ignoreNetworkEvents: true,
 };
 
 const main = () => {
@@ -21,11 +23,14 @@ const main = () => {
         '@opentelemetry/instrumentation-document-load': configDefaults,
       }),
     ],
+    contextManager: new ZoneContextManager(),
   });
   sdk.start();
+  const tracer = trace.getTracer('click-tracer');
 
-  // add event handlers
-  document.getElementById('loadDadJoke').onclick = () => {
+  const buttonElement = document.getElementById('loadDadJoke');
+
+  buttonElement.addEventListener('click', () => {
     fetch('https://icanhazdadjoke.com/', {
       headers: {
         'content-type': 'application/json',
@@ -33,15 +38,23 @@ const main = () => {
       },
     })
       .then((res) => {
-        return res.json();
+        return tracer.startActiveSpan('parseJSON', (span) => {
+          const jsonPromise = res.json();
+          jsonPromise.finally(span.end());
+          return jsonPromise;
+        });
       })
       .then((data) => {
-        document.getElementById('dadJokeText').innerText = data.joke;
+        tracer.startActiveSpan('setInnerText', (htmlSpan) => {
+          document.getElementById('dadJokeText').innerText = data.joke;
+          htmlSpan.setAttribute('text', data.joke);
+          htmlSpan.end();
+        });
       })
       .catch((e) => {
         console.error(e);
       });
-  };
+  });
 };
 
 main();
