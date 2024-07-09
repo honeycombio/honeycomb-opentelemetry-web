@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@honeycombio/opentelemetry-web": "file:../../dist/src",
+    "@honeycombio/opentelemetry-web": "file:../..",
     "@opentelemetry/auto-instrumentations-web": "^0.40.0",
     "@opentelemetry/context-zone": "^1.25.1"
   },
