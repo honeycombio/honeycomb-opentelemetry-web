@@ -7,6 +7,10 @@ import reportWebVitals from './reportWebVitals';
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
+const configDefaults = {
+  ignoreNetworkEvents: true,
+};
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
@@ -28,7 +32,13 @@ try {
   const sdk = new HoneycombWebSDK({
     apiKey: 'api-key-goes-here',
     serviceName: 'your-great-browser-application',
-    instrumentations: [getWebAutoInstrumentations()], // add automatic instrumentation
+    instrumentations: [
+      getWebAutoInstrumentations({
+        '@opentelemetry/instrumentation-xml-http-request': configDefaults,
+        '@opentelemetry/instrumentation-fetch': configDefaults,
+        '@opentelemetry/instrumentation-document-load': configDefaults,
+      }),
+    ], // add automatic instrumentation
   });
   sdk.start();
 } catch (err) {

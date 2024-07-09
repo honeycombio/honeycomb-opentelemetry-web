@@ -3,6 +3,10 @@ const {
   getWebAutoInstrumentations,
 } = require('@opentelemetry/auto-instrumentations-web');
 
+const configDefaults = {
+  ignoreNetworkEvents: true,
+};
+
 const main = () => {
   // Initialize base OTel WebSDK
   const sdk = new HoneycombWebSDK({
@@ -11,7 +15,13 @@ const main = () => {
     apiKey: 'hcaik_01hxc8g4cdhrywa0n9132mhfwh6yekhecstp429k90rec31qhv5cfjn5wk',
     serviceName: 'web-distro-basic-example',
     debug: true,
-    instrumentations: [getWebAutoInstrumentations()], // add auto-instrumentation
+    instrumentations: [
+      getWebAutoInstrumentations({
+        '@opentelemetry/instrumentation-xml-http-request': configDefaults,
+        '@opentelemetry/instrumentation-fetch': configDefaults,
+        '@opentelemetry/instrumentation-document-load': configDefaults,
+      }),
+    ], // add auto-instrumentation
   });
   sdk.start();
 };
