@@ -12,7 +12,7 @@
     "default": "./dist/esm/index.js"
   },
   "files": [
-    "build",
+    "dist",
     "README.md",
     "LICENSE"
   ],
