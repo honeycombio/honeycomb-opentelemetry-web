@@ -4,7 +4,7 @@ import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations
 import { ZoneContextManager } from '@opentelemetry/context-zone';
 
 const configDefaults = {
-  // ignoreNetworkEvents: true,
+  ignoreNetworkEvents: true,
 };
 
 const main = () => {
