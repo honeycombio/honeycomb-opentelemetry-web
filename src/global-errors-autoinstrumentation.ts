@@ -1,7 +1,7 @@
 import { InstrumentationConfig } from '@opentelemetry/instrumentation';
 import { InstrumentationAbstract } from './web-vitals-autoinstrumentation';
 import { VERSION } from './version';
-import { SpanStatusCode } from '@opentelemetry/api';
+import { context, SpanStatusCode } from '@opentelemetry/api';
 import {
   SEMATTRS_EXCEPTION_MESSAGE,
   SEMATTRS_EXCEPTION_STACKTRACE,
@@ -31,17 +31,20 @@ export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
       'reason' in event ? event.reason : event.error;
     const message = error?.message;
     const type = error?.name;
+    const attributes = {
+      [SEMATTRS_EXCEPTION_TYPE]: type,
+      [SEMATTRS_EXCEPTION_MESSAGE]: message,
+      [SEMATTRS_EXCEPTION_STACKTRACE]: error?.stack,
+    };
     // otel spec requires at minimum these two
     if (!message || !type) return;
-    const span = this.tracer.startSpan('exception', {
-      attributes: {
-        [SEMATTRS_EXCEPTION_TYPE]: type,
-        [SEMATTRS_EXCEPTION_MESSAGE]: message,
-        [SEMATTRS_EXCEPTION_STACKTRACE]: error?.stack,
-      },
-    });
-    span.setStatus({ code: SpanStatusCode.ERROR, message });
-    span.end();
+    const errorSpan = this.tracer.startSpan(
+      'exception',
+      { attributes },
+      context.active(),
+    );
+    errorSpan.setStatus({ code: SpanStatusCode.ERROR, message });
+    errorSpan.end();
   };
 
   init() {}
