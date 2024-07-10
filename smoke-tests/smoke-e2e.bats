@@ -20,7 +20,7 @@ teardown_file() {
 
 @test "SDK telemetry includes service.name in resource attributes" {
   result=$(resource_attributes_received | jq "select(.key == \"service.name\").value.stringValue")
-  assert_equal "$result" '"web-distro"'
+  assert_equal "$result" '"hny-web-distro-example:custom-with-collector-ts"'
 }
 
 @test "SDK telemetry includes Honeycomb distro version" {
@@ -73,8 +73,8 @@ teardown_file() {
 }
 
 @test "Auto instrumentation adds session.id attribute" {
-	result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"session.id\").value.stringValue")
-	assert_not_empty "$result"
+  result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"session.id\").value.stringValue")
+  assert_not_empty "$result"
 }
 
 ## tests on custom instrumentation ##
@@ -92,13 +92,13 @@ teardown_file() {
 }
 
 @test "Custom instrumentation adds custom attribute" {
-	result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"message\").value.stringValue")
-	assert_equal "$result" '"important message"'
+  result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"message\").value.stringValue")
+  assert_equal "$result" '"important message"'
 }
 
 @test "BaggageSpanProcessor: key-values added to baggage appear on child spans" {
-	result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"username\").value.stringValue")
-	assert_equal "$result" '"alice"
+  result=$(span_attributes_for ${CUSTOM_TRACER_NAME} | jq "select(.key == \"username\").value.stringValue")
+  assert_equal "$result" '"alice"
 "alice"'
 }
 
