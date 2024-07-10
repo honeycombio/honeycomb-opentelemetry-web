@@ -8,6 +8,7 @@ import dts from 'rollup-plugin-dts';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
+import autoExternal from 'rollup-plugin-auto-external';
 
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
@@ -30,6 +31,7 @@ const getExternalDepsFromPackageJSON = () => {
 const entryPoint = './src/index.ts';
 
 const modulePlugins = [
+  autoExternal(),
   commonjs(),
   nodeResolve({ browser: true }),
   typescript(),
@@ -46,23 +48,28 @@ const modulePlugins = [
 
 const cjsConfig = {
   input: entryPoint,
-  external: getExternalDepsFromPackageJSON(),
   output: { file: 'dist/cjs/index.js', format: 'cjs' },
   plugins: [...modulePlugins],
 };
 
 const esmConfig = {
   input: entryPoint,
-  external: getExternalDepsFromPackageJSON(),
   output: { file: 'dist/esm/index.js', format: 'esm' },
   plugins: [...modulePlugins],
 };
 
 const typesConfig = {
   input: entryPoint,
-  external: getExternalDepsFromPackageJSON(),
   output: { file: 'dist/types/index.d.ts', format: 'esm' },
-  plugins: [dts()],
+  plugins: [
+    autoExternal(),
+    dts(),
+    analyze({
+      hideDeps: true,
+      limit: 0,
+      summaryOnly: true,
+    }),
+  ],
 };
 
 const config = [cjsConfig, esmConfig, typesConfig];

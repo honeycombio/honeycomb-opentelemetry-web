@@ -62,6 +62,7 @@
     "prettier": "^3.2.5",
     "rollup": "^4.13.0",
     "rollup-plugin-analyzer": "^4.0.0",
+    "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-esbuild": "^6.1.1",
     "rollup-plugin-preserve-directives": "^0.4.0",
