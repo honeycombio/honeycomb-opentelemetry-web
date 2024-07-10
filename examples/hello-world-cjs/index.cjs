@@ -13,7 +13,7 @@ const main = () => {
     // endpoint: 'http://localhost:4318', // send to collector
     // To send to collector, comment out API Key
     apiKey: 'api-key',
-    serviceName: 'web-distro-basic-example',
+    serviceName: 'hny-web-distro-example:hello-world-cjs',
     debug: true,
     instrumentations: [
       getWebAutoInstrumentations({

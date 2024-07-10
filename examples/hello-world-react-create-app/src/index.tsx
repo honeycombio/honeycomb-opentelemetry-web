@@ -31,7 +31,7 @@ reportWebVitals(console.log);
 try {
   const sdk = new HoneycombWebSDK({
     apiKey: 'api-key-goes-here',
-    serviceName: 'your-great-browser-application',
+    serviceName: 'hny-web-distro-example:hello-world-react-create-app',
     instrumentations: [
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-xml-http-request': configDefaults,

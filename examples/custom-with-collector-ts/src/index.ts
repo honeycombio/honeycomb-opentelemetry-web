@@ -11,7 +11,7 @@ const tracing = () => {
     // To send direct to Honeycomb, set API Key and comment out endpoint
     // apiKey: 'api-key',
     endpoint: 'http://localhost:4318', // send to local collector
-    serviceName: 'web-distro',
+    serviceName: 'hny-web-distro-example:custom-with-collector-ts',
     debug: true,
     skipOptionsValidation: true,
     resourceAttributes: { 'app.environment': 'development' },
