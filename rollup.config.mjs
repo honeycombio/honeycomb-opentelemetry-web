@@ -13,7 +13,13 @@ const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 
 // get dependencies and peer dependencies as declared in package.json
-const getExternalDeps = (externalArr) => {
+const getExternalDepsFromPackageJSON = () => {
+  const externalArr = [
+    ...Object.keys(pkg.dependencies || {}),
+    ...Object.keys(pkg.peerDependencies || {}),
+    ...Object.keys(pkg.optionalDependencies || {}),
+  ];
+
   if (externalArr.length === 0) {
     return () => false;
   }
@@ -21,13 +27,9 @@ const getExternalDeps = (externalArr) => {
   return (id) => pattern.test(id);
 };
 
-const external = getExternalDeps([
-  ...Object.keys(pkg.dependencies || {}),
-  ...Object.keys(pkg.peerDependencies || {}),
-]);
+const entryPoint = './src/index.ts';
 
-const input = './src/index.ts';
-const plugins = [
+const modulePlugins = [
   commonjs(),
   nodeResolve({ browser: true }),
   typescript(),
@@ -42,25 +44,27 @@ const plugins = [
   }),
 ];
 
-const config = [
-  {
-    input,
-    external,
-    output: { file: 'dist/cjs/index.js', format: 'cjs' },
-    plugins,
-  },
-  {
-    input,
-    external,
-    output: { file: 'dist/esm/index.js', format: 'esm' },
-    plugins,
-  },
-  {
-    input,
-    external,
-    output: { file: 'dist/types/index.d.ts', format: 'esm' },
-    plugins: [dts()],
-  },
-];
+const cjsConfig = {
+  input: entryPoint,
+  external: getExternalDepsFromPackageJSON(),
+  output: { file: 'dist/cjs/index.js', format: 'cjs' },
+  plugins: [...modulePlugins],
+};
+
+const esmConfig = {
+  input: entryPoint,
+  external: getExternalDepsFromPackageJSON(),
+  output: { file: 'dist/esm/index.js', format: 'esm' },
+  plugins: [...modulePlugins],
+};
+
+const typesConfig = {
+  input: entryPoint,
+  external: getExternalDepsFromPackageJSON(),
+  output: { file: 'dist/types/index.d.ts', format: 'esm' },
+  plugins: [dts()],
+};
+
+const config = [cjsConfig, esmConfig, typesConfig];
 
 export default config;
