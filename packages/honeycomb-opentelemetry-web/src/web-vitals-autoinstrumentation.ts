@@ -292,63 +292,120 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     };
   }
 
-  private processPerformanceLongAnimationFrameTiming(
+  private getAttributesforPerformanceResourceTiming(
     prefix: string,
-    perfEntry: PerformanceLongAnimationFrameTiming,
+    perfEntry: PerformanceResourceTiming,
   ) {
-    const loafPrefix = `${prefix}.loaf`;
-    const loafAttributes = {
-      [`${loafPrefix}.duration`]: perfEntry.duration,
-      [`${loafPrefix}.entryType`]: perfEntry.entryType,
-      [`${loafPrefix}.name`]: perfEntry.name,
-      [`${loafPrefix}.renderStart`]: perfEntry.renderStart,
-      [`${loafPrefix}.startTime`]: perfEntry.startTime,
+    console.log('🪵', { prefix, perfEntry });
+    const attributes = {
+      // TODO: resource timing
+      // developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming
+    };
+    return attributes;
+  }
+  private processPerformanceResourceTiming(
+    parentPrefix: string,
+    perfEntry?: PerformanceNavigationTiming,
+  ) {
+    if (!perfEntry) return;
+    const prefix = `${parentPrefix}.timing`;
+    const attributes = this.getAttributesforPerformanceResourceTiming(
+      prefix,
+      perfEntry,
+    );
+    this.tracer.startActiveSpan(
+      perfEntry.name,
+      { startTime: perfEntry.startTime },
+      (span) => {
+        span.setAttributes(attributes);
+        span.end(perfEntry.startTime + perfEntry.duration);
+      },
+    );
+  }
+
+  private processPerformanceNavigationTiming(
+    parentPrefix: string,
+    perfEntry?: PerformanceNavigationTiming,
+  ) {
+    if (!perfEntry) return;
+    const prefix = `${parentPrefix}.timing`;
+    const attributes = {
+      ...this.getAttributesforPerformanceResourceTiming(prefix, perfEntry),
+      [`${prefix}.activation_start`]: perfEntry.activationStart,
+      // TODO: Add add'l attributes/spans based on this:
+      // https://mdn.github.io/shared-assets/images/diagrams/api/performance/timestamp-diagram.svg
+      // AND resource timing
+      // https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming
     };
     this.tracer.startActiveSpan(
       perfEntry.name,
       { startTime: perfEntry.startTime },
-      (loafSpan) => {
-        loafSpan.setAttributes(loafAttributes);
+      (span) => {
+        span.setAttributes(attributes);
+        span.end(perfEntry.startTime + perfEntry.duration);
+      },
+    );
+  }
+
+  private processPerformanceLongAnimationFrameTiming(
+    parentPrefix: string,
+    perfEntry?: PerformanceLongAnimationFrameTiming,
+  ) {
+    if (!perfEntry) return;
+
+    const prefix = `${parentPrefix}.timing`;
+    const loafAttributes = {
+      [`${prefix}.duration`]: perfEntry.duration,
+      [`${prefix}.entryType`]: perfEntry.entryType,
+      [`${prefix}.name`]: perfEntry.name,
+      [`${prefix}.renderStart`]: perfEntry.renderStart,
+      [`${prefix}.startTime`]: perfEntry.startTime,
+    };
+    this.tracer.startActiveSpan(
+      perfEntry.name,
+      { startTime: perfEntry.startTime },
+      (span) => {
+        span.setAttributes(loafAttributes);
         this.processPerformanceScriptTiming(
-          loafPrefix,
+          prefix,
           perfEntry as PerformanceEntryWithPerformanceScriptTiming,
         );
-        loafSpan.end(perfEntry.startTime + perfEntry.duration);
+        span.end(perfEntry.startTime + perfEntry.duration);
       },
     );
   }
 
   private processPerformanceScriptTiming(
-    prefix: string,
-    perfEntry: PerformanceEntryWithPerformanceScriptTiming,
+    parentPrefix: string,
+    perfEntry?: PerformanceEntryWithPerformanceScriptTiming,
   ) {
+    if (!perfEntry) return;
     if (!perfEntry.scripts.length) return;
-    const scriptPrefix = `${prefix}.script_timing`;
+    const prefix = `${parentPrefix}.timing`;
 
     perfEntry.scripts?.map((scriptPerfEntry) => {
       this.tracer.startActiveSpan(
         scriptPerfEntry.name,
         { startTime: scriptPerfEntry.startTime },
-        (scriptSpan) => {
+        (span) => {
           const scriptAttributes = {
-            [`${scriptPrefix}.entry_type`]: scriptPerfEntry.entryType,
-            [`${scriptPrefix}.start_time`]: scriptPerfEntry.startTime,
-            [`${scriptPrefix}.execution_start`]: scriptPerfEntry.executionStart,
-            [`${scriptPrefix}.duration`]: scriptPerfEntry.duration,
-            [`${scriptPrefix}.forced_style_and_layout_duration`]:
+            [`${prefix}.entry_type`]: scriptPerfEntry.entryType,
+            [`${prefix}.start_time`]: scriptPerfEntry.startTime,
+            [`${prefix}.execution_start`]: scriptPerfEntry.executionStart,
+            [`${prefix}.duration`]: scriptPerfEntry.duration,
+            [`${prefix}.forced_style_and_layout_duration`]:
               scriptPerfEntry.forcedStyleAndLayoutDuration,
-            [`${scriptPrefix}.invoker`]: scriptPerfEntry.invoker,
-            [`${scriptPrefix}.pause_duration`]: scriptPerfEntry.pauseDuration,
-            [`${scriptPrefix}.source_url`]: scriptPerfEntry.sourceURL,
-            [`${scriptPrefix}.source_function_name`]:
+            [`${prefix}.invoker`]: scriptPerfEntry.invoker,
+            [`${prefix}.pause_duration`]: scriptPerfEntry.pauseDuration,
+            [`${prefix}.source_url`]: scriptPerfEntry.sourceURL,
+            [`${prefix}.source_function_name`]:
               scriptPerfEntry.sourceFunctionName,
-            [`${scriptPrefix}.source_char_position`]:
+            [`${prefix}.source_char_position`]:
               scriptPerfEntry.sourceCharPosition,
-            [`${scriptPrefix}.window_attribution`]:
-              scriptPerfEntry.windowAttribution,
+            [`${prefix}.window_attribution`]: scriptPerfEntry.windowAttribution,
           };
-          scriptSpan.setAttributes(scriptAttributes);
-          scriptSpan.end(scriptPerfEntry.startTime + scriptPerfEntry.duration);
+          span.setAttributes(scriptAttributes);
+          span.end(scriptPerfEntry.startTime + scriptPerfEntry.duration);
         },
       );
     });
@@ -550,10 +607,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       dnsDuration,
       requestDuration,
       waitingDuration,
+      navigationEntry,
     }: TTFBAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
-    const span = this.tracer.startSpan(name);
-    span.setAttributes({
+    const attributes = {
       ...this.getSharedAttributes(ttfb),
       [`${attrPrefix}.waiting_duration`]: waitingDuration,
       [`${attrPrefix}.dns_duration`]: dnsDuration,
@@ -565,13 +622,15 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.dns_time`]: dnsDuration,
       [`${attrPrefix}.connection_time`]: connectionDuration,
       [`${attrPrefix}.request_time`]: requestDuration,
+    };
+    this.tracer.startActiveSpan(name, (span) => {
+      span.setAttributes(attributes);
+      if (applyCustomAttributes) {
+        applyCustomAttributes(ttfb, span);
+      }
+      this.processPerformanceNavigationTiming(attrPrefix, navigationEntry);
+      span.end();
     });
-
-    if (applyCustomAttributes) {
-      applyCustomAttributes(ttfb, span);
-    }
-
-    span.end();
   };
 
   disable(): void {
