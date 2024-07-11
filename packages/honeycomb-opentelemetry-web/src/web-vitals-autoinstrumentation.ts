@@ -292,7 +292,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     };
   }
 
-  private processINPPerformanceLongAnimationFrameTiming(
+  private processPerformanceLongAnimationFrameTiming(
     prefix: string,
     perfEntry: PerformanceLongAnimationFrameTiming,
   ) {
@@ -309,7 +309,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       { startTime: perfEntry.startTime },
       (loafSpan) => {
         loafSpan.setAttributes(loafAttributes);
-        this.processINPPerformanceScriptTiming(
+        this.processPerformanceScriptTiming(
           loafPrefix,
           perfEntry as PerformanceEntryWithPerformanceScriptTiming,
         );
@@ -318,11 +318,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     );
   }
 
-  private processINPPerformanceScriptTiming(
+  private processPerformanceScriptTiming(
     prefix: string,
     perfEntry: PerformanceEntryWithPerformanceScriptTiming,
   ) {
-    console.log('processINPPerformanceScriptTiming', perfEntry);
     if (!perfEntry.scripts.length) return;
     const scriptPrefix = `${prefix}.script_timing`;
 
@@ -472,7 +471,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
         }
 
         longAnimationFrameEntries.forEach((perfEntry) => {
-          this.processINPPerformanceLongAnimationFrameTiming(
+          this.processPerformanceLongAnimationFrameTiming(
             attrPrefix,
             perfEntry,
           );
@@ -553,9 +552,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       waitingDuration,
     }: TTFBAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
-
     const span = this.tracer.startSpan(name);
-
     span.setAttributes({
       ...this.getSharedAttributes(ttfb),
       [`${attrPrefix}.waiting_duration`]: waitingDuration,
