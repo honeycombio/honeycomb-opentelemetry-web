@@ -296,16 +296,31 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     prefix: string,
     perfEntry: PerformanceResourceTiming,
   ) {
-    console.log('🪵', { prefix, perfEntry });
     const attributes = {
-      // TODO: resource timing
-      // developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming
+      [`${prefix}.connect_end`]: perfEntry.connectEnd,
+      [`${prefix}.connect_start`]: perfEntry.connectStart,
+      [`${prefix}.decoded_body_size`]: perfEntry.decodedBodySize,
+      [`${prefix}.domain_lookup_end`]: perfEntry.domainLookupEnd,
+      [`${prefix}.domain_lookup_start`]: perfEntry.domainLookupStart,
+      [`${prefix}.encoded_body_size`]: perfEntry.encodedBodySize,
+      [`${prefix}.fetch_start`]: perfEntry.fetchStart,
+      [`${prefix}.initiator_type`]: perfEntry.initiatorType,
+      [`${prefix}.next_hop_protocol`]: perfEntry.nextHopProtocol,
+      [`${prefix}.redirect_end`]: perfEntry.redirectEnd,
+      [`${prefix}.redirect_start`]: perfEntry.redirectStart,
+      [`${prefix}.request_start`]: perfEntry.requestStart,
+      [`${prefix}.response_end`]: perfEntry.responseEnd,
+      [`${prefix}.response_start`]: perfEntry.responseStart,
+      [`${prefix}.secure_connection_start`]: perfEntry.secureConnectionStart,
+      // [`${prefix}.server_timing`]: perfEntry.serverTiming, // TODO: perfEntry.server timing?
+      [`${prefix}.transfer_size`]: perfEntry.transferSize,
+      [`${prefix}.worker_start`]: perfEntry.workerStart,
     };
     return attributes;
   }
   private processPerformanceResourceTiming(
     parentPrefix: string,
-    perfEntry?: PerformanceNavigationTiming,
+    perfEntry?: PerformanceResourceTiming,
   ) {
     if (!perfEntry) return;
     const prefix = `${parentPrefix}.timing`;
@@ -316,11 +331,19 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     this.tracer.startActiveSpan(
       perfEntry.name,
       { startTime: perfEntry.startTime },
-      (span) => {
-        span.setAttributes(attributes);
-        span.end(perfEntry.startTime + perfEntry.duration);
-      },
+      this.toSpanPerformanceResourceTiming(attributes, perfEntry),
     );
+  }
+
+  private toSpanPerformanceResourceTiming(
+    attributes: { [x: string]: string | number },
+    perfEntry: PerformanceResourceTiming,
+  ): (span: Span) => void {
+    return (span) => {
+      span.setAttributes(attributes);
+      // TODO: break down spans as per https://mdn.github.io/shared-assets/images/diagrams/api/performance/timestamp-diagram.svg
+      span.end(perfEntry.startTime + perfEntry.duration);
+    };
   }
 
   private processPerformanceNavigationTiming(
@@ -330,12 +353,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     if (!perfEntry) return;
     const prefix = `${parentPrefix}.timing`;
     const attributes = {
-      ...this.getAttributesforPerformanceResourceTiming(prefix, perfEntry),
       [`${prefix}.activation_start`]: perfEntry.activationStart,
-      // TODO: Add add'l attributes/spans based on this:
-      // https://mdn.github.io/shared-assets/images/diagrams/api/performance/timestamp-diagram.svg
-      // AND resource timing
-      // https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming
+      ...this.getAttributesforPerformanceResourceTiming(prefix, perfEntry),
     };
     this.tracer.startActiveSpan(
       perfEntry.name,
