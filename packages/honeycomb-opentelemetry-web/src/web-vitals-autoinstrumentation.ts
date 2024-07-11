@@ -292,6 +292,69 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     };
   }
 
+  private processINPPerformanceLongAnimationFrameTiming(
+    prefix: string,
+    perfEntry: PerformanceLongAnimationFrameTiming,
+  ) {
+    const loafPrefix = `${prefix}.loaf`;
+    const loafAttributes = {
+      [`${loafPrefix}.duration`]: perfEntry.duration,
+      [`${loafPrefix}.entryType`]: perfEntry.entryType,
+      [`${loafPrefix}.name`]: perfEntry.name,
+      [`${loafPrefix}.renderStart`]: perfEntry.renderStart,
+      [`${loafPrefix}.startTime`]: perfEntry.startTime,
+    };
+    this.tracer.startActiveSpan(
+      perfEntry.name,
+      { startTime: perfEntry.startTime },
+      (loafSpan) => {
+        loafSpan.setAttributes(loafAttributes);
+        this.processINPPerformanceScriptTiming(
+          loafPrefix,
+          perfEntry as PerformanceEntryWithPerformanceScriptTiming,
+        );
+        loafSpan.end(perfEntry.startTime + perfEntry.duration);
+      },
+    );
+  }
+
+  private processINPPerformanceScriptTiming(
+    prefix: string,
+    perfEntry: PerformanceEntryWithPerformanceScriptTiming,
+  ) {
+    console.log('processINPPerformanceScriptTiming', perfEntry);
+    if (!perfEntry.scripts.length) return;
+    const scriptPrefix = `${prefix}.script_timing`;
+
+    perfEntry.scripts?.map((scriptPerfEntry) => {
+      this.tracer.startActiveSpan(
+        scriptPerfEntry.name,
+        { startTime: scriptPerfEntry.startTime },
+        (scriptSpan) => {
+          const scriptAttributes = {
+            [`${scriptPrefix}.entry_type`]: scriptPerfEntry.entryType,
+            [`${scriptPrefix}.start_time`]: scriptPerfEntry.startTime,
+            [`${scriptPrefix}.execution_start`]: scriptPerfEntry.executionStart,
+            [`${scriptPrefix}.duration`]: scriptPerfEntry.duration,
+            [`${scriptPrefix}.forced_style_and_layout_duration`]:
+              scriptPerfEntry.forcedStyleAndLayoutDuration,
+            [`${scriptPrefix}.invoker`]: scriptPerfEntry.invoker,
+            [`${scriptPrefix}.pause_duration`]: scriptPerfEntry.pauseDuration,
+            [`${scriptPrefix}.source_url`]: scriptPerfEntry.sourceURL,
+            [`${scriptPrefix}.source_function_name`]:
+              scriptPerfEntry.sourceFunctionName,
+            [`${scriptPrefix}.source_char_position`]:
+              scriptPerfEntry.sourceCharPosition,
+            [`${scriptPrefix}.window_attribution`]:
+              scriptPerfEntry.windowAttribution,
+          };
+          scriptSpan.setAttributes(scriptAttributes);
+          scriptSpan.end(scriptPerfEntry.startTime + scriptPerfEntry.duration);
+        },
+      );
+    });
+  }
+
   onReportCLS = (
     cls: CLSMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
@@ -379,31 +442,44 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       nextPaintTime,
       presentationDelay,
       processingDuration,
+      longAnimationFrameEntries,
     }: INPAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
+    const inpDuration = inputDelay + processingDuration + presentationDelay;
+    this.tracer.startActiveSpan(
+      name,
+      { startTime: interactionTime },
+      (inpSpan) => {
+        const inpAttributes = {
+          ...this.getSharedAttributes(inp),
+          [`${attrPrefix}.input_delay`]: inputDelay,
+          [`${attrPrefix}.interaction_target`]: interactionTarget,
+          [`${attrPrefix}.interaction_time`]: interactionTime,
+          [`${attrPrefix}.interaction_type`]: interactionType,
+          [`${attrPrefix}.load_state`]: loadState,
+          [`${attrPrefix}.next_paint_time`]: nextPaintTime,
+          [`${attrPrefix}.presentation_delay`]: presentationDelay,
+          [`${attrPrefix}.processing_duration`]: processingDuration,
+          [`${attrPrefix}.duration`]: inpDuration,
+          // These will be deprecated in a future version
+          [`${attrPrefix}.element`]: interactionTarget,
+          [`${attrPrefix}.event_type`]: interactionType,
+        };
+        inpSpan.setAttributes(inpAttributes);
 
-    const span = this.tracer.startSpan(name);
+        if (applyCustomAttributes) {
+          applyCustomAttributes(inp, inpSpan);
+        }
 
-    span.setAttributes({
-      ...this.getSharedAttributes(inp),
-      [`${attrPrefix}.input_delay`]: inputDelay,
-      [`${attrPrefix}.interaction_target`]: interactionTarget,
-      [`${attrPrefix}.interaction_time`]: interactionTime,
-      [`${attrPrefix}.interaction_type`]: interactionType,
-      [`${attrPrefix}.load_state`]: loadState,
-      [`${attrPrefix}.next_paint_time`]: nextPaintTime,
-      [`${attrPrefix}.presentation_delay`]: presentationDelay,
-      [`${attrPrefix}.processing_duration`]: processingDuration,
-      // These will be deprecated in a future version
-      [`${attrPrefix}.element`]: interactionTarget,
-      [`${attrPrefix}.event_type`]: interactionType,
-    });
-
-    if (applyCustomAttributes) {
-      applyCustomAttributes(inp, span);
-    }
-
-    span.end();
+        longAnimationFrameEntries.forEach((perfEntry) => {
+          this.processINPPerformanceLongAnimationFrameTiming(
+            attrPrefix,
+            perfEntry,
+          );
+        });
+        inpSpan.end(interactionTime + inpDuration);
+      },
+    );
   };
 
   onReportFCP = (
@@ -522,4 +598,35 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   public isEnabled() {
     return this._isEnabled;
   }
+}
+
+// PerformanceScriptTiming is not yet exposed via web-vitals
+type PerformanceScriptTiming = {
+  name: string;
+  entryType: string;
+  invokerType:
+    | 'user-callback'
+    | 'event-listener'
+    | 'resolve-promise'
+    | 'reject-promise'
+    | 'classic-script'
+    | 'module-script';
+  invoker:
+    | 'IMG#id.onload'
+    | 'Window.requestAnimationFrame'
+    | 'Response.json.then';
+  startTime: number;
+  executionStart: number;
+  duration: number;
+  forcedStyleAndLayoutDuration: number;
+  pauseDuration: number;
+  sourceURL: 'https://example.com/big.js';
+  sourceFunctionName: 'do_something_long';
+  sourceCharPosition: number;
+  windowAttribution: 'self' | 'descendant' | 'ancestor' | 'same-page' | 'other';
+};
+
+interface PerformanceEntryWithPerformanceScriptTiming
+  extends PerformanceLongAnimationFrameTiming {
+  scripts: PerformanceScriptTiming[];
 }
