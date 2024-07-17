@@ -54,6 +54,7 @@ interface VitalOpts extends ReportOpts {
    * }
    */
   applyCustomAttributes: ApplyCustomAttributesFn;
+  includeTimingsAsSpans: boolean;
 }
 
 // To avoid importing InstrumentationAbstract from:
@@ -253,7 +254,11 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
     if (this.vitalsToTrack.includes('INP')) {
       onINP((vital) => {
-        this.onReportINP(vital, this.inpOpts?.applyCustomAttributes);
+        this.onReportINP(
+          vital,
+          this.inpOpts?.applyCustomAttributes,
+          this.inpOpts?.includeTimingsAsSpans,
+        );
       }, this.inpOpts);
     }
 
@@ -504,6 +509,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   onReportINP = (
     inp: INPMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
+    includeTimingsAsSpans = false,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -536,6 +542,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
           [`${attrPrefix}.presentation_delay`]: presentationDelay,
           [`${attrPrefix}.processing_duration`]: processingDuration,
           [`${attrPrefix}.duration`]: inpDuration,
+          [`${attrPrefix}.timing.json`]: JSON.stringify(
+            longAnimationFrameEntries,
+          ),
           // These will be deprecated in a future version
           [`${attrPrefix}.element`]: interactionTarget,
           [`${attrPrefix}.event_type`]: interactionType,
@@ -546,12 +555,14 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
           applyCustomAttributes(inp, inpSpan);
         }
 
-        longAnimationFrameEntries.forEach((perfEntry) => {
-          this.processPerformanceLongAnimationFrameTiming(
-            attrPrefix,
-            perfEntry,
-          );
-        });
+        if (includeTimingsAsSpans) {
+          longAnimationFrameEntries.forEach((perfEntry) => {
+            this.processPerformanceLongAnimationFrameTiming(
+              attrPrefix,
+              perfEntry,
+            );
+          });
+        }
         inpSpan.end(interactionTime + inpDuration);
       },
     );
