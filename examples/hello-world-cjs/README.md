@@ -6,7 +6,7 @@ You can run this example to see the SDK in action.
 
 `npm install`
 
-Paste your API key into `index.js`, where is says "your api key goes here".
+Paste your API key into `index.cjs`, where is says "your api key goes here".
 
 `npm run start`
 
