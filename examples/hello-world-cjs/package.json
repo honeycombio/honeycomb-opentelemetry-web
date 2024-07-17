@@ -1,10 +1,11 @@
 {
-  "name": "hello-world-web",
+  "name": "hello-world-cjs",
   "version": "0.0.1",
-  "description": "An example vanilla web app that works with Honeycomb's OpenTelemetry Web Distro",
+  "description": "An example vanilla that uses cjs modules that works with Honeycomb's OpenTelemetry Web Distro",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "build": "esbuild index.js --bundle --sourcemap --outfile=build/bundle.js",
+    "build": "esbuild index.cjs --bundle --sourcemap --outfile=build/bundle.js",
     "start": "npm run build && serve .",
     "build-src": "cd ../../ && npm run build",
     "watch:build-bundle": "npm run build-src && npm run build",
@@ -16,13 +17,12 @@
   "license": "ISC",
   "dependencies": {
     "@honeycombio/opentelemetry-web": "file:../..",
-    "@opentelemetry/auto-instrumentations-web": "^0.40.0",
-    "@opentelemetry/context-zone": "^1.25.1"
+    "@opentelemetry/auto-instrumentations-web": "^0.40.0"
   },
   "devDependencies": {
     "chokidar": "^3.6.0",
     "chokidar-cli": "^3.0.0",
-    "esbuild": "0.21.5",
+    "esbuild": "0.21.3",
     "serve": "^14.2.3"
   }
 }
