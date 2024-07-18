@@ -1,4 +1,14 @@
 # honeycomb-opentelemetry-web changelog
+
+## v0.5.0 [beta] - 2024-07-18
+- maint(deps-dev): bump esbuild from 0.21.5 to 0.22.0 in /examples/hello-world-web in the example-deps group (#184) | @dependabot
+- maint(deps): bump web-vitals from 4.2.0 to 4.2.1 (#183) | @dependabot
+- docs: update vulnerability reporting process (#193) | @robbkidd
+- feat: Bundle using Rollup for multi-module support. (#175) | @wolfgangcodes
+ (main)- maint: Remove Pipeline team as code owners from web distro (#190) | @akvanhar
+- feat: Add Global Error Instrumentation (#186) | @wolfgangcodes @nordfjord
+- feat: Update example to nest spans. (#189) | @wolfgangcodes
+
 ## v0.4.0 [beta] - 2024-06-21
 - maint(deps): bump the otel group across 1 directory with 9 updates (#178) | @dependabot
 - maint(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#179) | @dependabot
