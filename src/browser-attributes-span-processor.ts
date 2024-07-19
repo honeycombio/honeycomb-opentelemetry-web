@@ -1,4 +1,3 @@
-import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { DynamicAttributesSpanProcessor } from './dynamic-attributes-span-processor';
 
 function getBrowserAttributes() {
