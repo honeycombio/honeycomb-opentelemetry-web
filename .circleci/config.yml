@@ -14,7 +14,7 @@ workflows:
   generate-config:
     jobs:
       - path-filtering/filter:
-          base-revision: main
+          base-revision: mhaddara/exp-multi-packages
           filters:
             tags:
               only: /.*/
