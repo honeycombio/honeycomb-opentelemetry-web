@@ -18,4 +18,4 @@ workflows:
           config-path: .circleci/build-npm-package.yml
           mapping: |
             packages/honeycomb-opentelemetry-web/.* package-name "honeycomb-opentelemetry-web" packages/honeycomb-opentelemetry-web/.circleci/config.yml
-            packages/honeycomb-react-user-instrumentation/.* package-name "honeycomb-react-user-instrumentation" .circleci/build-code-config.yml
+            packages/honeycomb-react-user-instrumentation/.* package-name "honeycomb-react-user-instrumentation" packages/honeycomb-react-user-instrumentation/.circleci/config.yml
