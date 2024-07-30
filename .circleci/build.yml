@@ -2,10 +2,10 @@ version: 2.1
 
 parameters:
   build-web-distro:
-    type: bool
+    type: boolean
     default: false
   build-react-distro:
-    type: bool
+    type: boolean
     default: false
 
 filters_always: &filters_always
@@ -139,7 +139,7 @@ jobs:
 workflows:
   build-web-distro:
     when:
-      - equal: [ true, << pipeline.parameters.build-web-distro >> ]
+      condition: << pipeline.parameters.build-web-distro >> 
     jobs:
       - checkout-and-install:
           <<: *filters_always
@@ -147,19 +147,19 @@ workflows:
       - check-format:
           <<: *filters_always
           requires:
-            - git-checkout
+            - checkout-and-install
       - lint:
           <<: *filters_always
           requires:
-            - git-checkout
+            - checkout-and-install
       - test:
           <<: *filters_always
           requires:
-            - git-checkout
+            - checkout-and-install
       - build:
           <<: *filters_always
           requires:
-            - git-checkout
+            - checkout-and-install
             - test
       - smoke_test:
           <<: *filters_always
@@ -180,7 +180,7 @@ workflows:
 
   build-react-distro:
     when:
-      - equal: [ true, << pipeline.parameters.build-react-distro >> ]
+      condition: << pipeline.parameters.build-react-distro >> 
     jobs:
       - checkout-and-install:
           <<: *filters_always
@@ -188,19 +188,19 @@ workflows:
       - check-format:
           <<: *filters_always
           requires:
-            - git-checkout
+            - checkout-and-install
       - lint:
           <<: *filters_always
           requires:
-            - git-checkout
+            - checkout-and-install
       - test:
           <<: *filters_always
           requires:
-            - git-checkout
+            - checkout-and-install
       - build:
           <<: *filters_always
           requires:
-            - git-checkout
+            - checkout-and-install
             - test
       - publish_github:
           <<: *filters_publish
