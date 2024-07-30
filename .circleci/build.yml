@@ -41,9 +41,13 @@ jobs:
         default: ''
     steps:
       - checkout
-      - run: npm ci
+      - run:
+          name: NPM CI
+          command: |
+            cd << parameters.package-path >>
+            npm ci
       - persist_to_workspace:
-          root: packages/<< parameters.package-path >>
+          root: << parameters.package-path >>
           paths:
             - ./*
 
