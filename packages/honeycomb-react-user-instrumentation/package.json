@@ -23,6 +23,7 @@
     "check-format": "prettier --list-different \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "format": "prettier --write \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "lint": "eslint .",
+    "lint:ci": "npm run lint",
     "lint:fix": "eslint . --fix",
     "test:smoke-docker": "docker-compose up --build --detach",
     "test:smoke-cypress": "npx cypress run --headed --browser chrome",

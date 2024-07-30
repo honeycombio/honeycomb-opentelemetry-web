@@ -1,9 +1,12 @@
 version: 2.1
 
 parameters:
-  package-name:
-    type: string
-    default: ''
+  build-web-distro:
+    type: bool
+    default: false
+  build-react-distro:
+    type: bool
+    default: false
 
 filters_always: &filters_always
   filters:
@@ -30,12 +33,17 @@ executors:
       - image: cibuilds/github:0.13.0
 
 jobs:
-  git-checkout:
+  checkout-and-install:
     executor: node
+    parameters:
+      package-path:
+        type: string
+        default: ''
     steps:
       - checkout
+      - run: npm ci
       - persist_to_workspace:
-          root: packages/<< pipeline.parameters.package-name >>
+          root: packages/<< parameters.package-path >>
           paths:
             - ./*
 
@@ -44,7 +52,6 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - run: npm i
       - run: npm run build
       - persist_to_workspace:
           root: .
@@ -57,7 +64,6 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - run: npm ci
       - run: npm run check-format
 
   lint:
@@ -65,8 +71,6 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - run: npm ci
-      - run: npm run build
       - run: npm run lint:ci
 
   test:
@@ -75,14 +79,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - run: npm i
-      - run:
-          name: Install JUnit coverage reporter
-          # command: yarn add --dev jest-junit
-          command: npm i --save-dev jest-junit
       - run:
           name: Run tests with JUnit as reporter
-          # command: jest --ci --runInBand --reporters=default --reporters=jest-junit
           command: npm run test:ci
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/
@@ -135,15 +133,17 @@ jobs:
       - run:
           name: store npm auth token
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run: npm ci
       - run: npm run build
       - run: npm publish --access public
 
 workflows:
-  build-and-deploy:
+  build-web-distro:
+    when:
+      - equal: [ true, << pipeline.parameters.build-web-distro >> ]
     jobs:
-      - git-checkout:
+      - checkout-and-install:
           <<: *filters_always
+          package-path: packages/honeycomb-opentelemetry-web
       - check-format:
           <<: *filters_always
           requires:
@@ -177,3 +177,38 @@ workflows:
           requires:
             - build
             - smoke_test
+
+  build-react-distro:
+    when:
+      - equal: [ true, << pipeline.parameters.build-react-distro >> ]
+    jobs:
+      - checkout-and-install:
+          <<: *filters_always
+          package-path: packages/honeycomb-react-user-instrumentation
+      - check-format:
+          <<: *filters_always
+          requires:
+            - git-checkout
+      - lint:
+          <<: *filters_always
+          requires:
+            - git-checkout
+      - test:
+          <<: *filters_always
+          requires:
+            - git-checkout
+      - build:
+          <<: *filters_always
+          requires:
+            - git-checkout
+            - test
+      - publish_github:
+          <<: *filters_publish
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build
+      - publish_npm:
+          <<: *filters_publish
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build

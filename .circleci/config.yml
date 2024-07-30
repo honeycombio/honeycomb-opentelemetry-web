@@ -15,7 +15,7 @@ workflows:
     jobs:
       - path-filtering/filter:
           base-revision: main
-          config-path: .circleci/build-npm-package.yml
+          config-path: .circleci/build.yml
           mapping: |
-            packages/honeycomb-opentelemetry-web/.* package-name "honeycomb-opentelemetry-web" packages/honeycomb-opentelemetry-web/.circleci/config.yml
-            packages/honeycomb-react-user-instrumentation/.* package-name "honeycomb-react-user-instrumentation" packages/honeycomb-react-user-instrumentation/.circleci/config.yml
+            packages/honeycomb-opentelemetry-web/.* build-web-distro true
+            packages/honeycomb-react-user-instrumentation/.* build-react-distro true
