@@ -193,12 +193,12 @@ workflows:
           requires:
             - build
             - smoke_test
-      - publish_npm:
-          <<: *filters_publish_web
-          context: Honeycomb Secrets for Public Repos
-          requires:
-            - build
-            - smoke_test
+      # - publish_npm:
+      #     <<: *filters_publish_web
+      #     context: Honeycomb Secrets for Public Repos
+      #     requires:
+      #       - build
+      #       - smoke_test
 
   build-react-distro:
     when:
@@ -229,8 +229,8 @@ workflows:
           context: Honeycomb Secrets for Public Repos
           requires:
             - build
-      - publish_npm:
-          <<: *filters_publish_react
-          context: Honeycomb Secrets for Public Repos
-          requires:
-            - build
+      # - publish_npm:
+      #     <<: *filters_publish_react
+      #     context: Honeycomb Secrets for Public Repos
+      #     requires:
+      #       - build
