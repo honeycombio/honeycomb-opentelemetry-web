@@ -81,6 +81,13 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   serviceName?: string;
 
+  /** Provide an array of span processors that should be applied to all spans.
+   * Use this to specify synchronous hooks that can add to a span once the span is started or ended.
+   * The processors will be applied in the order they are specified.
+   * E.g. adding attributes to a span.
+   */
+  spanProcessors?: SpanProcessor[];
+
   /** The sample rate used to determine whether a trace is exported.
    * This must be a whole positive number. Only 1 out of every `sampleRate` traces will be randomly selected to be sent.
    * Set to 0 to drop everything.

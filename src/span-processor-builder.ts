@@ -53,6 +53,13 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
     honeycombSpanProcessor.addProcessor(options?.spanProcessor);
   }
 
+  // if there is an array of spanProcessors provided, add them to the composite span processor
+  if (options?.spanProcessors) {
+    options.spanProcessors.forEach((processor) => {
+      honeycombSpanProcessor.addProcessor(processor);
+    });
+  }
+
   return honeycombSpanProcessor;
 };
 

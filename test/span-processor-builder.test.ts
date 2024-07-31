@@ -126,6 +126,7 @@ describe('configureSpanProcessors', () => {
       'url.path': '/some-page',
     });
   });
+
   test('Configures additional user provided span processor', () => {
     const honeycombSpanProcessors = configureSpanProcessors({
       spanProcessor: new TestSpanProcessorOne(),
@@ -146,6 +147,29 @@ describe('configureSpanProcessors', () => {
       'page.url':
         'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
       'processor1.name': 'TestSpanProcessorOne',
+      'url.path': '/some-page',
+    });
+  });
+
+  test('Configures array of span processors if provided', () => {
+    const honeycombSpanProcessors = configureSpanProcessors({
+      spanProcessors: [new TestSpanProcessorOne(), new TestSpanProcessorTwo()],
+    });
+
+    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(5);
+
+    honeycombSpanProcessors.onStart(span, ROOT_CONTEXT);
+    expect(span.attributes).toEqual({
+      'browser.width': 1024,
+      'browser.height': 768,
+      'page.hash': '#the-hash',
+      'page.hostname': 'something-something.com',
+      'page.route': '/some-page',
+      'page.search': '?search_params=yes&hello=hi',
+      'page.url':
+        'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
+      'processor1.name': 'TestSpanProcessorOne',
+      'processor2.name': 'TestSpanProcessorTwo',
       'url.path': '/some-page',
     });
   });
