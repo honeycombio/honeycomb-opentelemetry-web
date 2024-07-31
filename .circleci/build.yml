@@ -161,6 +161,7 @@ workflows:
     jobs:
       - checkout-and-install:
           <<: *filters_always
+          package-path: packages/honeycomb-opentelemetry-web
       - check-format:
           <<: *filters_always
           requires:
@@ -205,6 +206,7 @@ workflows:
     jobs:
       - checkout-and-install:
           <<: *filters_always
+          package-path: packages/honeycomb-react-user-instrumentation
       - check-format:
           <<: *filters_always
           requires:
