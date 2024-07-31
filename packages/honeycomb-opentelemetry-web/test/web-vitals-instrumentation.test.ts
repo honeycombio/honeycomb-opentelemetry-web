@@ -114,10 +114,58 @@ const INP: INPMetricWithAttribution = {
     presentationDelay: 500,
   },
 };
+const scriptTiming = {
+  name: 'script',
+  entryType: 'script',
+  startTime: 2338.2999999523163,
+  duration: 1000,
+  invoker: 'BUTTON#INP-poor.onclick',
+  invokerType: 'event-listener',
+  windowAttribution: 'self',
+  executionStart: 2338.2999999523163,
+  forcedStyleAndLayoutDuration: 0,
+  pauseDuration: 0,
+  sourceURL: 'http://someapp.com/bundle.js',
+  sourceFunctionName: 'myFn',
+  sourceCharPosition: 424242,
+};
+
+const frameTiming = {
+  duration: 1000,
+  entryType: 'long-animation-frame',
+  name: 'long-animation-frame',
+  renderStart: 90,
+  startTime: 10,
+  scripts: [scriptTiming],
+};
+const INPWithTimings: INPMetricWithAttribution = {
+  name: 'INP',
+  value: 200,
+  id: 'inp-id',
+  delta: 200,
+  rating: 'good',
+  entries: [],
+  navigationType: 'back-forward',
+  attribution: {
+    interactionTarget: 'div#inp-element',
+    interactionType: 'pointer',
+    loadState: 'complete',
+    interactionTargetElement: undefined,
+    interactionTime: 10,
+    nextPaintTime: 400,
+    processedEventEntries: [],
+    longAnimationFrameEntries: [{ ...frameTiming, toJSON: () => frameTiming }],
+    inputDelay: 42,
+    processingDuration: 600,
+    presentationDelay: 500,
+  },
+};
 
 const INPAttr = {
   'inp.value': 200,
   'inp.id': 'inp-id',
+  'inp.duration': 1142,
+  'inp.timing.json': '[]',
   'inp.delta': 200,
   'inp.rating': 'good',
   'inp.navigation_type': 'back-forward',
@@ -337,6 +385,54 @@ describe('Web Vitals Instrumentation Tests', () => {
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(INPAttr);
+    });
+
+    it('should create a include timings when enabled', () => {
+      const webVitalsInstr = new WebVitalsInstrumentation();
+      webVitalsInstr.onReportINP(
+        INPWithTimings,
+        (inp, span) => {
+          span.setAttributes({
+            'inp.entries': inp.entries.toString(),
+            'inp.my_custom_attr': 'custom_attr',
+          });
+        },
+        true,
+      );
+
+      const [scriptTimingSpan, timingSpan, inpSpan] =
+        exporter.getFinishedSpans();
+      console.log({ timingSpan });
+      expect(inpSpan.name).toBe('INP');
+      expect(inpSpan.instrumentationLibrary.name).toBe(
+        '@honeycombio/instrumentation-web-vitals',
+      );
+      const timingJSON =
+        '[{"duration":1000,"entryType":"long-animation-frame","name":"long-animation-frame","renderStart":90,"startTime":10,"scripts":[{"name":"script","entryType":"script","startTime":2338.2999999523163,"duration":1000,"invoker":"BUTTON#INP-poor.onclick","invokerType":"event-listener","windowAttribution":"self","executionStart":2338.2999999523163,"forcedStyleAndLayoutDuration":0,"pauseDuration":0,"sourceURL":"http://someapp.com/bundle.js","sourceFunctionName":"myFn","sourceCharPosition":424242}]}]';
+      expect(inpSpan.attributes).toEqual({
+        ...INPAttr,
+        'inp.timing.json': timingJSON,
+      });
+      expect(timingSpan.attributes).toEqual({
+        'inp.timing.duration': 1000,
+        'inp.timing.entryType': 'long-animation-frame',
+        'inp.timing.name': 'long-animation-frame',
+        'inp.timing.renderStart': 90,
+        'inp.timing.startTime': 10,
+      });
+      expect(scriptTimingSpan.attributes).toEqual({
+        'inp.timing.timing.duration': 1000,
+        'inp.timing.timing.entry_type': 'script',
+        'inp.timing.timing.execution_start': 2338.2999999523163,
+        'inp.timing.timing.forced_style_and_layout_duration': 0,
+        'inp.timing.timing.invoker': 'BUTTON#INP-poor.onclick',
+        'inp.timing.timing.pause_duration': 0,
+        'inp.timing.timing.source_char_position': 424242,
+        'inp.timing.timing.source_function_name': 'myFn',
+        'inp.timing.timing.source_url': 'http://someapp.com/bundle.js',
+        'inp.timing.timing.start_time': 2338.2999999523163,
+        'inp.timing.timing.window_attribution': 'self',
+      });
     });
 
     it('should not create a span when disabled', () => {

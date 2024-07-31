@@ -38,6 +38,38 @@ import {
 } from '@opentelemetry/api';
 import * as shimmer from 'shimmer';
 
+// PerformanceScriptTiming is not yet exposed via web-vitals
+// See https://github.com/w3c/long-animation-frames
+type PerformanceScriptTiming = {
+  name: string;
+  entryType: string;
+  invokerType:
+    | 'user-callback'
+    | 'event-listener'
+    | 'resolve-promise'
+    | 'reject-promise'
+    | 'classic-script'
+    | 'module-script';
+  invoker:
+    | 'IMG#id.onload'
+    | 'Window.requestAnimationFrame'
+    | 'Response.json.then';
+  startTime: number;
+  executionStart: number;
+  duration: number;
+  forcedStyleAndLayoutDuration: number;
+  pauseDuration: number;
+  sourceURL: 'https://example.com/big.js';
+  sourceFunctionName: 'do_something_long';
+  sourceCharPosition: number;
+  windowAttribution: 'self' | 'descendant' | 'ancestor' | 'same-page' | 'other';
+};
+
+interface PerformanceEntryWithPerformanceScriptTiming
+  extends PerformanceLongAnimationFrameTiming {
+  scripts: PerformanceScriptTiming[];
+}
+
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
 interface VitalOpts extends ReportOpts {
@@ -54,6 +86,9 @@ interface VitalOpts extends ReportOpts {
    * }
    */
   applyCustomAttributes: ApplyCustomAttributesFn;
+}
+
+interface VitalOptsWithTimings extends VitalOpts {
   includeTimingsAsSpans: boolean;
 }
 
@@ -178,7 +213,7 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   cls?: VitalOpts;
 
   /** Config specific to INP (Interaction to Next Paint) */
-  inp?: VitalOpts;
+  inp?: VitalOptsWithTimings;
 
   /** Config specific to FID (First Input Delay) */
   fid?: VitalOpts;
@@ -199,7 +234,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   readonly vitalsToTrack: Array<Metric['name']>;
   readonly lcpOpts?: VitalOpts;
   readonly clsOpts?: VitalOpts;
-  readonly inpOpts?: VitalOpts;
+  readonly inpOpts?: VitalOptsWithTimings;
   readonly fidOpts?: VitalOpts;
   readonly fcpOpts?: VitalOpts;
   readonly ttfbOpts?: VitalOpts;
@@ -297,80 +332,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     };
   }
 
-  private getAttributesforPerformanceResourceTiming(
-    prefix: string,
-    perfEntry: PerformanceResourceTiming,
-  ) {
-    const attributes = {
-      [`${prefix}.connect_end`]: perfEntry.connectEnd,
-      [`${prefix}.connect_start`]: perfEntry.connectStart,
-      [`${prefix}.decoded_body_size`]: perfEntry.decodedBodySize,
-      [`${prefix}.domain_lookup_end`]: perfEntry.domainLookupEnd,
-      [`${prefix}.domain_lookup_start`]: perfEntry.domainLookupStart,
-      [`${prefix}.encoded_body_size`]: perfEntry.encodedBodySize,
-      [`${prefix}.fetch_start`]: perfEntry.fetchStart,
-      [`${prefix}.initiator_type`]: perfEntry.initiatorType,
-      [`${prefix}.next_hop_protocol`]: perfEntry.nextHopProtocol,
-      [`${prefix}.redirect_end`]: perfEntry.redirectEnd,
-      [`${prefix}.redirect_start`]: perfEntry.redirectStart,
-      [`${prefix}.request_start`]: perfEntry.requestStart,
-      [`${prefix}.response_end`]: perfEntry.responseEnd,
-      [`${prefix}.response_start`]: perfEntry.responseStart,
-      [`${prefix}.secure_connection_start`]: perfEntry.secureConnectionStart,
-      // [`${prefix}.server_timing`]: perfEntry.serverTiming, // TODO: perfEntry.server timing?
-      [`${prefix}.transfer_size`]: perfEntry.transferSize,
-      [`${prefix}.worker_start`]: perfEntry.workerStart,
-    };
-    return attributes;
-  }
-  private processPerformanceResourceTiming(
-    parentPrefix: string,
-    perfEntry?: PerformanceResourceTiming,
-  ) {
-    if (!perfEntry) return;
-    const prefix = `${parentPrefix}.timing`;
-    const attributes = this.getAttributesforPerformanceResourceTiming(
-      prefix,
-      perfEntry,
-    );
-    this.tracer.startActiveSpan(
-      perfEntry.name,
-      { startTime: perfEntry.startTime },
-      this.toSpanPerformanceResourceTiming(attributes, perfEntry),
-    );
-  }
-
-  private toSpanPerformanceResourceTiming(
-    attributes: { [x: string]: string | number },
-    perfEntry: PerformanceResourceTiming,
-  ): (span: Span) => void {
-    return (span) => {
-      span.setAttributes(attributes);
-      // TODO: break down spans as per https://mdn.github.io/shared-assets/images/diagrams/api/performance/timestamp-diagram.svg
-      span.end(perfEntry.startTime + perfEntry.duration);
-    };
-  }
-
-  private processPerformanceNavigationTiming(
-    parentPrefix: string,
-    perfEntry?: PerformanceNavigationTiming,
-  ) {
-    if (!perfEntry) return;
-    const prefix = `${parentPrefix}.timing`;
-    const attributes = {
-      [`${prefix}.activation_start`]: perfEntry.activationStart,
-      ...this.getAttributesforPerformanceResourceTiming(prefix, perfEntry),
-    };
-    this.tracer.startActiveSpan(
-      perfEntry.name,
-      { startTime: perfEntry.startTime },
-      (span) => {
-        span.setAttributes(attributes);
-        span.end(perfEntry.startTime + perfEntry.duration);
-      },
-    );
-  }
-
   private processPerformanceLongAnimationFrameTiming(
     parentPrefix: string,
     perfEntry?: PerformanceLongAnimationFrameTiming,
@@ -404,7 +365,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     perfEntry?: PerformanceEntryWithPerformanceScriptTiming,
   ) {
     if (!perfEntry) return;
-    if (!perfEntry.scripts.length) return;
+    if (!perfEntry.scripts?.length) return;
     const prefix = `${parentPrefix}.timing`;
 
     perfEntry.scripts?.map((scriptPerfEntry) => {
@@ -637,7 +598,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       dnsDuration,
       requestDuration,
       waitingDuration,
-      navigationEntry,
     }: TTFBAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
     const attributes = {
@@ -653,14 +613,13 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.connection_time`]: connectionDuration,
       [`${attrPrefix}.request_time`]: requestDuration,
     };
-    this.tracer.startActiveSpan(name, (span) => {
-      span.setAttributes(attributes);
-      if (applyCustomAttributes) {
-        applyCustomAttributes(ttfb, span);
-      }
-      this.processPerformanceNavigationTiming(attrPrefix, navigationEntry);
-      span.end();
-    });
+
+    const span = this.tracer.startSpan(name);
+    span.setAttributes(attributes);
+    if (applyCustomAttributes) {
+      applyCustomAttributes(ttfb, span);
+    }
+    span.end();
   };
 
   disable(): void {
@@ -684,35 +643,4 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   public isEnabled() {
     return this._isEnabled;
   }
-}
-
-// PerformanceScriptTiming is not yet exposed via web-vitals
-type PerformanceScriptTiming = {
-  name: string;
-  entryType: string;
-  invokerType:
-    | 'user-callback'
-    | 'event-listener'
-    | 'resolve-promise'
-    | 'reject-promise'
-    | 'classic-script'
-    | 'module-script';
-  invoker:
-    | 'IMG#id.onload'
-    | 'Window.requestAnimationFrame'
-    | 'Response.json.then';
-  startTime: number;
-  executionStart: number;
-  duration: number;
-  forcedStyleAndLayoutDuration: number;
-  pauseDuration: number;
-  sourceURL: 'https://example.com/big.js';
-  sourceFunctionName: 'do_something_long';
-  sourceCharPosition: number;
-  windowAttribution: 'self' | 'descendant' | 'ancestor' | 'same-page' | 'other';
-};
-
-interface PerformanceEntryWithPerformanceScriptTiming
-  extends PerformanceLongAnimationFrameTiming {
-  scripts: PerformanceScriptTiming[];
 }
