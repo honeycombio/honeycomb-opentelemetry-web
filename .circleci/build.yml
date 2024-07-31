@@ -76,6 +76,13 @@ jobs:
       - attach_workspace:
           at: ./
       - run: npm run lint:ci
+  
+  lint-examples:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: npm run lint:examples
 
   test:
     executor: node
@@ -165,6 +172,10 @@ workflows:
           requires:
             - checkout-and-install
             - test
+      - lint-examples:
+          <<: *filters_always
+          requires:
+            - build
       - smoke_test:
           <<: *filters_always
           requires:
