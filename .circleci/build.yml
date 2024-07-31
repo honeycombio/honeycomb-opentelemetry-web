@@ -13,10 +13,17 @@ filters_always: &filters_always
     tags:
       only: /.*/
 
-filters_publish: &filters_publish
+filters_publish_web: &filters_publish_web
   filters:
     tags:
-      only: /^v[0-9].*/
+      only: /^web-distro-v[0-9].*/
+    branches:
+      ignore: /.*/
+
+filters_publish_react: &filters_publish_react
+  filters:
+    tags:
+      only: /^react-instrumentation-v[0-9].*/
     branches:
       ignore: /.*/
 
@@ -131,10 +138,14 @@ jobs:
 
   publish_github:
     executor: github
+    parameters:
+      package-path:
+        type: string
+        default: ''
     steps:
       - run:
           name: "GHR Draft"
-          command: ghr -draft -n ${CIRCLE_TAG} -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG}
+          command: ghr -draft -n "<< parameters.package-path >> ${CIRCLE_TAG}" -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -generatenotes ${CIRCLE_TAG}
 
   publish_npm:
     executor: node
@@ -181,13 +192,13 @@ workflows:
           requires:
             - build
       - publish_github:
-          <<: *filters_publish
+          <<: *filters_publish_web
           context: Honeycomb Secrets for Public Repos
           requires:
             - build
             - smoke_test
       - publish_npm:
-          <<: *filters_publish
+          <<: *filters_publish_web
           context: Honeycomb Secrets for Public Repos
           requires:
             - build
@@ -218,12 +229,12 @@ workflows:
             - checkout-and-install
             - test
       - publish_github:
-          <<: *filters_publish
+          <<: *filters_publish_react
           context: Honeycomb Secrets for Public Repos
           requires:
             - build
       - publish_npm:
-          <<: *filters_publish
+          <<: *filters_publish_react
           context: Honeycomb Secrets for Public Repos
           requires:
             - build
