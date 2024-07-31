@@ -27,7 +27,7 @@
 
 ## Git Tags and Releases
 - Checkout `main` and fetch the now-updated `main` branch.
-- Apply a tag for the new version on the merged commit (e.g. `git tag -a v2.3.1 -m "web-distro-v2.3.1"`). The tag MUST begin with either `web-distro-v` or `react-instrumentation-v` in order to trigger our CI release pipeline
+- Apply a tag for the new version on the merged commit (e.g. `git tag -a web-distro-v2.3.1 -m "web-distro-v2.3.1"`). The tag MUST begin with either `web-distro-v` or `react-instrumentation-v` in order to trigger our CI release pipeline
   - use the tag prefix that corresponds to the library you want to release
   - if you want to release both libraries, create two tags and push them both upstream.
 - Push the tag upstream (this will kick off the release pipeline in CI) e.g. `git push origin web-distro-v2.3.1`
