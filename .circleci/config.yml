@@ -15,6 +15,9 @@ workflows:
     jobs:
       - path-filtering/filter:
           base-revision: main
+          filters:
+            tags:
+              only: /.*/
           config-path: .circleci/build.yml
           mapping: |
             packages/honeycomb-opentelemetry-web/.* build-web-distro true
