@@ -84,6 +84,7 @@ Pass these options to the HoneycombWebSDK:
 | debug                 | optional                                         | boolean | false                   | Enable additional logging.                                                                                                                                                 |
 | dataset               | optional                                         | string  |                         | Populate this only if your Honeycomb environment is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic).                                   |
 | skipOptionsValidation | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with OpenTelemetry Collector.                                                                                                       |
+| spanProcessors | optional                                         | SpanProcessor[] | | Array of [span processors](https://opentelemetry.io/docs/languages/java/instrumentation/#span-processor) to apply to all generated spans.  |
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 
