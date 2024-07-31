@@ -138,14 +138,10 @@ jobs:
 
   publish_github:
     executor: github
-    parameters:
-      package-path:
-        type: string
-        default: ''
     steps:
       - run:
           name: "GHR Draft"
-          command: ghr -draft -n "<< parameters.package-path >> ${CIRCLE_TAG}" -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -generatenotes ${CIRCLE_TAG}
+          command: ghr -draft -generatenotes -n ${CIRCLE_TAG} -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG}
 
   publish_npm:
     executor: node
@@ -165,7 +161,6 @@ workflows:
     jobs:
       - checkout-and-install:
           <<: *filters_always
-          package-path: packages/honeycomb-opentelemetry-web
       - check-format:
           <<: *filters_always
           requires:
@@ -210,7 +205,6 @@ workflows:
     jobs:
       - checkout-and-install:
           <<: *filters_always
-          package-path: packages/honeycomb-react-user-instrumentation
       - check-format:
           <<: *filters_always
           requires:
