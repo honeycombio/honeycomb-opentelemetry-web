@@ -89,6 +89,9 @@ interface VitalOpts extends ReportOpts {
 }
 
 interface VitalOptsWithTimings extends VitalOpts {
+  /**
+   * if this is true it will create spans from the PerformanceLongAnimationFrameTiming frames
+   */
   includeTimingsAsSpans: boolean;
 }
 
