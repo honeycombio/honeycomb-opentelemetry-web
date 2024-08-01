@@ -16,14 +16,14 @@ filters_always: &filters_always
 filters_publish_web: &filters_publish_web
   filters:
     tags:
-      only: /^web-distro-v[0-9].*/
+      only: /^honeycomb-opentelemetry-web-v[0-9].*/
     branches:
       ignore: /.*/
 
 filters_publish_react: &filters_publish_react
   filters:
     tags:
-      only: /^react-instrumentation-v[0-9].*/
+      only: /^honeycomb-react-user-instrumentation-v[0-9].*/
     branches:
       ignore: /.*/
 

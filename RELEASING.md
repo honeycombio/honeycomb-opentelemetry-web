@@ -27,10 +27,19 @@
 
 ## Git Tags and Releases
 - Checkout `main` and fetch the now-updated `main` branch.
-- Apply a tag for the new version on the merged commit (e.g. `git tag -a web-distro-v2.3.1 -m "web-distro-v2.3.1"`). The tag MUST begin with either `web-distro-v` or `react-instrumentation-v` in order to trigger our CI release pipeline
-  - use the tag prefix that corresponds to the library you want to release
+- Apply a tag for the new version on the merged commit (e.g. `git tag -a web-distro-v2.3.1 -m "web-distro-v2.3.1"`). The tag MUST begin with our accepted tag prefix, corresponding to the library that is being released. See the section below for the full list of tag prefixes.
   - if you want to release both libraries, create two tags and push them both upstream.
 - Push the tag upstream (this will kick off the release pipeline in CI) e.g. `git push origin web-distro-v2.3.1`
 - The CI publish steps will create a draft GitHub release; wait for CircleCI to complete and then ensure the draft exists at https://github.com/honeycombio/honeycomb-opentelemetry-web/releases
 - Click "generate release notes" in GitHub for full changelog notes and any new contributors
 - Publish the GitHub draft release - if it is a prerelease (e.g., beta) click the prerelease checkbox.
+
+## Available Tag Prefixes
+We currently publish 2 packages from this repository. Each package is versioned separately, and may be released independently. We manage releases via git tags, and we use the following tags for each package:
+
+| package                                        | tag                                           |
+|------------------------------------------------|-----------------------------------------------|
+| packages/honeycomb-opentelemetry-web:          | `honeycomb-opentelemetry-web-vX.Y.Z`          |
+| packages/honeycomb-react-user-instrumentation: | `honeycomb-react-user-instrumentation-vX.Y.Z` |
+
+note that the `X.Y.Z` at the end of each tag will be replaced with the version number for that package.
