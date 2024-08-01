@@ -1,0 +1,14 @@
+# Ignore artifacts:
+build
+coverage
+dist
+dist/*
+
+# https://github.com/typescript-eslint/typescript-eslint/blob/main/.prettierignore
+**/dist
+**/dist/*
+**/coverage
+**/shared-fixtures
+**/.vscode
+**/.nyc_output
+**/.vs

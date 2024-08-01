@@ -1,0 +1,236 @@
+version: 2.1
+
+parameters:
+  build-web-distro:
+    type: boolean
+    default: false
+  build-react-distro:
+    type: boolean
+    default: false
+
+filters_always: &filters_always
+  filters:
+    tags:
+      only: /.*/
+
+filters_publish_web: &filters_publish_web
+  filters:
+    tags:
+      only: /^honeycomb-opentelemetry-web-v[0-9].*/
+    branches:
+      ignore: /.*/
+
+filters_publish_react: &filters_publish_react
+  filters:
+    tags:
+      only: /^honeycomb-react-user-instrumentation-v[0-9].*/
+    branches:
+      ignore: /.*/
+
+orbs:
+  bats: circleci/bats@1.0.0
+  cypress: cypress-io/cypress@3
+
+executors:
+  node:
+    docker:
+      - image: cimg/node:16.16
+  github:
+    docker:
+      - image: cibuilds/github:0.13.0
+
+jobs:
+  checkout-and-install:
+    executor: node
+    parameters:
+      package-path:
+        type: string
+        default: ''
+    steps:
+      - checkout
+      - run:
+          name: NPM CI
+          command: |
+            cd << parameters.package-path >>
+            npm ci
+      - persist_to_workspace:
+          root: << parameters.package-path >>
+          paths:
+            - ./*
+
+  build:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules/*
+            - dist/*
+
+  check-format:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: npm run check-format
+
+  lint:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: npm run lint:ci
+  
+  lint-examples:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: npm run lint:examples
+
+  test:
+    executor: node
+    # https://circleci.com/docs/collect-test-data/#jest
+    steps:
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Run tests with JUnit as reporter
+          command: npm run test:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/
+      - store_test_results:
+          path: ./reports/
+      - store_artifacts:
+          path: ./reports/
+
+  smoke_test:
+    machine:
+      image: ubuntu-2204:2024.01.1
+    steps:
+      - attach_workspace:
+          at: ./
+      - bats/install
+      - run:
+          name: What's the BATS?
+          command: |
+            which bats
+            bats --version
+      - run: npx cypress install
+      - run:
+          name: What's the Cypress?
+          command: npx cypress --version
+      - run:
+          name: Spin up and run e2e smoke tests
+          command: make smoke
+      - store_test_results:
+          path: ./smoke-tests/
+      - store_artifacts:
+          path: ./smoke-tests/report.xml
+      - store_artifacts:
+          path: ./smoke-tests/collector/data-results
+      - run:
+          name: Tear down e2e smoke tests
+          command: make unsmoke
+
+  publish_github:
+    executor: github
+    steps:
+      - run:
+          name: "GHR Draft"
+          command: ghr -draft -n ${CIRCLE_TAG} -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG}
+
+  publish_npm:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: /
+      - run:
+          name: store npm auth token
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run: npm run build
+      - run: npm publish --access public
+
+workflows:
+  build-web-distro:
+    when:
+      condition: << pipeline.parameters.build-web-distro >> 
+    jobs:
+      - checkout-and-install:
+          <<: *filters_always
+          package-path: packages/honeycomb-opentelemetry-web
+      - check-format:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+      - lint:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+      - test:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+      - build:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+            - test
+      - lint-examples:
+          <<: *filters_always
+          requires:
+            - build
+      - smoke_test:
+          <<: *filters_always
+          requires:
+            - build
+      - publish_github:
+          <<: *filters_publish_web
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build
+            - smoke_test
+      - publish_npm:
+          <<: *filters_publish_web
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build
+            - smoke_test
+
+  build-react-distro:
+    when:
+      condition: << pipeline.parameters.build-react-distro >> 
+    jobs:
+      - checkout-and-install:
+          <<: *filters_always
+          package-path: packages/honeycomb-react-user-instrumentation
+      - check-format:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+      - lint:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+      - test:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+      - build:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+            - test
+      - publish_github:
+          <<: *filters_publish_react
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build
+      - publish_npm:
+          <<: *filters_publish_react
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - build

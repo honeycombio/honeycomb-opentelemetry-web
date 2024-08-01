@@ -1,147 +1,24 @@
 version: 2.1
 
-filters_always: &filters_always
-  filters:
-    tags:
-      only: /.*/
-
-filters_publish: &filters_publish
-  filters:
-    tags:
-      only: /^v[0-9].*/
-    branches:
-      ignore: /.*/
+setup: true
 
 orbs:
-  bats: circleci/bats@1.0.0
-  cypress: cypress-io/cypress@3
+  path-filtering: circleci/path-filtering@1.1.0
 
-executors:
-  node:
-    docker:
-      - image: cimg/node:16.16
-  github:
-    docker:
-      - image: cibuilds/github:0.13.0
-
-jobs:
-  build:
-    executor: node
-    steps:
-      - checkout
-      - run: npm i
-      - run: npm run build
-
-  check-format:
-    executor: node
-    steps:
-      - checkout
-      - run: npm ci
-      - run: npm run check-format
-
-  lint:
-    executor: node
-    steps:
-      - checkout
-      - run: npm ci
-      - run: npm run build
-      - run: npm run lint:ci
-
-  test:
-    executor: node
-    # https://circleci.com/docs/collect-test-data/#jest
-    steps:
-      - checkout
-      - run: npm i
-      - run:
-          name: Install JUnit coverage reporter
-          # command: yarn add --dev jest-junit
-          command: npm i --save-dev jest-junit
-      - run:
-          name: Run tests with JUnit as reporter
-          # command: jest --ci --runInBand --reporters=default --reporters=jest-junit
-          command: npm run test:ci
-          environment:
-            JEST_JUNIT_OUTPUT_DIR: ./reports/
-      - store_test_results:
-          path: ./reports/
-      - store_artifacts:
-          path: ./reports/
-
-  smoke_test:
-    machine:
-      image: ubuntu-2204:2024.01.1
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ./
-      - bats/install
-      - run:
-          name: What's the BATS?
-          command: |
-            which bats
-            bats --version
-      - cypress/install
-      - run:
-          name: What's the Cypress?
-          command: npx cypress --version
-      - run:
-          name: Spin up and run e2e smoke tests
-          command: make smoke
-      - store_test_results:
-          path: ./smoke-tests/
-      - store_artifacts:
-          path: ./smoke-tests/report.xml
-      - store_artifacts:
-          path: ./smoke-tests/collector/data-results
-      - run:
-          name: Tear down e2e smoke tests
-          command: make unsmoke
-
-  publish_github:
-    executor: github
-    steps:
-      - run:
-          name: "GHR Draft"
-          command: ghr -draft -n ${CIRCLE_TAG} -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG}
-
-  publish_npm:
-    executor: node
-    steps:
-      - checkout
-      - run:
-          name: store npm auth token
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run: npm ci
-      - run: npm run build
-      - run: npm publish --access public
+parameters:
+  base-path:
+    type: string
+    default: ''
 
 workflows:
-  build:
+  generate-config:
     jobs:
-      - check-format:
-          <<: *filters_always
-      - lint:
-          <<: *filters_always
-      - test:
-          <<: *filters_always
-      - build:
-          <<: *filters_always
-          requires:
-            - test
-      - smoke_test:
-          <<: *filters_always
-          requires:
-            - build
-      - publish_github:
-          <<: *filters_publish
-          context: Honeycomb Secrets for Public Repos
-          requires:
-            - build
-            - smoke_test
-      - publish_npm:
-          <<: *filters_publish
-          context: Honeycomb Secrets for Public Repos
-          requires:
-            - build
-            - smoke_test
+      - path-filtering/filter:
+          base-revision: main
+          filters:
+            tags:
+              only: /.*/
+          config-path: .circleci/build.yml
+          mapping: |
+            packages/honeycomb-opentelemetry-web/.* build-web-distro true
+            packages/honeycomb-react-user-instrumentation/.* build-react-distro true
