@@ -414,17 +414,17 @@ describe('Web Vitals Instrumentation Tests', () => {
         'inp.timing.startTime': 10,
       });
       expect(scriptTimingSpan.attributes).toEqual({
-        'inp.timing.timing.duration': 1000,
-        'inp.timing.timing.entry_type': 'script',
-        'inp.timing.timing.execution_start': 2338.2999999523163,
-        'inp.timing.timing.forced_style_and_layout_duration': 0,
-        'inp.timing.timing.invoker': 'BUTTON#INP-poor.onclick',
-        'inp.timing.timing.pause_duration': 0,
-        'inp.timing.timing.source_char_position': 424242,
-        'inp.timing.timing.source_function_name': 'myFn',
-        'inp.timing.timing.source_url': 'http://someapp.com/bundle.js',
-        'inp.timing.timing.start_time': 2338.2999999523163,
-        'inp.timing.timing.window_attribution': 'self',
+        'inp.timing.script.duration': 1000,
+        'inp.timing.script.entry_type': 'script',
+        'inp.timing.script.execution_start': 2338.2999999523163,
+        'inp.timing.script.forced_style_and_layout_duration': 0,
+        'inp.timing.script.invoker': 'BUTTON#INP-poor.onclick',
+        'inp.timing.script.pause_duration': 0,
+        'inp.timing.script.source_char_position': 424242,
+        'inp.timing.script.source_function_name': 'myFn',
+        'inp.timing.script.source_url': 'http://someapp.com/bundle.js',
+        'inp.timing.script.start_time': 2338.2999999523163,
+        'inp.timing.script.window_attribution': 'self',
       });
     });
 

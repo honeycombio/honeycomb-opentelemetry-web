@@ -399,7 +399,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   ) {
     if (!perfScriptEntries) return;
     if (!perfScriptEntries?.length) return;
-    const prefix = `${parentPrefix}.timing`;
+    const prefix = `${parentPrefix}.script`;
 
     perfScriptEntries.map((scriptPerfEntry) => {
       this.tracer.startActiveSpan(
