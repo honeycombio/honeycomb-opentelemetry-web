@@ -165,7 +165,6 @@ const INPAttr = {
   'inp.value': 200,
   'inp.id': 'inp-id',
   'inp.duration': 1142,
-  'inp.timing.json': '[]',
   'inp.delta': 200,
   'inp.rating': 'good',
   'inp.navigation_type': 'back-forward',
@@ -407,12 +406,6 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(inpSpan.instrumentationLibrary.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      const timingJSON =
-        '[{"duration":1000,"entryType":"long-animation-frame","name":"long-animation-frame","renderStart":90,"startTime":10,"scripts":[{"name":"script","entryType":"script","startTime":2338.2999999523163,"duration":1000,"invoker":"BUTTON#INP-poor.onclick","invokerType":"event-listener","windowAttribution":"self","executionStart":2338.2999999523163,"forcedStyleAndLayoutDuration":0,"pauseDuration":0,"sourceURL":"http://someapp.com/bundle.js","sourceFunctionName":"myFn","sourceCharPosition":424242}]}]';
-      expect(inpSpan.attributes).toEqual({
-        ...INPAttr,
-        'inp.timing.json': timingJSON,
-      });
       expect(timingSpan.attributes).toEqual({
         'inp.timing.duration': 1000,
         'inp.timing.entryType': 'long-animation-frame',

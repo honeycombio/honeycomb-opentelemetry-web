@@ -335,13 +335,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     };
   }
 
-  private processPerformanceLongAnimationFrameTiming(
-    parentPrefix: string,
-    perfEntry?: PerformanceLongAnimationFrameTiming,
+  private getAttributesForPerformanceLongAnimationFrameTiming(
+    prefix: string,
+    perfEntry: PerformanceLongAnimationFrameTiming,
   ) {
-    if (!perfEntry) return;
-
-    const prefix = `${parentPrefix}.timing`;
     const loafAttributes = {
       [`${prefix}.duration`]: perfEntry.duration,
       [`${prefix}.entryType`]: perfEntry.entryType,
@@ -349,49 +346,70 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${prefix}.renderStart`]: perfEntry.renderStart,
       [`${prefix}.startTime`]: perfEntry.startTime,
     };
+    return loafAttributes;
+  }
+
+  private getAttributesForPerformanceScriptTiming(
+    prefix: string,
+    scriptPerfEntry: PerformanceScriptTiming,
+  ) {
+    const scriptAttributes = {
+      [`${prefix}.entry_type`]: scriptPerfEntry.entryType,
+      [`${prefix}.start_time`]: scriptPerfEntry.startTime,
+      [`${prefix}.execution_start`]: scriptPerfEntry.executionStart,
+      [`${prefix}.duration`]: scriptPerfEntry.duration,
+      [`${prefix}.forced_style_and_layout_duration`]:
+        scriptPerfEntry.forcedStyleAndLayoutDuration,
+      [`${prefix}.invoker`]: scriptPerfEntry.invoker,
+      [`${prefix}.pause_duration`]: scriptPerfEntry.pauseDuration,
+      [`${prefix}.source_url`]: scriptPerfEntry.sourceURL,
+      [`${prefix}.source_function_name`]: scriptPerfEntry.sourceFunctionName,
+      [`${prefix}.source_char_position`]: scriptPerfEntry.sourceCharPosition,
+      [`${prefix}.window_attribution`]: scriptPerfEntry.windowAttribution,
+    };
+    return scriptAttributes;
+  }
+
+  private processPerformanceLongAnimationFrameTimingSpans(
+    parentPrefix: string,
+    perfEntry?: PerformanceEntryWithPerformanceScriptTiming,
+  ) {
+    if (!perfEntry) return;
+
+    const prefix = `${parentPrefix}.timing`;
+    const loafAttributes =
+      this.getAttributesForPerformanceLongAnimationFrameTiming(
+        prefix,
+        perfEntry,
+      );
     this.tracer.startActiveSpan(
       perfEntry.name,
       { startTime: perfEntry.startTime },
       (span) => {
         span.setAttributes(loafAttributes);
-        this.processPerformanceScriptTiming(
-          prefix,
-          perfEntry as PerformanceEntryWithPerformanceScriptTiming,
-        );
+        this.processPerformanceScriptTimingSpans(prefix, perfEntry.scripts);
         span.end(perfEntry.startTime + perfEntry.duration);
       },
     );
   }
 
-  private processPerformanceScriptTiming(
+  private processPerformanceScriptTimingSpans(
     parentPrefix: string,
-    perfEntry?: PerformanceEntryWithPerformanceScriptTiming,
+    perfScriptEntries?: PerformanceScriptTiming[],
   ) {
-    if (!perfEntry) return;
-    if (!perfEntry.scripts?.length) return;
+    if (!perfScriptEntries) return;
+    if (!perfScriptEntries?.length) return;
     const prefix = `${parentPrefix}.timing`;
 
-    perfEntry.scripts?.map((scriptPerfEntry) => {
+    perfScriptEntries.map((scriptPerfEntry) => {
       this.tracer.startActiveSpan(
         scriptPerfEntry.name,
         { startTime: scriptPerfEntry.startTime },
         (span) => {
-          const scriptAttributes = {
-            [`${prefix}.entry_type`]: scriptPerfEntry.entryType,
-            [`${prefix}.start_time`]: scriptPerfEntry.startTime,
-            [`${prefix}.execution_start`]: scriptPerfEntry.executionStart,
-            [`${prefix}.duration`]: scriptPerfEntry.duration,
-            [`${prefix}.forced_style_and_layout_duration`]:
-              scriptPerfEntry.forcedStyleAndLayoutDuration,
-            [`${prefix}.invoker`]: scriptPerfEntry.invoker,
-            [`${prefix}.pause_duration`]: scriptPerfEntry.pauseDuration,
-            [`${prefix}.source_url`]: scriptPerfEntry.sourceURL,
-            [`${prefix}.source_function_name`]:
-              scriptPerfEntry.sourceFunctionName,
-            [`${prefix}.source_char_position`]:
-              scriptPerfEntry.sourceCharPosition,
-            [`${prefix}.window_attribution`]: scriptPerfEntry.windowAttribution,
-          };
+          const scriptAttributes = this.getAttributesForPerformanceScriptTiming(
+            prefix,
+            scriptPerfEntry,
+          );
           span.setAttributes(scriptAttributes);
           span.end(scriptPerfEntry.startTime + scriptPerfEntry.duration);
         },
@@ -487,8 +505,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       nextPaintTime,
       presentationDelay,
       processingDuration,
-      longAnimationFrameEntries,
+      longAnimationFrameEntries: _loafEntries,
     }: INPAttribution = attribution;
+    const longAnimationFrameEntries =
+      _loafEntries as PerformanceEntryWithPerformanceScriptTiming[];
     const attrPrefix = this.getAttrPrefix(name);
     const inpDuration = inputDelay + processingDuration + presentationDelay;
     this.tracer.startActiveSpan(
@@ -506,13 +526,11 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
           [`${attrPrefix}.presentation_delay`]: presentationDelay,
           [`${attrPrefix}.processing_duration`]: processingDuration,
           [`${attrPrefix}.duration`]: inpDuration,
-          [`${attrPrefix}.timing.json`]: JSON.stringify(
-            longAnimationFrameEntries,
-          ),
           // These will be deprecated in a future version
           [`${attrPrefix}.element`]: interactionTarget,
           [`${attrPrefix}.event_type`]: interactionType,
         };
+
         inpSpan.setAttributes(inpAttributes);
 
         if (applyCustomAttributes) {
@@ -521,7 +539,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
         if (includeTimingsAsSpans) {
           longAnimationFrameEntries.forEach((perfEntry) => {
-            this.processPerformanceLongAnimationFrameTiming(
+            this.processPerformanceLongAnimationFrameTimingSpans(
               attrPrefix,
               perfEntry,
             );
