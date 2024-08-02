@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: 'npm' # See documentation for possible values
-    directory: '/' # Location of package manifests
+    directory: '/packages/honeycomb-opentelemetry-web' # Location of package manifests
     schedule:
       interval: 'weekly' # Check for updates every week
     labels:
@@ -33,7 +33,7 @@ updates:
       - dependency-name: '*'
         update-types: ['version-update:semver-major'] # Ignore major version updates for all packages.
   - package-ecosystem: 'npm'
-    directory: '/examples/hello-world-web' # Location of package manifests
+    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-web' # Location of package manifests
     schedule:
       interval: 'weekly' # Check for updates every week
     labels:
@@ -47,3 +47,30 @@ updates:
       example-deps:
         patterns:
           - '*' # Update all dependencies in example app
+  - package-ecosystem: 'npm' # See documentation for possible values
+    directory: '/packages/honeycomb-react-user-instrumentation' # Location of package manifests
+    schedule:
+      interval: 'weekly' # Check for updates every week
+    labels:
+      - 'type: dependencies' # Add label
+    reviewers:
+      - 'honeycombio/pink-gremlins'
+    commit-message:
+      prefix: 'maint' # Add PR title prefix
+      include: 'scope'
+    groups:
+      otel:
+        patterns:
+          - '@opentelemetry/*' # Update all otel dependencies together
+      dev-dependencies: # Update dev dependencies together instead of piecemeal
+        patterns:
+          - '@type*'
+          - 'cypress'
+          - 'eslint*'
+          - 'jest*'
+          - 'prettier'
+          - 'ts-*'
+          - 'typescript'
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major'] # Ignore major version updates for all packages.
