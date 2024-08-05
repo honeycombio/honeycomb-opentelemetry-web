@@ -20,6 +20,7 @@ This package sets up OpenTelemetry for tracing, using our recommended practices,
 * Easy configuration to send to Honeycomb
 * Basic sampler to control event volume
 * Multi span attributes
+* 'session.id' on every span, generated on page load
 * Convenient packaging
 * An informative debug mode
 * Links to traces in Honeycomb
