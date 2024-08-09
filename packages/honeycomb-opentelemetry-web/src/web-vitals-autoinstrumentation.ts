@@ -38,6 +38,38 @@ import {
 } from '@opentelemetry/api';
 import * as shimmer from 'shimmer';
 
+// PerformanceScriptTiming is not yet exposed via web-vitals
+// See https://github.com/w3c/long-animation-frames
+type PerformanceScriptTiming = {
+  name: string;
+  entryType: string;
+  invokerType:
+    | 'user-callback'
+    | 'event-listener'
+    | 'resolve-promise'
+    | 'reject-promise'
+    | 'classic-script'
+    | 'module-script';
+  invoker:
+    | 'IMG#id.onload'
+    | 'Window.requestAnimationFrame'
+    | 'Response.json.then';
+  startTime: number;
+  executionStart: number;
+  duration: number;
+  forcedStyleAndLayoutDuration: number;
+  pauseDuration: number;
+  sourceURL: 'https://example.com/big.js';
+  sourceFunctionName: 'do_something_long';
+  sourceCharPosition: number;
+  windowAttribution: 'self' | 'descendant' | 'ancestor' | 'same-page' | 'other';
+};
+
+interface PerformanceEntryWithPerformanceScriptTiming
+  extends PerformanceLongAnimationFrameTiming {
+  scripts: PerformanceScriptTiming[];
+}
+
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
 interface VitalOpts extends ReportOpts {
@@ -54,6 +86,13 @@ interface VitalOpts extends ReportOpts {
    * }
    */
   applyCustomAttributes: ApplyCustomAttributesFn;
+}
+
+interface VitalOptsWithTimings extends VitalOpts {
+  /**
+   * if this is true it will create spans from the PerformanceLongAnimationFrameTiming frames
+   */
+  includeTimingsAsSpans: boolean;
 }
 
 // To avoid importing InstrumentationAbstract from:
@@ -177,7 +216,7 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   cls?: VitalOpts;
 
   /** Config specific to INP (Interaction to Next Paint) */
-  inp?: VitalOpts;
+  inp?: VitalOptsWithTimings;
 
   /** Config specific to FID (First Input Delay) */
   fid?: VitalOpts;
@@ -198,7 +237,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   readonly vitalsToTrack: Array<Metric['name']>;
   readonly lcpOpts?: VitalOpts;
   readonly clsOpts?: VitalOpts;
-  readonly inpOpts?: VitalOpts;
+  readonly inpOpts?: VitalOptsWithTimings;
   readonly fidOpts?: VitalOpts;
   readonly fcpOpts?: VitalOpts;
   readonly ttfbOpts?: VitalOpts;
@@ -253,7 +292,11 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
     if (this.vitalsToTrack.includes('INP')) {
       onINP((vital) => {
-        this.onReportINP(vital, this.inpOpts?.applyCustomAttributes);
+        this.onReportINP(
+          vital,
+          this.inpOpts?.applyCustomAttributes,
+          this.inpOpts?.includeTimingsAsSpans,
+        );
       }, this.inpOpts);
     }
 
@@ -290,6 +333,88 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.rating`]: rating,
       [`${attrPrefix}.navigation_type`]: navigationType,
     };
+  }
+
+  private getAttributesForPerformanceLongAnimationFrameTiming(
+    prefix: string,
+    perfEntry: PerformanceLongAnimationFrameTiming,
+  ) {
+    const loafAttributes = {
+      [`${prefix}.duration`]: perfEntry.duration,
+      [`${prefix}.entryType`]: perfEntry.entryType,
+      [`${prefix}.name`]: perfEntry.name,
+      [`${prefix}.renderStart`]: perfEntry.renderStart,
+      [`${prefix}.startTime`]: perfEntry.startTime,
+    };
+    return loafAttributes;
+  }
+
+  private getAttributesForPerformanceScriptTiming(
+    prefix: string,
+    scriptPerfEntry: PerformanceScriptTiming,
+  ) {
+    const scriptAttributes = {
+      [`${prefix}.entry_type`]: scriptPerfEntry.entryType,
+      [`${prefix}.start_time`]: scriptPerfEntry.startTime,
+      [`${prefix}.execution_start`]: scriptPerfEntry.executionStart,
+      [`${prefix}.duration`]: scriptPerfEntry.duration,
+      [`${prefix}.forced_style_and_layout_duration`]:
+        scriptPerfEntry.forcedStyleAndLayoutDuration,
+      [`${prefix}.invoker`]: scriptPerfEntry.invoker,
+      [`${prefix}.pause_duration`]: scriptPerfEntry.pauseDuration,
+      [`${prefix}.source_url`]: scriptPerfEntry.sourceURL,
+      [`${prefix}.source_function_name`]: scriptPerfEntry.sourceFunctionName,
+      [`${prefix}.source_char_position`]: scriptPerfEntry.sourceCharPosition,
+      [`${prefix}.window_attribution`]: scriptPerfEntry.windowAttribution,
+    };
+    return scriptAttributes;
+  }
+
+  private processPerformanceLongAnimationFrameTimingSpans(
+    parentPrefix: string,
+    perfEntry?: PerformanceEntryWithPerformanceScriptTiming,
+  ) {
+    if (!perfEntry) return;
+
+    const prefix = `${parentPrefix}.timing`;
+    const loafAttributes =
+      this.getAttributesForPerformanceLongAnimationFrameTiming(
+        prefix,
+        perfEntry,
+      );
+    this.tracer.startActiveSpan(
+      perfEntry.name,
+      { startTime: perfEntry.startTime },
+      (span) => {
+        span.setAttributes(loafAttributes);
+        this.processPerformanceScriptTimingSpans(prefix, perfEntry.scripts);
+        span.end(perfEntry.startTime + perfEntry.duration);
+      },
+    );
+  }
+
+  private processPerformanceScriptTimingSpans(
+    parentPrefix: string,
+    perfScriptEntries?: PerformanceScriptTiming[],
+  ) {
+    if (!perfScriptEntries) return;
+    if (!perfScriptEntries?.length) return;
+    const prefix = `${parentPrefix}.script`;
+
+    perfScriptEntries.map((scriptPerfEntry) => {
+      this.tracer.startActiveSpan(
+        scriptPerfEntry.name,
+        { startTime: scriptPerfEntry.startTime },
+        (span) => {
+          const scriptAttributes = this.getAttributesForPerformanceScriptTiming(
+            prefix,
+            scriptPerfEntry,
+          );
+          span.setAttributes(scriptAttributes);
+          span.end(scriptPerfEntry.startTime + scriptPerfEntry.duration);
+        },
+      );
+    });
   }
 
   onReportCLS = (
@@ -366,6 +491,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   onReportINP = (
     inp: INPMetricWithAttribution,
     applyCustomAttributes?: ApplyCustomAttributesFn,
+    includeTimingsAsSpans = false,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -379,31 +505,49 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       nextPaintTime,
       presentationDelay,
       processingDuration,
+      longAnimationFrameEntries: _loafEntries,
     }: INPAttribution = attribution;
+    const longAnimationFrameEntries =
+      _loafEntries as PerformanceEntryWithPerformanceScriptTiming[];
     const attrPrefix = this.getAttrPrefix(name);
+    const inpDuration = inputDelay + processingDuration + presentationDelay;
+    this.tracer.startActiveSpan(
+      name,
+      { startTime: interactionTime },
+      (inpSpan) => {
+        const inpAttributes = {
+          ...this.getSharedAttributes(inp),
+          [`${attrPrefix}.input_delay`]: inputDelay,
+          [`${attrPrefix}.interaction_target`]: interactionTarget,
+          [`${attrPrefix}.interaction_time`]: interactionTime,
+          [`${attrPrefix}.interaction_type`]: interactionType,
+          [`${attrPrefix}.load_state`]: loadState,
+          [`${attrPrefix}.next_paint_time`]: nextPaintTime,
+          [`${attrPrefix}.presentation_delay`]: presentationDelay,
+          [`${attrPrefix}.processing_duration`]: processingDuration,
+          [`${attrPrefix}.duration`]: inpDuration,
+          // These will be deprecated in a future version
+          [`${attrPrefix}.element`]: interactionTarget,
+          [`${attrPrefix}.event_type`]: interactionType,
+        };
 
-    const span = this.tracer.startSpan(name);
+        inpSpan.setAttributes(inpAttributes);
 
-    span.setAttributes({
-      ...this.getSharedAttributes(inp),
-      [`${attrPrefix}.input_delay`]: inputDelay,
-      [`${attrPrefix}.interaction_target`]: interactionTarget,
-      [`${attrPrefix}.interaction_time`]: interactionTime,
-      [`${attrPrefix}.interaction_type`]: interactionType,
-      [`${attrPrefix}.load_state`]: loadState,
-      [`${attrPrefix}.next_paint_time`]: nextPaintTime,
-      [`${attrPrefix}.presentation_delay`]: presentationDelay,
-      [`${attrPrefix}.processing_duration`]: processingDuration,
-      // These will be deprecated in a future version
-      [`${attrPrefix}.element`]: interactionTarget,
-      [`${attrPrefix}.event_type`]: interactionType,
-    });
+        if (applyCustomAttributes) {
+          applyCustomAttributes(inp, inpSpan);
+        }
 
-    if (applyCustomAttributes) {
-      applyCustomAttributes(inp, span);
-    }
-
-    span.end();
+        if (includeTimingsAsSpans) {
+          longAnimationFrameEntries.forEach((perfEntry) => {
+            this.processPerformanceLongAnimationFrameTimingSpans(
+              attrPrefix,
+              perfEntry,
+            );
+          });
+        }
+        inpSpan.end(interactionTime + inpDuration);
+      },
+    );
   };
 
   onReportFCP = (
@@ -477,10 +621,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       waitingDuration,
     }: TTFBAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
-
-    const span = this.tracer.startSpan(name);
-
-    span.setAttributes({
+    const attributes = {
       ...this.getSharedAttributes(ttfb),
       [`${attrPrefix}.waiting_duration`]: waitingDuration,
       [`${attrPrefix}.dns_duration`]: dnsDuration,
@@ -492,12 +633,13 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.dns_time`]: dnsDuration,
       [`${attrPrefix}.connection_time`]: connectionDuration,
       [`${attrPrefix}.request_time`]: requestDuration,
-    });
+    };
 
+    const span = this.tracer.startSpan(name);
+    span.setAttributes(attributes);
     if (applyCustomAttributes) {
       applyCustomAttributes(ttfb, span);
     }
-
     span.end();
   };
 

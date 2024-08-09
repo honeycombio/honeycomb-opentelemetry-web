@@ -24,6 +24,9 @@ const main = () => {
       }),
     ],
     contextManager: new ZoneContextManager(),
+    webVitalsInstrumentationConfig: {
+      vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
+    },
   });
   sdk.start();
   const tracer = trace.getTracer('click-tracer');
