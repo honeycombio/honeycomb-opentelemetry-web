@@ -1,11 +1,24 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.6.0 [beta] - 2024-08-09
+- feat: Add LOAF support for onINP (#191) | @wolfgangcodes
+- docs: Tell people about the session ID (#232) | @jessitron
+- refactor: export multiple packages (#203) | @MustafaHaddara
+- feat: Support multiple span processors (#212) | @pkanal
+- chore: dependabot should ignore major version upgrades (#210) | @pkanal
+- fix: npm audit vulnerability (#209) | @pkanal
+- chore: Use Approximately equivalent to version for eslint b/c peer dep (#196) | @wolfgangcodes
+- maint(deps): bump ua-parser-js from 1.0.37 to 1.0.38 in /packages/honeycomb-react-user-instrumentation (#227) | @dependabot
+- maint(deps): bump @rollup/rollup-linux-x64-gnu from 4.9.5 to 4.20.0 in /packages/honeycomb-react-user-instrumentation (#229) | @dependabot
+- maint: update package paths for dependabot (#218) | @MustafaHaddara
+- maint(deps): bump web-vitals from 4.2.1 to 4.2.2 (#199) | @dependabot
+
 ## v0.5.0 [beta] - 2024-07-18
 - maint(deps-dev): bump esbuild from 0.21.5 to 0.22.0 in /examples/hello-world-web in the example-deps group (#184) | @dependabot
 - maint(deps): bump web-vitals from 4.2.0 to 4.2.1 (#183) | @dependabot
 - docs: update vulnerability reporting process (#193) | @robbkidd
 - feat: Bundle using Rollup for multi-module support. (#175) | @wolfgangcodes
- (main)- maint: Remove Pipeline team as code owners from web distro (#190) | @akvanhar
+- maint: Remove Pipeline team as code owners from web distro (#190) | @akvanhar
 - feat: Add Global Error Instrumentation (#186) | @wolfgangcodes @nordfjord
 - feat: Update example to nest spans. (#189) | @wolfgangcodes
 
