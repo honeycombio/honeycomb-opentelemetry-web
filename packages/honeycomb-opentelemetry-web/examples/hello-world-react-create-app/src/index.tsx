@@ -3,20 +3,60 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import {
+  createBrowserRouter,
+  Link,
+  RouterProvider,
+  useParams,
+} from 'react-router-dom';
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
+import { ReactRouterSpanProcessor } from './reactRouterSpanProcessor';
 
 const configDefaults = {
   ignoreNetworkEvents: true,
 };
+
+const Name = () => {
+  const { name } = useParams();
+  return (
+    <div>
+      {name} <Link to={'/'}>Home</Link>
+    </div>
+  );
+};
+
+const Pet = () => {
+  const { name, pet } = useParams();
+  return (
+    <div>
+      {name} has a pet {pet}
+      <Link to={`/name/${name}`}>Back to person</Link>
+    </div>
+  );
+};
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+  },
+  {
+    path: 'name/:name',
+    element: <Name />,
+  },
+  {
+    path: 'name/:name/pet/:pet',
+    element: <Pet />,
+  },
+]);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>,
 );
 
@@ -30,6 +70,7 @@ reportWebVitals(console.log);
 
 try {
   const sdk = new HoneycombWebSDK({
+    debug: true,
     apiKey: 'api-key-goes-here',
     serviceName: 'hny-web-distro-example:hello-world-react-create-app',
     instrumentations: [
@@ -39,6 +80,7 @@ try {
         '@opentelemetry/instrumentation-document-load': configDefaults,
       }),
     ], // add automatic instrumentation
+    spanProcessors: [new ReactRouterSpanProcessor({ router })],
   });
   sdk.start();
 } catch (err) {
