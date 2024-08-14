@@ -4,7 +4,8 @@
 [![CircleCI](https://circleci.com/gh/honeycombio/honeycomb-opentelemetry-web.svg?style=shield)](https://circleci.com/gh/honeycombio/honeycomb-opentelemetry-web)
 [![npm](https://img.shields.io/npm/v/@honeycombio/opentelemetry-web)](https://www.npmjs.com/package/@honeycombio/opentelemetry-web)
 
-Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser.
+Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser. Detailed documentation for setup, instrumentation and troubleshooting can be found [here](https://docs.honeycomb.io/get-started/start-building/web/).
+
 <!-- TODO: happy badges of the OTel versions we are using -->
 <!-- TODO: evergreen question of whether to use fields or attributes -->
 **STATUS: this library is in BETA.** Data shapes are stable and safe for production. We are actively seeking feedback to ensure usability.
@@ -69,7 +70,7 @@ sdk.start();
 
 ![Honeycomb screen, with "Home" circled on the left, and the dropdown circled at the top.](docs/honeycomb-home.png)
 
-Refer to our [Honeycomb documentation](https://docs.honeycomb.io/get-started/start-building/rum/) for more information on instrumentation and troubleshooting.
+Refer to our [Honeycomb documentation](https://docs.honeycomb.io/get-started/start-building/web/) for more information on instrumentation and troubleshooting.
 
 ## SDK Configuration
 
