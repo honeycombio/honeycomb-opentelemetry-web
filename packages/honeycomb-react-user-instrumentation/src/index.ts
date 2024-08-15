@@ -1,1 +1,2 @@
-export const add = (a: number, b: number) => a + b;
+export { ReactUserInteractionInstrumentation } from './ReactUserInteractionInstrumentation';
+export { ReactUserInteractionSpanProcessor } from './ReactUserInteractionSpanProcessor';

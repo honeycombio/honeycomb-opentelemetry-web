@@ -12,7 +12,8 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
-    "lib": ["es6", "dom"]
+    "lib": ["es6", "dom"],
+    "jsx": "react"
   },
   "include": ["./src/**/*.ts", "./src/**/*.js", "*.config.js"],
   "exclude": ["node_modules"]
