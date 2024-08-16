@@ -14,7 +14,9 @@ function App() {
         </p>
         <p>words words words</p>
 
-        <button type="button" onClick={() => console.log('click')}>click me</button>
+        <button type="button" onClick={() => console.log('click')}>
+          click me
+        </button>
       </header>
     </div>
   );

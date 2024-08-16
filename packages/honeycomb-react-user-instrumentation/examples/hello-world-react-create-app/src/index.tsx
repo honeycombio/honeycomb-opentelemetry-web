@@ -10,7 +10,10 @@ import {
   useParams,
 } from 'react-router-dom';
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
-import { ReactUserInteractionInstrumentation, ReactUserInteractionSpanProcessor } from '@honeycombio/react-user-instrumentations';
+import {
+  ReactUserInteractionInstrumentation,
+  ReactUserInteractionSpanProcessor,
+} from '@honeycombio/react-user-instrumentations';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { ReactRouterSpanProcessor } from './reactRouterSpanProcessor';
 
