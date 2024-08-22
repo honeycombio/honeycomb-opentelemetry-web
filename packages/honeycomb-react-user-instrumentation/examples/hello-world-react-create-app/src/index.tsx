@@ -90,7 +90,7 @@ try {
     ], // add automatic instrumentation
     spanProcessors: [
       new ReactRouterSpanProcessor({ router }),
-      new ReactUserInteractionSpanProcessor(),
+      // new ReactUserInteractionSpanProcessor(),
     ],
   });
   sdk.start();

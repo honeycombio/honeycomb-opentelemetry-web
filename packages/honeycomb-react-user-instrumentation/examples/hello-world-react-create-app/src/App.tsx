@@ -14,7 +14,13 @@ function App() {
         </p>
         <p>words words words</p>
 
-        <button type="button" onClick={() => console.log('click')}>
+        <button
+          type="button"
+          onClick={(e) => {
+            console.log('click');
+            e.stopPropagation();
+          }}
+        >
           click me
         </button>
       </header>
