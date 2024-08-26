@@ -82,7 +82,7 @@
     "@opentelemetry/resources": "~1.25.1",
     "@opentelemetry/sdk-trace-base": "~1.25.1",
     "@opentelemetry/sdk-trace-web": "~1.25.1",
-    "@opentelemetry/semantic-conventions": "~1.25.1",
+    "@opentelemetry/semantic-conventions": "~1.26.0",
     "shimmer": "^1.2.1",
     "ua-parser-js": "^1.0.37",
     "web-vitals": "^4.2.3"
