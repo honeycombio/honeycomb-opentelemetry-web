@@ -15,7 +15,7 @@
 ```
 
 - Confirm the version number update appears in `package.json` and `package-lock.json`.
-- Update `version.ts` with the new version number.
+- Update `version.ts` (in the correct package) with the new version number.
 - Update `CHANGELOG.md` with the changes since the last release. Consider automating with a command such as these two:
   - `git log $(git describe --tags --abbrev=0)..HEAD --no-merges --oneline > new-in-this-release.log`
   - `git log --pretty='%C(green)%d%Creset- %s | %an'`

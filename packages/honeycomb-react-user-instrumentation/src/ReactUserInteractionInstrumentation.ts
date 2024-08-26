@@ -5,22 +5,23 @@ import {
 } from '@opentelemetry/instrumentation';
 import { getElementXPath } from '@opentelemetry/sdk-trace-web';
 
-type EventName = keyof HTMLElementEventMap;
-interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
-  eventNames?: EventName[];
-}
+import { VERSION } from './version';
+
+const INSTRUMENTATION_NAME = '@honeycombio/user-instrumentation';
+const SPAN_KEY = '__HNY_SPAN';
 
 const DEFAULT_EVENT_NAMES: EventName[] = ['click'];
 
-const INSTRUMENTATION_NAME = '@honeycombio/user-instrumentation';
-const VERSION = '0.0.1';
-
-const SPAN_KEY = '__HNY_SPAN';
+type EventName = keyof HTMLElementEventMap;
 
 type Listener = {
   eventName: EventName;
   handler: (event: Event) => void;
 };
+
+interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
+  eventNames?: EventName[];
+}
 
 export class ReactUserInteractionInstrumentation extends InstrumentationBase {
   protected _config: UserInteractionInstrumentationConfig;
