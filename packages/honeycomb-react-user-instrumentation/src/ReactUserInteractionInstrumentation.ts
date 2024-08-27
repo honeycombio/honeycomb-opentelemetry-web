@@ -144,10 +144,10 @@ const endSpan = (ev: Event) => {
   (ev[SPAN_KEY] as Span)?.end();
 };
 
-const wrapEventPropagationCb = (
-  event: Event,
+export const wrapEventPropagationCb = (
+  event: Pick<Event, 'stopPropagation' | 'stopImmediatePropagation'>,
   key: 'stopPropagation' | 'stopImmediatePropagation',
-  span: Span,
+  span: Pick<Span, 'end'>,
 ) => {
   const oldCb = event[key].bind(event);
   event[key] = () => {
