@@ -4,7 +4,7 @@ parameters:
   build-web-distro:
     type: boolean
     default: false
-  build-react-distro:
+  build-experimental:
     type: boolean
     default: false
 
@@ -20,10 +20,10 @@ filters_publish_web: &filters_publish_web
     branches:
       ignore: /.*/
 
-filters_publish_react: &filters_publish_react
+filters_publish_experimental: &filters_publish_experimental
   filters:
     tags:
-      only: /^honeycomb-react-user-instrumentation-v[0-9].*/
+      only: /^experimental-v[0-9].*/
     branches:
       ignore: /.*/
 
@@ -200,13 +200,13 @@ workflows:
             - build
             - smoke_test
 
-  build-react-distro:
+  build-experimental:
     when:
-      condition: << pipeline.parameters.build-react-distro >> 
+      condition: << pipeline.parameters.build-experimental >> 
     jobs:
       - checkout-and-install:
           <<: *filters_always
-          package-path: packages/honeycomb-react-user-instrumentation
+          package-path: packages/experimental
       - check-format:
           <<: *filters_always
           requires:
@@ -225,12 +225,12 @@ workflows:
             - checkout-and-install
             - test
       - publish_github:
-          <<: *filters_publish_react
+          <<: *filters_publish_experimental
           context: Honeycomb Secrets for Public Repos
           requires:
             - build
       - publish_npm:
-          <<: *filters_publish_react
+          <<: *filters_publish_experimental
           context: Honeycomb Secrets for Public Repos
           requires:
             - build

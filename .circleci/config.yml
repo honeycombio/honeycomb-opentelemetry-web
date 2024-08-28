@@ -21,4 +21,4 @@ workflows:
           config-path: .circleci/build.yml
           mapping: |
             packages/honeycomb-opentelemetry-web/.* build-web-distro true
-            packages/honeycomb-react-user-instrumentation/.* build-react-distro true
+            packages/experimental/.* build-experimental true
