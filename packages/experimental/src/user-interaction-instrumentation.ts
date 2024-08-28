@@ -25,28 +25,35 @@ interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
 
 export class UserInteractionInstrumentation extends InstrumentationBase {
   protected _config: UserInteractionInstrumentationConfig;
-  private _isenabled: boolean;
+  private _is_enabled: boolean;
   private _listeners: Listener[];
 
   constructor(config: UserInteractionInstrumentationConfig = {}) {
     super(INSTRUMENTATION_NAME, VERSION, config);
     this._config = config;
-    this._isenabled = true;
-    this._listeners = [];
+    this._is_enabled = this._config.enabled ?? false;
+
+    // enable() gets called by our superclass constructor
+    // @ts-expect-error this may get set in enable()
+    this._listeners = this._listeners ?? [];
   }
 
   protected init() {}
 
   public enable() {
-    if (this._isenabled) {
+    if (this._is_enabled) {
       return;
     }
+    // enable() gets called by our superclass constructor
+    // meaning our private fields aren't initialized yet!!
+    this._listeners = [];
+    //
     const eventNames = this._config.eventNames ?? DEFAULT_EVENT_NAMES;
     eventNames.forEach((eventName) => {
       // we need a stable reference to this handler so that we can remove it later
       const handler = createGlobalEventListener(
         eventName,
-        () => this._isenabled,
+        () => this._is_enabled,
       );
       this._listeners.push({ eventName, handler });
 
@@ -57,11 +64,11 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
       document.addEventListener(eventName, endSpan);
     });
 
-    this._isenabled = true;
+    this._is_enabled = true;
   }
 
   public disable(): void {
-    this._isenabled = false;
+    this._is_enabled = false;
     this._listeners.forEach(({ eventName, handler }) => {
       document.removeEventListener(eventName, handler, { capture: true });
       document.removeEventListener(eventName, endSpan);
