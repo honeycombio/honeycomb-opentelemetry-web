@@ -12,7 +12,7 @@ const SPAN_KEY = '__HNY_SPAN';
 
 const DEFAULT_EVENT_NAMES: EventName[] = ['click'];
 
-type EventName = keyof HTMLElementEventMap;
+type EventName = keyof GlobalEventHandlersEventMap;
 
 type Listener = {
   eventName: EventName;
@@ -21,6 +21,7 @@ type Listener = {
 
 interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
   eventNames?: EventName[];
+  rootNodeId: string;
 }
 
 export class UserInteractionInstrumentation extends InstrumentationBase {
@@ -28,7 +29,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
   private _is_enabled: boolean;
   private _listeners: Listener[];
 
-  constructor(config: UserInteractionInstrumentationConfig = {}) {
+  constructor(config: UserInteractionInstrumentationConfig) {
     super(INSTRUMENTATION_NAME, VERSION, config);
     this._config = config;
     this._is_enabled = this._config.enabled ?? false;
@@ -44,6 +45,12 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
     if (this._is_enabled) {
       return;
     }
+    const rootNode = document.getElementById(this._config.rootNodeId);
+    if (rootNode === null) {
+      this._diag.warn(`Root Node id: ${this._config.rootNodeId} not found!`);
+      return;
+    }
+
     // enable() gets called by our superclass constructor
     // meaning our private fields aren't initialized yet!!
     this._listeners = [];
@@ -53,6 +60,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
       // we need a stable reference to this handler so that we can remove it later
       const handler = createGlobalEventListener(
         eventName,
+        this._config.rootNodeId,
         () => this._is_enabled,
       );
       this._listeners.push({ eventName, handler });
@@ -81,6 +89,7 @@ const shouldCreateSpan = (
   event: Event,
   element: EventTarget | null,
   eventName: EventName,
+  rootNodeId: string,
 ): element is HTMLElement => {
   // @ts-expect-error we set this field in the handler, if it's already here then we've already seen this event
   if (event[SPAN_KEY]) {
@@ -91,9 +100,8 @@ const shouldCreateSpan = (
     return false;
   }
 
-  const handlerName = `on${eventName}`;
-  // @ts-expect-error this element might not have a handler for this event
-  if (!element[handlerName]) {
+  const handlerName = `on${eventName}` as keyof GlobalEventHandlers;
+  if (!elementHasEventHandler(element, handlerName, rootNodeId)) {
     return false;
   }
 
@@ -108,12 +116,30 @@ const shouldCreateSpan = (
   return true;
 };
 
+const elementHasEventHandler = (
+  element: HTMLElement | null,
+  eventName: keyof GlobalEventHandlers,
+  rootNodeId: string,
+) => {
+  if (!element || element.id === rootNodeId) {
+    return false;
+  }
+  if (element[eventName]) {
+    return true;
+  }
+  return elementHasEventHandler(element.parentElement, eventName, rootNodeId);
+};
+
 const createGlobalEventListener =
-  (eventName: EventName, isInstrumentationEnabled: () => boolean) =>
+  (
+    eventName: EventName,
+    rootNodeId: string,
+    isInstrumentationEnabled: () => boolean,
+  ) =>
   (event: Event) => {
     const element = event.target;
     if (
-      !shouldCreateSpan(event, element, eventName) ||
+      !shouldCreateSpan(event, element, eventName, rootNodeId) ||
       !isInstrumentationEnabled()
     ) {
       return;

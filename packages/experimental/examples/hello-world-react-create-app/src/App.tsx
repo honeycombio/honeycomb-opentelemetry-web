@@ -13,11 +13,18 @@ function App() {
             ' ' +
             new Date().toLocaleTimeString('en-us')}
         </p>
-        <button type="button" onClick={() => alert('clicked!')}>
-          click for alert (creates a span)
-        </button>
-        <button type="button">this one has no click handler (no span)</button>
       </header>
+
+      <main className="App-main" onClick={() => console.log('clicked on body')}>
+        this entire div has a click handler (should create a span)
+        <button type="button" onClick={() => console.log('clicked on button')}>
+          has a click handler
+        </button>
+        <button type="button">
+          this one has no click handler but is nested in a div (creates a span)
+        </button>
+      </main>
+      <button type="button">this one has no click handler (no span)</button>
     </div>
   );
 }

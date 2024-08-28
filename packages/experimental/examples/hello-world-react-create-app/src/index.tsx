@@ -83,7 +83,9 @@ try {
           enabled: false,
         },
       }),
-      new UserInteractionInstrumentation(),
+      new UserInteractionInstrumentation({
+        rootNodeId: 'root',
+      }),
     ], // add automatic instrumentation
     spanProcessors: [new ReactRouterSpanProcessor({ router })],
   });
