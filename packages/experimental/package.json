@@ -1,7 +1,7 @@
 {
-  "name": "@honeycombio/opentelemetry-web",
-  "version": "0.5.0",
-  "description": "Honeycomb OpenTelemetry Wrapper for Browser Applications",
+  "name": "@honeycombio/experimental-opentelemetry-web",
+  "version": "0.0.1",
+  "description": "Honeycomb experimental package",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
