@@ -9,6 +9,7 @@ import {
   RouterProvider,
   useParams,
 } from 'react-router-dom';
+import { UserInteractionInstrumentation } from '@honeycombio/experimental-opentelemetry-web';
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { ReactRouterSpanProcessor } from './reactRouterSpanProcessor';
@@ -78,7 +79,11 @@ try {
         '@opentelemetry/instrumentation-xml-http-request': configDefaults,
         '@opentelemetry/instrumentation-fetch': configDefaults,
         '@opentelemetry/instrumentation-document-load': configDefaults,
+        '@opentelemetry/instrumentation-user-interaction': {
+          enabled: false,
+        },
       }),
+      new UserInteractionInstrumentation(),
     ], // add automatic instrumentation
     spanProcessors: [new ReactRouterSpanProcessor({ router })],
   });
