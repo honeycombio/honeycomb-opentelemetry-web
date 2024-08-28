@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@honeycombio/opentelemetry-web": "file:../..",
+    "@honeycombio/experimental-opentelemetry-web": "file:../..",
+    "@honeycombio/opentelemetry-web": "^0.6.0",
     "@opentelemetry/auto-instrumentations-web": "^0.40.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.97",
