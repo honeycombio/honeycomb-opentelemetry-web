@@ -21,7 +21,7 @@ type Listener = {
 
 interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
   eventNames?: EventName[];
-  rootNodeId: string;
+  rootNodeId?: string;
 }
 
 export class UserInteractionInstrumentation extends InstrumentationBase {
@@ -29,7 +29,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
   private _is_enabled: boolean;
   private _listeners: Listener[];
 
-  constructor(config: UserInteractionInstrumentationConfig) {
+  constructor(config: UserInteractionInstrumentationConfig = {}) {
     super(INSTRUMENTATION_NAME, VERSION, config);
     this._config = config;
     this._is_enabled = this._config.enabled ?? false;
@@ -45,11 +45,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
     if (this._is_enabled) {
       return;
     }
-    const rootNode = document.getElementById(this._config.rootNodeId);
-    if (rootNode === null) {
-      this._diag.warn(`Root Node id: ${this._config.rootNodeId} not found!`);
-      return;
-    }
+    const rootNode = this.getRootNode();
 
     // enable() gets called by our superclass constructor
     // meaning our private fields aren't initialized yet!!
@@ -66,13 +62,25 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
       this._listeners.push({ eventName, handler });
 
       // capture phase listener to kick in before any other listeners
-      document.addEventListener(eventName, handler, { capture: true });
+      rootNode.addEventListener(eventName, handler, { capture: true });
 
       // bubble phase listener gets called at the end, if user space doesn't call e.stopPropagation()
-      document.addEventListener(eventName, endSpan);
+      rootNode.addEventListener(eventName, endSpan);
     });
 
     this._is_enabled = true;
+  }
+
+  private getRootNode() {
+    if (this._config.rootNodeId) {
+      const rootNode = document.getElementById(this._config.rootNodeId);
+      if (rootNode === null) {
+        this._diag.warn(`Root Node id: ${this._config.rootNodeId} not found!`);
+        return document;
+      }
+      return rootNode;
+    }
+    return document;
   }
 
   public disable(): void {
@@ -89,7 +97,7 @@ const shouldCreateSpan = (
   event: Event,
   element: EventTarget | null,
   eventName: EventName,
-  rootNodeId: string,
+  rootNodeId: string | undefined,
 ): element is HTMLElement => {
   // @ts-expect-error we set this field in the handler, if it's already here then we've already seen this event
   if (event[SPAN_KEY]) {
@@ -116,12 +124,20 @@ const shouldCreateSpan = (
   return true;
 };
 
+/**
+ * Detects if this event on this element is useful
+ *    by checking if this element or any of its parents have handlers
+ *    for this event.
+ *
+ * Accounts for the fact that frameworks like React will put dummy/noop
+ *    handlers at their root, and ignores those.
+ */
 const elementHasEventHandler = (
   element: HTMLElement | null,
   eventName: keyof GlobalEventHandlers,
-  rootNodeId: string,
+  rootNodeId: string | undefined,
 ) => {
-  if (!element || element.id === rootNodeId) {
+  if (!element || (!!rootNodeId && element.id === rootNodeId)) {
     return false;
   }
   if (element[eventName]) {
@@ -133,7 +149,7 @@ const elementHasEventHandler = (
 const createGlobalEventListener =
   (
     eventName: EventName,
-    rootNodeId: string,
+    rootNodeId: string | undefined,
     isInstrumentationEnabled: () => boolean,
   ) =>
   (event: Event) => {
