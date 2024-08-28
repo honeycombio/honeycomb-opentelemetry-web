@@ -1,7 +1,7 @@
 import { wrapEventPropagationCb } from '../src/user-interaction-instrumentation';
 
 describe('wrapEventPropagationCb', () => {
-  it('wraps the function', () => {
+  it('calls span.end on evt.stopPropagation', () => {
     const fakeEvent = {
       stopPropagation: jest.fn(),
       stopImmediatePropagation: jest.fn(),
