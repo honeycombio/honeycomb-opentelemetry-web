@@ -39,7 +39,7 @@ We currently publish 2 packages from this repository. Each package is versioned 
 
 | package                                        | tag                                           |
 |------------------------------------------------|-----------------------------------------------|
-| packages/honeycomb-opentelemetry-web:          | `honeycomb-opentelemetry-web-vX.Y.Z`          |
-| packages/honeycomb-react-user-instrumentation: | `honeycomb-react-user-instrumentation-vX.Y.Z` |
+| packages/honeycomb-opentelemetry-web           | `honeycomb-opentelemetry-web-vX.Y.Z`          |
+| packages/experimental                          | `experimental-vX.Y.Z`                         |
 
 note that the `X.Y.Z` at the end of each tag will be replaced with the version number for that package.
