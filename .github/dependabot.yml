@@ -48,7 +48,7 @@ updates:
         patterns:
           - '*' # Update all dependencies in example app
   - package-ecosystem: 'npm' # See documentation for possible values
-    directory: '/packages/experimental' # Location of package manifests
+    directory: '/packages/experimental-opentelemetry-web' # Location of package manifests
     schedule:
       interval: 'weekly' # Check for updates every week
     labels:
