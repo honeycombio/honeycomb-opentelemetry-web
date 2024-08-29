@@ -26,13 +26,13 @@ interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
 
 export class UserInteractionInstrumentation extends InstrumentationBase {
   protected _config: UserInteractionInstrumentationConfig;
-  private _is_enabled: boolean;
+  private _isEnabled: boolean;
   private _listeners: Listener[];
 
   constructor(config: UserInteractionInstrumentationConfig = {}) {
     super(INSTRUMENTATION_NAME, VERSION, config);
     this._config = config;
-    this._is_enabled = this._config.enabled ?? false;
+    this._isEnabled = this._config.enabled ?? false;
 
     // enable() gets called by our superclass constructor
     // @ts-expect-error this may get set in enable()
@@ -42,7 +42,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
   protected init() {}
 
   public enable() {
-    if (this._is_enabled) {
+    if (this._isEnabled) {
       return;
     }
     const rootNode = this.getRootNode();
@@ -57,7 +57,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
       const handler = createGlobalEventListener(
         eventName,
         this._config.rootNodeId,
-        () => this._is_enabled,
+        () => this._isEnabled,
       );
       this._listeners.push({ eventName, handler });
 
@@ -68,7 +68,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
       rootNode.addEventListener(eventName, endSpan);
     });
 
-    this._is_enabled = true;
+    this._isEnabled = true;
   }
 
   private getRootNode() {
@@ -84,7 +84,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
   }
 
   public disable(): void {
-    this._is_enabled = false;
+    this._isEnabled = false;
     this._listeners.forEach(({ eventName, handler }) => {
       document.removeEventListener(eventName, handler, { capture: true });
       document.removeEventListener(eventName, endSpan);
