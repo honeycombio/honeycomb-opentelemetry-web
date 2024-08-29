@@ -23,7 +23,7 @@ filters_publish_web: &filters_publish_web
 filters_publish_experimental: &filters_publish_experimental
   filters:
     tags:
-      only: /^experimental-v[0-9].*/
+      only: /^experimental-opentelemetry-web-v[0-9].*/
     branches:
       ignore: /.*/
 
@@ -206,7 +206,7 @@ workflows:
     jobs:
       - checkout-and-install:
           <<: *filters_always
-          package-path: packages/experimental
+          package-path: packages/experimental-opentelemetry-web
       - check-format:
           <<: *filters_always
           requires:
