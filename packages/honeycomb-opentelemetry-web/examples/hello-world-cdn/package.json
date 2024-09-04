@@ -1,0 +1,20 @@
+{
+  "name": "hello-world-cjs",
+  "version": "0.0.1",
+  "description": "An example vanilla that uses cjs modules that works with Honeycomb's OpenTelemetry Web Distro",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "cp ../../dist/cdn/index.js ./cdn/",
+    "start": "npm run build && serve .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "chokidar": "^3.6.0",
+    "chokidar-cli": "^3.0.0",
+    "serve": "^14.2.3"
+  }
+}

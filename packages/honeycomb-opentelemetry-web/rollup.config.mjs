@@ -58,6 +58,25 @@ const esmConfig = {
   plugins: [...modulePlugins],
 };
 
+const cdnConfig = {
+  input: entryPoint,
+  output: { file: 'dist/cdn/index.js', format: 'iife', name: 'HNY' },
+  plugins: [
+    commonjs(),
+    nodeResolve({ browser: true }),
+    typescript(),
+    babel({
+      babelHelpers: 'bundled',
+      extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
+    }),
+    analyze({
+      hideDeps: true,
+      limit: 0,
+      summaryOnly: true,
+    }),
+  ],
+};
+
 const typesConfig = {
   input: entryPoint,
   output: { file: 'dist/types/index.d.ts', format: 'esm' },
@@ -72,6 +91,6 @@ const typesConfig = {
   ],
 };
 
-const config = [cjsConfig, esmConfig, typesConfig];
+const config = [cjsConfig, esmConfig, typesConfig, cdnConfig];
 
 export default config;
