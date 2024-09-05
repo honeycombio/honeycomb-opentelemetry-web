@@ -85,7 +85,7 @@ interface VitalOpts extends ReportOpts {
    *  }
    * }
    */
-  applyCustomAttributes: ApplyCustomAttributesFn;
+  applyCustomAttributes?: ApplyCustomAttributesFn;
 }
 
 interface VitalOptsWithTimings extends VitalOpts {

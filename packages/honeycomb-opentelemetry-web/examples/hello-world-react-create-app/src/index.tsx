@@ -73,6 +73,10 @@ try {
     debug: true,
     apiKey: 'api-key-goes-here',
     serviceName: 'hny-web-distro-example:hello-world-react-create-app',
+    webVitalsInstrumentationConfig: {
+      vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
+      inp: { includeTimingsAsSpans: true },
+    },
     instrumentations: [
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-xml-http-request': configDefaults,
