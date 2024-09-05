@@ -1,23 +1,12 @@
-# Hello World Example for the Honeycomb Web SDK
+# Hello World Example for the Honeycomb Web SDK using a CDN
 
-You can run this example to see the SDK in action.
+You can run this example to see the SDK in action. This is for POC example only, in production we recommend using a bundler like rollup or webpack.
 
-## Run this application
+## Run this example
 
-`npm install`
+1.  Build the CDN bundle: from the `honeycomb-opentelemetry-web` run `npm run build`
+2.  `npm install`
+3. Paste your API key into `index.html`, where is says "your api key goes here".
+4. `npm start` to serve the bundle
 
-Paste your API key into `index.cjs`, where is says "your api key goes here".
-
-`npm run start`
-
-Visit [http://localhost:8080]() to see "hello world".
-
-Now go to [https://ui.honeycomb.io](), click Home, and choose the dataset "web-distro" (unless you changed the `serviceName` in `index.cjs`).
-
-## Sync changes from `honeycomb-opentelemetry-web` package
-
-`npm run dev`
-
-Visit [http://localhost:8080]() to see "hello world".
-
-Any changes to the `../../src` files will trigger an update to the build js. Refresh the page to load the updated bundle.
+Now go to [https://ui.honeycomb.io](), click Home, and choose the dataset `hny-web-distro-example:hello-world-cdn` (unless you changed the `serviceName` in `index.html`).
