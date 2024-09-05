@@ -85,7 +85,7 @@ interface VitalOpts extends ReportOpts {
    *  }
    * }
    */
-  applyCustomAttributes: ApplyCustomAttributesFn;
+  applyCustomAttributes?: ApplyCustomAttributesFn;
 }
 
 interface VitalOptsWithTimings extends VitalOpts {
@@ -227,6 +227,10 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   /** Config specific to TTFB (Time To First Byte) */
   ttfb?: VitalOpts;
 }
+
+const noop = () => {
+  // No-op
+};
 
 /**
  * Web vitals auto-instrumentation, sends spans automatically for CLS, LCP, INP, FCP, FID, TTFB.
@@ -419,7 +423,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   onReportCLS = (
     cls: CLSMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
+    applyCustomAttributes: ApplyCustomAttributesFn = noop,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -444,16 +448,13 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.had_recent_input`]: largestShiftEntry?.hadRecentInput,
     });
 
-    if (applyCustomAttributes) {
-      applyCustomAttributes(cls, span);
-    }
-
+    applyCustomAttributes(cls, span);
     span.end();
   };
 
   onReportLCP = (
     lcp: LCPMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
+    applyCustomAttributes: ApplyCustomAttributesFn = noop,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -481,16 +482,13 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
-    if (applyCustomAttributes) {
-      applyCustomAttributes(lcp, span);
-    }
-
+    applyCustomAttributes(lcp, span);
     span.end();
   };
 
   onReportINP = (
     inp: INPMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
+    applyCustomAttributes: ApplyCustomAttributesFn = noop,
     includeTimingsAsSpans = false,
   ) => {
     if (!this.isEnabled()) return;
@@ -533,9 +531,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
         inpSpan.setAttributes(inpAttributes);
 
-        if (applyCustomAttributes) {
-          applyCustomAttributes(inp, inpSpan);
-        }
+        applyCustomAttributes(inp, inpSpan);
 
         if (includeTimingsAsSpans) {
           longAnimationFrameEntries.forEach((perfEntry) => {
@@ -545,6 +541,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
             );
           });
         }
+
         inpSpan.end(interactionTime + inpDuration);
       },
     );
@@ -552,7 +549,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   onReportFCP = (
     fcp: FCPMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
+    applyCustomAttributes: ApplyCustomAttributesFn = noop,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -570,10 +567,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
-    if (applyCustomAttributes) {
-      applyCustomAttributes(fcp, span);
-    }
-
+    applyCustomAttributes(fcp, span);
     span.end();
   };
 
@@ -582,7 +576,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
    */
   onReportFID = (
     fid: FIDMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
+    applyCustomAttributes: ApplyCustomAttributesFn = noop,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -599,16 +593,13 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
-    if (applyCustomAttributes) {
-      applyCustomAttributes(fid, span);
-    }
-
+    applyCustomAttributes(fid, span);
     span.end();
   };
 
   onReportTTFB = (
     ttfb: TTFBMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
+    applyCustomAttributes: ApplyCustomAttributesFn = noop,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -637,9 +628,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
     const span = this.tracer.startSpan(name);
     span.setAttributes(attributes);
-    if (applyCustomAttributes) {
-      applyCustomAttributes(ttfb, span);
-    }
+    applyCustomAttributes(ttfb, span);
     span.end();
   };
 
