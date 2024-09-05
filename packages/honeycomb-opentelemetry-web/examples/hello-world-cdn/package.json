@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "build": "cp ../../dist/cdn/index.js ./cdn/",
+    "build": "cd ../ && npm run build",
     "start": "npm run build && serve .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

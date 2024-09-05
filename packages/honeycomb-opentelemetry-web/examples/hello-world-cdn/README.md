@@ -4,8 +4,8 @@ You can run this example to see the SDK in action. This is for POC example only,
 
 ## Run this example
 
-1.  Build the CDN bundle: from the `honeycomb-opentelemetry-web` run `npm run build`
-2.  `npm install`
+1.  `npm install`
+2.  `npm run build` (This will build the package and put the cdn in the `dist/cdn` folder)
 3. Paste your API key into `index.html`, where is says "your api key goes here".
 4. `npm start` to serve the bundle
 
