@@ -59,15 +59,22 @@ const esmConfig = {
 };
 
 const cdnConfig = {
-  input: entryPoint,
-  output: { file: 'dist/cdn/index.js', format: 'iife', name: 'HNY' },
+  input: './src/cdn/index.ts',
+  output: {
+    file: 'dist/cdn/index.js',
+    format: 'iife',
+    name: 'HNY',
+    // TODO: supress warnings
+    // onWarn() {},
+  },
   plugins: [
-    commonjs(),
-    nodeResolve({ browser: true }),
+    commonjs({ sourceMap: false }),
+    nodeResolve({ browser: true, sourceMap: false }),
     typescript(),
     babel({
       babelHelpers: 'bundled',
       extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
+      sourceMaps: false,
     }),
     analyze({
       hideDeps: true,

@@ -9,9 +9,15 @@
     <ul id="spans-go-here"></ul>
     <section class="example-app">
       <header class="header">
-        <h1>👋 Hello World [CDN]</h1>
+        <h1>👋 Hello World</h1>
       </header>
+
+      <button id="loadDadJoke">Get A Random Dad Joke</button>
+      <div>
+        <span id="dadJokeText"></span>
+      </div>
     </section>
+
     <!-- Scripts here. Don't remove ↓ -->
     <script src="./cdn/index.js"></script>
     <script>
@@ -20,21 +26,61 @@
       };
 
       const main = () => {
-        // Initialize base OTel WebSDK
-        const sdk = new window.HNY.HoneycombWebSDK({
-          // endpoint: 'http://localhost:4318', // send to collector
-          // To send to collector, comment out API Key
-          apiKey: 'api-key',
-          serviceName: 'hny-web-distro-example:hello-world-cdn',
+        const sdkOptions = {
+          // defaults to sending to US instance of Honeycomb
+          // endpoint: "https://api.eu1.honeycomb.io/v1/traces", // uncomment to send to EU instance
+          apiKey: 'api-key', // Replace with your Honeycomb Ingest API Key
+          serviceName: 'hny-web-distro-example:hello-world-cdn', // Replace with your application name. Honeycomb will name your dataset using this variable.
           debug: true,
-          instrumentations: [
-            // add add'l auto-instrumentation
-          ],
-        });
+          webVitalsInstrumentationConfig: {
+            vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
+            inp: {
+              includeTimingsAsSpans: true,
+            },
+          },
+        };
+
+        const instOpts = {
+          // load custom configuration for xml-http-request instrumentation
+          '@opentelemetry/instrumentation-xml-http-request': configDefaults,
+          '@opentelemetry/instrumentation-fetch': configDefaults,
+          '@opentelemetry/instrumentation-document-load': configDefaults,
+        };
+
+        const sdk = window.HNY.configureHoneycombSDK(
+          sdkOptions,
+          instOpts,
+          'hello-world-cdn',
+        );
         sdk.start();
 
-        console.log({ HNY: window.HNY });
+        const buttonElement = document.getElementById('loadDadJoke');
+
+        buttonElement.addEventListener('click', () => {
+          const span = sdk.startSpan('getJoke');
+          fetch('https://icanhazdadjoke.com/', {
+            headers: {
+              'content-type': 'application/json',
+              accept: 'application/json',
+            },
+          })
+            .then((res) => {
+              const jsonPromise = res.json();
+              return jsonPromise;
+            })
+            .then((data) => {
+              span.setAttribute('text', data);
+              document.getElementById('dadJokeText').innerText = data.joke;
+            })
+            .finally(() => {
+              span.end();
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+        });
       };
+
       main();
     </script>
   </body>
