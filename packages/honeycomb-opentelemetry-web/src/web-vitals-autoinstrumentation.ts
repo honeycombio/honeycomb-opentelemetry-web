@@ -228,10 +228,6 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   ttfb?: VitalOpts;
 }
 
-const noop = () => {
-  // No-op
-};
-
 /**
  * Web vitals auto-instrumentation, sends spans automatically for CLS, LCP, INP, FCP, FID, TTFB.
  * Defaults to sending spans for CLS, LCP, INP, FCP and TTFB.
@@ -423,7 +419,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   onReportCLS = (
     cls: CLSMetricWithAttribution,
-    applyCustomAttributes: ApplyCustomAttributesFn = noop,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -448,13 +444,16 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.had_recent_input`]: largestShiftEntry?.hadRecentInput,
     });
 
-    applyCustomAttributes(cls, span);
+    if (applyCustomAttributes) {
+      applyCustomAttributes(cls, span);
+    }
+
     span.end();
   };
 
   onReportLCP = (
     lcp: LCPMetricWithAttribution,
-    applyCustomAttributes: ApplyCustomAttributesFn = noop,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -482,13 +481,16 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
-    applyCustomAttributes(lcp, span);
+    if (applyCustomAttributes) {
+      applyCustomAttributes(lcp, span);
+    }
+
     span.end();
   };
 
   onReportINP = (
     inp: INPMetricWithAttribution,
-    applyCustomAttributes: ApplyCustomAttributesFn = noop,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
     includeTimingsAsSpans = false,
   ) => {
     if (!this.isEnabled()) return;
@@ -531,7 +533,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
         inpSpan.setAttributes(inpAttributes);
 
-        applyCustomAttributes(inp, inpSpan);
+        if (applyCustomAttributes) {
+          applyCustomAttributes(inp, inpSpan);
+        }
 
         if (includeTimingsAsSpans) {
           longAnimationFrameEntries.forEach((perfEntry) => {
@@ -541,7 +545,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
             );
           });
         }
-
         inpSpan.end(interactionTime + inpDuration);
       },
     );
@@ -549,7 +552,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   onReportFCP = (
     fcp: FCPMetricWithAttribution,
-    applyCustomAttributes: ApplyCustomAttributesFn = noop,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -567,7 +570,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
-    applyCustomAttributes(fcp, span);
+    if (applyCustomAttributes) {
+      applyCustomAttributes(fcp, span);
+    }
+
     span.end();
   };
 
@@ -576,7 +582,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
    */
   onReportFID = (
     fid: FIDMetricWithAttribution,
-    applyCustomAttributes: ApplyCustomAttributesFn = noop,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -593,13 +599,16 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.load_state`]: loadState,
     });
 
-    applyCustomAttributes(fid, span);
+    if (applyCustomAttributes) {
+      applyCustomAttributes(fid, span);
+    }
+
     span.end();
   };
 
   onReportTTFB = (
     ttfb: TTFBMetricWithAttribution,
-    applyCustomAttributes: ApplyCustomAttributesFn = noop,
+    applyCustomAttributes?: ApplyCustomAttributesFn,
   ) => {
     if (!this.isEnabled()) return;
 
@@ -628,7 +637,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
     const span = this.tracer.startSpan(name);
     span.setAttributes(attributes);
-    applyCustomAttributes(ttfb, span);
+    if (applyCustomAttributes) {
+      applyCustomAttributes(ttfb, span);
+    }
     span.end();
   };
 
