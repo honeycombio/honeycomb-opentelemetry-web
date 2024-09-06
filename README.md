@@ -87,8 +87,28 @@ Pass these options to the HoneycombWebSDK:
 | dataset               | optional                                         | string  |                         | Populate this only if your Honeycomb environment is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic).                                   |
 | skipOptionsValidation | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with OpenTelemetry Collector.                                                                                                       |
 | spanProcessors | optional                                         | SpanProcessor[] | | Array of [span processors](https://opentelemetry.io/docs/languages/java/instrumentation/#span-processor) to apply to all generated spans.  |
+|  webVitalsInstrumentationConfig|optional|WebVitalsInstrumentationConfig| `{ enabled: true }` | See [WebVitalsInstrumentationConfig](####WebVitalsInstrumentationConfig). |
+|  globalErrorsInstrumentationConfig |optional| GlobalErrorsInstrumentationConfig|  `{ enabled: true }` | See [GlobalErrorsInstrumentationConfig](####GlobalErrorsInstrumentationConfig).
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
+
+#### WebVitalsInstrumentationConfig
+| name | required? | type | default value | description |
+| ---- | --------- | ---- | ------------- | ----------- |
+| enabled | optional | boolean | `true` | Where or not to enable this auto instrumentation. |
+| lcp| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| cls| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| inp| optional| VitalOptsWithTimings | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| inp.includeTimingsAsSpans| optional| boolean | `false` | When true will emit `PerformanceLongAnimationFrameTiming` and `PerformanceScriptTiming` as spans.
+| fid| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| fcp| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| ttf| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+
+#### GlobalErrorsInstrumentationConfig
+| name | required? | type | default value | description |
+| ---- | --------- | ---- | ------------- | ----------- |
+| enabled | optional | boolean | `true` | Where or not to enable this auto instrumentation. |
+
 
 ### Send to an OpenTelemetry Collector
 
