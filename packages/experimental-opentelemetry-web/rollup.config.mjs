@@ -72,42 +72,6 @@ const typesConfig = {
   ],
 };
 
-const IGNORE_WARNINGS = new Set([
-  'THIS_IS_UNDEFINED',
-  'CIRCULAR_DEPENDENCY',
-  'EVAL',
-]);
-
-const cdnConfig = {
-  onwarn(warning, defaultHandler) {
-    if (IGNORE_WARNINGS.has(warning.code)) {
-      return;
-    }
-    defaultHandler(warning);
-  },
-  input: './src/cdn.ts',
-  output: {
-    file: 'dist/umd/index.js',
-    format: 'umd',
-    name: 'HNY',
-  },
-  plugins: [
-    commonjs({ sourceMap: false }),
-    nodeResolve({ browser: true, sourceMap: false }),
-    typescript(),
-    babel({
-      babelHelpers: 'bundled',
-      extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
-      sourceMaps: false,
-    }),
-    analyze({
-      hideDeps: true,
-      limit: 0,
-      summaryOnly: true,
-    }),
-  ],
-};
-
-const config = [cjsConfig, esmConfig, typesConfig, cdnConfig];
+const config = [cjsConfig, esmConfig, typesConfig];
 
 export default config;
