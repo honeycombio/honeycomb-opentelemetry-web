@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "build": "cd ../ && npm run build",
+    "build": "cd $npm_config_local_prefix/../../ && npm run build && cd $npm_config_local_prefix &&  mkdir -p ./dist/umd/ && cp -vR $npm_config_local_prefix/../../dist/umd/index.js ./dist/umd",
     "start": "npm run build && serve .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -19,7 +19,7 @@
     </section>
 
     <!-- Scripts here. Don't remove ↓ -->
-    <script src="./../dist/cdn/index.js"></script>
+    <script src="../dist/umd/index.js"></script>
     <script>
       const configDefaults = {
         ignoreNetworkEvents: true,
@@ -69,7 +69,10 @@
               return jsonPromise;
             })
             .then((data) => {
-              span.setAttribute('text', data);
+              console.log({ data });
+              span.setAttribute('data.joke', data.joke);
+              span.setAttribute('data.id', data.id);
+              span.setAttribute('data.status', data.status);
               document.getElementById('dadJokeText').innerText = data.joke;
             })
             .finally(() => {

@@ -1,12 +1,10 @@
 import { createRequire } from 'node:module';
 import { DEFAULT_EXTENSIONS } from '@babel/core';
-import { fileURLToPath } from 'node:url';
 import analyze from 'rollup-plugin-analyzer';
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 import autoExternal from 'rollup-plugin-auto-external';
 
@@ -58,14 +56,23 @@ const esmConfig = {
   plugins: [...modulePlugins],
 };
 
+const IGNORE_WARNINGS = new Set([
+  'THIS_IS_UNDEFINED',
+  'CIRCULAR_DEPENDENCY',
+  'EVAL',
+]);
 const cdnConfig = {
-  input: './src/cdn/index.ts',
+  onwarn(warning, defaultHandler) {
+    if (IGNORE_WARNINGS.has(warning.code)) {
+      return;
+    }
+    defaultHandler(warning);
+  },
+  input: './src/cdn.ts',
   output: {
-    file: 'dist/cdn/index.js',
-    format: 'iife',
+    file: 'dist/umd/index.js',
+    format: 'umd',
     name: 'HNY',
-    // TODO: supress warnings
-    // onWarn() {},
   },
   plugins: [
     commonjs({ sourceMap: false }),
