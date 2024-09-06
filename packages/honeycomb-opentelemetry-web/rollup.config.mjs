@@ -56,14 +56,18 @@ const esmConfig = {
   plugins: [...modulePlugins],
 };
 
-const IGNORE_WARNINGS = new Set([
-  'THIS_IS_UNDEFINED',
-  'CIRCULAR_DEPENDENCY',
-  'EVAL',
-]);
+const IGNORE_WARNINGS = ['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY', 'EVAL'];
+const printHeader = () => ({
+  name: 'rollup-plugin-print-header',
+  load(source) {
+    if (this.getModuleInfo(source).isEntry) {
+      console.log('⚠️ ignoring warnings: ', IGNORE_WARNINGS.join(', '));
+    }
+  },
+});
 const cdnConfig = {
   onwarn(warning, defaultHandler) {
-    if (IGNORE_WARNINGS.has(warning.code)) {
+    if (IGNORE_WARNINGS.includes(warning.code)) {
       return;
     }
     defaultHandler(warning);
@@ -75,6 +79,7 @@ const cdnConfig = {
     name: 'HNY',
   },
   plugins: [
+    printHeader(),
     commonjs({ sourceMap: false }),
     nodeResolve({ browser: true, sourceMap: false }),
     typescript(),
