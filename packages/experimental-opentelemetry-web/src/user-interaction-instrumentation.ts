@@ -27,7 +27,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
   protected _config: UserInteractionInstrumentationConfig;
   private _isEnabled: boolean;
   private _listeners: Listener[];
-  private static _eventMap: WeakMap<Event, Span>;
+  private static _eventMap: WeakMap<Event, Span> = new WeakMap();
 
   constructor(config: UserInteractionInstrumentationConfig = {}) {
     super(INSTRUMENTATION_NAME, VERSION, config);
@@ -37,7 +37,6 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
     // enable() gets called by our superclass constructor
     // @ts-expect-error this may get set in enable()
     this._listeners = this._listeners ?? [];
-    UserInteractionInstrumentation._eventMap = new WeakMap();
   }
 
   protected init() {}
@@ -52,7 +51,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
     rootNodeId: string | undefined,
     isInstrumentationEnabled: () => boolean,
   ) {
-    console.log('createGlobalEventListener');
+
     return (event: Event) => {
       const element = event.target;
       if (isInstrumentationEnabled() === false) return;
