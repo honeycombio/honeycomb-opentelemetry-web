@@ -51,7 +51,6 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
     rootNodeId: string | undefined,
     isInstrumentationEnabled: () => boolean,
   ) {
-
     return (event: Event) => {
       const element = event.target;
       if (isInstrumentationEnabled() === false) return;
