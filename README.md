@@ -97,12 +97,18 @@ Pass these options to the HoneycombWebSDK:
 | ---- | --------- | ---- | ------------- | ----------- |
 | enabled | optional | boolean | `true` | Where or not to enable this auto instrumentation. |
 | lcp| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| lcp.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 | cls| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| cls.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 | inp| optional| VitalOptsWithTimings | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| inp.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 | inp.includeTimingsAsSpans| optional| boolean | `false` | When true will emit `PerformanceLongAnimationFrameTiming` and `PerformanceScriptTiming` as spans.
 | fid| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| fid.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 | fcp| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| fcp.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 | ttf| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| ttf.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 
 #### GlobalErrorsInstrumentationConfig
 | name | required? | type | default value | description |
