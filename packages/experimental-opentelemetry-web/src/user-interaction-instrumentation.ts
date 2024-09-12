@@ -8,7 +8,6 @@ import { getElementXPath } from '@opentelemetry/sdk-trace-web';
 import { VERSION } from './version';
 
 const INSTRUMENTATION_NAME = '@honeycombio/user-instrumentation';
-const SPAN_KEY = '__HNY_SPAN';
 
 const DEFAULT_EVENT_NAMES: EventName[] = ['click'];
 
@@ -28,6 +27,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
   protected _config: UserInteractionInstrumentationConfig;
   private _isEnabled: boolean;
   private _listeners: Listener[];
+  private static _eventMap: WeakMap<Event, Span> = new WeakMap();
 
   constructor(config: UserInteractionInstrumentationConfig = {}) {
     super(INSTRUMENTATION_NAME, VERSION, config);
@@ -41,6 +41,47 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
 
   protected init() {}
 
+  private static handleEndSpan(this: void, ev: Event): void {
+    UserInteractionInstrumentation._eventMap.get(ev)?.end();
+  }
+
+  private static createGlobalEventListener(
+    this: void,
+    eventName: EventName,
+    rootNodeId: string | undefined,
+    isInstrumentationEnabled: () => boolean,
+  ) {
+    return (event: Event) => {
+      const element = event.target;
+      if (isInstrumentationEnabled() === false) return;
+      if (UserInteractionInstrumentation._eventMap.has(event)) return;
+      if (!shouldCreateSpan(event, element, eventName, rootNodeId)) return;
+
+      const xpath = getElementXPath(element);
+
+      const tracer = trace.getTracer(INSTRUMENTATION_NAME);
+      context.with(context.active(), () => {
+        tracer.startActiveSpan(
+          eventName,
+          {
+            attributes: {
+              event_type: eventName,
+              target_element: element.tagName,
+              target_xpath: xpath,
+              'http.url': window.location.href,
+            },
+          },
+          (span) => {
+            // if user space code calls stopPropagation, we'll never see it again
+            // so let's monkey patch those funcs to end the span if they do kill it
+            wrapEventPropagationCb(event, 'stopPropagation', span);
+            wrapEventPropagationCb(event, 'stopImmediatePropagation', span);
+            UserInteractionInstrumentation._eventMap.set(event, span);
+          },
+        );
+      });
+    };
+  }
   public enable() {
     if (this._isEnabled) {
       return;
@@ -54,7 +95,7 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
     const eventNames = this._config.eventNames ?? DEFAULT_EVENT_NAMES;
     eventNames.forEach((eventName) => {
       // we need a stable reference to this handler so that we can remove it later
-      const handler = createGlobalEventListener(
+      const handler = UserInteractionInstrumentation.createGlobalEventListener(
         eventName,
         this._config.rootNodeId,
         () => this._isEnabled,
@@ -65,7 +106,10 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
       rootNode.addEventListener(eventName, handler, { capture: true });
 
       // bubble phase listener gets called at the end, if user space doesn't call e.stopPropagation()
-      rootNode.addEventListener(eventName, endSpan);
+      rootNode.addEventListener(
+        eventName,
+        UserInteractionInstrumentation.handleEndSpan,
+      );
     });
 
     this._isEnabled = true;
@@ -87,7 +131,10 @@ export class UserInteractionInstrumentation extends InstrumentationBase {
     this._isEnabled = false;
     this._listeners.forEach(({ eventName, handler }) => {
       document.removeEventListener(eventName, handler, { capture: true });
-      document.removeEventListener(eventName, endSpan);
+      document.removeEventListener(
+        eventName,
+        UserInteractionInstrumentation.handleEndSpan,
+      );
     });
     this._listeners = [];
   }
@@ -99,11 +146,6 @@ const shouldCreateSpan = (
   eventName: EventName,
   rootNodeId: string | undefined,
 ): element is HTMLElement => {
-  // @ts-expect-error we set this field in the handler, if it's already here then we've already seen this event
-  if (event[SPAN_KEY]) {
-    return false;
-  }
-
   if (!(element instanceof HTMLElement)) {
     return false;
   }
@@ -144,53 +186,6 @@ const elementHasEventHandler = (
     return true;
   }
   return elementHasEventHandler(element.parentElement, eventName, rootNodeId);
-};
-
-const createGlobalEventListener =
-  (
-    eventName: EventName,
-    rootNodeId: string | undefined,
-    isInstrumentationEnabled: () => boolean,
-  ) =>
-  (event: Event) => {
-    const element = event.target;
-    if (
-      !shouldCreateSpan(event, element, eventName, rootNodeId) ||
-      !isInstrumentationEnabled()
-    ) {
-      return;
-    }
-
-    const xpath = getElementXPath(element);
-
-    const tracer = trace.getTracer(INSTRUMENTATION_NAME);
-    context.with(context.active(), () => {
-      tracer.startActiveSpan(
-        eventName,
-        {
-          attributes: {
-            event_type: eventName,
-            target_element: element.tagName,
-            target_xpath: xpath,
-            'http.url': window.location.href,
-          },
-        },
-        (span) => {
-          // if user space code calls stopPropagation, we'll never see it again
-          // so let's monkey patch those funcs to end the span if they do kill it
-          wrapEventPropagationCb(event, 'stopPropagation', span);
-          wrapEventPropagationCb(event, 'stopImmediatePropagation', span);
-
-          // @ts-expect-error store the span on the event so we can get it later
-          event[SPAN_KEY] = span;
-        },
-      );
-    });
-  };
-
-const endSpan = (ev: Event) => {
-  // @ts-expect-error we stored the span on the event earlier
-  (ev[SPAN_KEY] as Span)?.end();
 };
 
 export const wrapEventPropagationCb = (
