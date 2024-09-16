@@ -49,7 +49,7 @@ NOTE: the `X.Y.Z` at the end of each tag will be replaced with the version numbe
    npm version --no-git-tag-version RELEASE_TYPE
    vX.Y.Y
    ```
-7. Confirm the version number in the package's `package.json` and `package-lock.json`. the out put of `npm version` should match the `version` field in both `package.json` and `package-lock.json`.
+7. Confirm the version number in the package's `package.json` and `package-lock.json`. The output of `npm version` should match the `version` field in both `package.json` and `package-lock.json`.
 8. Update `version.ts` with the new version number.
 9. Update the `CHANGELOG.md` using:
     ```shell
