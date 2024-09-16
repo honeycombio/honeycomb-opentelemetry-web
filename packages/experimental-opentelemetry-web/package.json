@@ -1,6 +1,6 @@
 {
   "name": "@honeycombio/experimental-opentelemetry-web",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Honeycomb experimental package",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
