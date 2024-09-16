@@ -13,11 +13,11 @@ NOTE: the `X.Y.Z` at the end of each tag will be replaced with the version numbe
 ### Release Steps:
 
 #### Checkout latest and create a release branch:
-2. Checkout the `main` branch and fetch the latest
+1. Checkout the `main` branch and fetch the latest
     ```shell
     git checkout main && git fetch
     ```
-1.  Checkout a new branch for the release `release-YYYY-MM-DD` (i.e. `release-2024-09-16`)
+2.  Checkout a new branch for the release `release-YYYY-MM-DD` (i.e. `release-2024-09-16`)
     ```shell
     git checkout -b release-honeycomb-opentelemetry-web-vX.Y.Z
     ```
@@ -68,7 +68,7 @@ NOTE: the `X.Y.Z` at the end of each tag will be replaced with the version numbe
       - Make sure the PR title starts with `rel:` to conform with our semantic commits convention
       - Add the `no-changelog`, `type: maintenance`, and `version: no bump` labels
 12. Once the pull request is approved, squash-merge it
-1. Checkout `main` and fetch the now-updated `main` branch.
+13. Checkout `main` and fetch the now-updated `main` branch.
 
 #### Create tags and publish release
   >For _EACH_ package that needs to be released:
@@ -81,11 +81,11 @@ NOTE: the `X.Y.Z` at the end of each tag will be replaced with the version numbe
     ```shell
       git push origin TAG
     ```
-1. Publish Release notes
+16. Publish Release notes
    Pushing the tags will kickoff a CI process that will create a draft GitHub release
-   1. Wait for the CI pipeline to finish and ensure the draft exists at: https://github.com/honeycombio/honeycomb-opentelemetry-web/releases
-   2. Click "generate release notes" in GitHub for full changelog notes and at-mention any new contributors
-   3. Publish the GitHub draft release
-      - If it is a prerelease (e.g., beta) click the prerelease checkbox.
+      1. Wait for the CI pipeline to finish and ensure the draft exists at: https://github.com/honeycombio/honeycomb-opentelemetry-web/releases
+      2. Click "generate release notes" in GitHub for full changelog notes and at-mention any new contributors
+      3. Publish the GitHub draft release
+        - If it is a prerelease (e.g., beta) click the prerelease checkbox.
 
 
