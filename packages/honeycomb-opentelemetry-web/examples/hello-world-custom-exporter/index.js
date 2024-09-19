@@ -5,6 +5,7 @@ import {
 import { trace } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
+import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
 
 const configDefaults = {
   ignoreNetworkEvents: true,
@@ -37,6 +38,7 @@ const main = () => {
     traceExporters: [
       // Default honeycomb exporter
       getDefaultTraceExporter(hcoConfig),
+      new ConsoleSpanExporter(),
     ],
   });
 
