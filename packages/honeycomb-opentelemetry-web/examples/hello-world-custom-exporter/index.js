@@ -1,4 +1,7 @@
-import { getDefaultTraceExporter, HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
+import {
+  getDefaultTraceExporter,
+  HoneycombWebSDK,
+} from '@honeycombio/opentelemetry-web';
 import { trace } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
@@ -8,12 +11,11 @@ const configDefaults = {
 };
 
 const main = () => {
-
-    const hcoConfig = {
-        // defaults to sending to US instance of Honeycomb
-        // endpoint: "https://api.eu1.honeycomb.io/v1/traces", // uncomment to send to EU instance
-        apiKey: 'api-key-goes-here',
-    }
+  const hcoConfig = {
+    // defaults to sending to US instance of Honeycomb
+    // endpoint: "https://api.eu1.honeycomb.io/v1/traces", // uncomment to send to EU instance
+    apiKey: 'api-key-goes-here',
+  };
 
   // Initialize Honeycomb SDK
   const sdk = new HoneycombWebSDK({
@@ -33,9 +35,9 @@ const main = () => {
       vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
     },
     traceExporters: [
-        // Default honeycomb exporter
-        getDefaultTraceExporter(hcoConfig),
-    ]
+      // Default honeycomb exporter
+      getDefaultTraceExporter(hcoConfig),
+    ],
   });
 
   sdk.start();
