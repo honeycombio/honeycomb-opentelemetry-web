@@ -31,6 +31,13 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
     honeycombTraceExporters.push(options?.traceExporter);
   }
 
+  // if there is an array of user-provided exporters, add them to the composite exporter
+  if(options?.traceExporters) {
+    options.traceExporters.forEach((exporter) => {
+        honeycombTraceExporters.push(exporter);
+    });
+  }
+
   // We have to configure the exporter here because the way the base SDK is setup
   // does not allow having both a `spanProcessor` and `traceExporter` configured.
   honeycombSpanProcessor.addProcessor(
