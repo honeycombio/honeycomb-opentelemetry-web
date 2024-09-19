@@ -1,4 +1,4 @@
-import { configureHoneycombHttpJsonTraceExporter, HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
+import { getDefaultTraceExporter, HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { trace } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
@@ -34,7 +34,7 @@ const main = () => {
     },
     traceExporters: [
         // Default honeycomb exporter
-        configureHoneycombHttpJsonTraceExporter(hcoConfig),
+        getDefaultTraceExporter(hcoConfig),
     ]
   });
 
