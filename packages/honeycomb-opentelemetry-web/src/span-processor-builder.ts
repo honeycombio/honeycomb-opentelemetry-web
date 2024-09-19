@@ -33,9 +33,7 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
 
   // if there is an array of user-provided exporters, add them to the composite exporter
   if(options?.traceExporters) {
-    options.traceExporters.forEach((exporter) => {
-        honeycombTraceExporters.push(exporter);
-    });
+    honeycombTraceExporters.push(...options.traceExporters);
   }
 
   // We have to configure the exporter here because the way the base SDK is setup
