@@ -53,3 +53,5 @@ export class HoneycombWebSDK extends WebSDK {
     }
   }
 }
+
+export {configureHoneycombHttpJsonTraceExporter} from './http-json-trace-exporter';
