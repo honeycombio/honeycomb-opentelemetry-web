@@ -89,8 +89,8 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   spanProcessors?: SpanProcessor[];
 
   /** Provide an array of exporters
-   * 
-   * 
+   * Use this to configure custom tracing services to export data in their own format
+   * E.g. You want to send data to another service.
    */
   traceExporters?: SpanExporter[];
 
