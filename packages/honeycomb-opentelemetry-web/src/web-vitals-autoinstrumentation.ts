@@ -92,14 +92,14 @@ interface LcpVitalOpts extends VitalOpts {
   /**
    * Will send the values of these data attributes if they appear on an LCP event
    */
-  dataAttributes: string[];
+  dataAttributes?: string[];
 }
 
 interface InpVitalOpts extends VitalOpts {
   /**
    * if this is true it will create spans from the PerformanceLongAnimationFrameTiming frames
    */
-  includeTimingsAsSpans: boolean;
+  includeTimingsAsSpans?: boolean;
 }
 
 // To avoid importing InstrumentationAbstract from:
@@ -484,8 +484,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
-    if (dataAttributes.length >= 0) {
-      dataAttributes.forEach((dataAttr) => {
+    if (dataAttributes && dataAttributes.length >= 0) {
+      dataAttributes?.forEach((dataAttr) => {
         const value = lcpEntry?.element?.getAttribute(dataAttr);
         if (value !== null && value !== undefined) {
           span.setAttribute(`${attrPrefix}.element.${dataAttr}`, value);
