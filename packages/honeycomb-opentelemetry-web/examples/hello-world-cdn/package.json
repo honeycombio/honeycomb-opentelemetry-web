@@ -1,5 +1,5 @@
 {
-  "name": "hello-world-cjs",
+  "name": "hello-world-cdn",
   "version": "0.0.1",
   "description": "An example vanilla that uses cjs modules that works with Honeycomb's OpenTelemetry Web Distro",
   "main": "index.js",
