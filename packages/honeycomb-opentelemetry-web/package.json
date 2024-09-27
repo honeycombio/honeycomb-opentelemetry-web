@@ -32,8 +32,9 @@
     "test:smoke-bats": "cd smoke-tests && bats ./smoke-e2e.bats --report-formatter junit --output ./",
     "test:smoke": "npm run test:smoke-docker && npm run test:smoke-cypress && npm run test:smoke-bats",
     "test:unsmoke": "docker-compose down",
-    "test": "jest --config ./jest.config.js --no-cache -u --silent",
-    "test:ci": "jest --config ./jest.config.js --ci --runInBand --reporters=default --reporters=jest-junit --no-cache -u --silent"
+    "test": "jest --config ./jest.config.js --no-cache",
+    "test:update-snapshots": "jest --config ./jest.config.js --no-cache -u",
+    "test:ci": "jest --config ./jest.config.js --ci --runInBand --reporters=default --reporters=jest-junit --no-cache"
   },
   "author": "Honeycomb <support@honeycomb.io> (https://www.honeycomb.io/)",
   "license": "Apache-2.0",
@@ -58,8 +59,10 @@
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "jest-fixed-jsdom": "^0.0.3",
     "jest-junit": "^16.0.0",
     "lint-staged": "^15.2.2",
+    "msw": "^2.4.9",
     "prettier": "^3.2.5",
     "rollup": "^4.13.0",
     "rollup-plugin-analyzer": "^4.0.0",
