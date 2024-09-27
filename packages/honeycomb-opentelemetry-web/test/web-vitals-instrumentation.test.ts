@@ -56,7 +56,9 @@ const CLSAttr = {
   'cls.entries': '',
   'cls.my_custom_attr': 'custom_attr',
 };
-
+const lcpElement = document.createElement('button');
+lcpElement.setAttribute('data-foo', '42');
+lcpElement.setAttribute('data-bar', 'cats');
 const LCP: LCPMetricWithAttribution = {
   name: 'LCP',
   value: 2500,
@@ -72,6 +74,19 @@ const LCP: LCPMetricWithAttribution = {
     resourceLoadDuration: 20,
     elementRenderDelay: 20,
     resourceLoadDelay: 100,
+    lcpEntry: {
+      duration: 0,
+      element: lcpElement,
+      entryType: 'largest-contentful-paint',
+      id: '',
+      loadTime: 0,
+      name: '',
+      renderTime: 74.09999999403954,
+      size: 4382,
+      startTime: 74.09999999403954,
+      url: '',
+      toJSON: () => '',
+    },
   },
 };
 
@@ -370,6 +385,63 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('LCP');
+    });
+
+    it('should include add data-* attributes when dataAttributes is undefined', () => {
+      const instr = new WebVitalsInstrumentation({
+        vitalsToTrack: ['LCP'],
+      });
+      instr.enable();
+      instr.onReportLCP(LCP, {
+        applyCustomAttributes: () => {},
+        dataAttributes: undefined,
+      });
+      expect(exporter.getFinishedSpans().length).toEqual(1);
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.attributes).toMatchObject({
+        'lcp.element.data-foo': '42',
+        'lcp.element.data-bar': 'cats',
+      });
+    });
+    it('should not include any data-* attributes when dataAttributes is []', () => {
+      const instr = new WebVitalsInstrumentation({
+        vitalsToTrack: ['LCP'],
+      });
+      instr.enable();
+      instr.onReportLCP(LCP, {
+        applyCustomAttributes: () => {},
+        dataAttributes: [],
+      });
+      expect(exporter.getFinishedSpans().length).toEqual(1);
+      const span = exporter.getFinishedSpans()[0];
+      const dataKeys = Object.keys(span.attributes).filter((key) =>
+        key.startsWith('lcp.element.data-'),
+      );
+      expect(dataKeys).toEqual([]);
+      expect(span.attributes['lcp.element.data-foo']).toBeUndefined();
+      expect(span.attributes['lcp.element.data-bar']).toBeUndefined();
+    });
+    it('should only include any data-* attributes that match dataAttributes array', () => {
+      const instr = new WebVitalsInstrumentation({
+        vitalsToTrack: ['LCP'],
+      });
+      instr.enable();
+      instr.onReportLCP(LCP, {
+        applyCustomAttributes: () => {},
+        dataAttributes: ['data-foo'],
+      });
+      expect(exporter.getFinishedSpans().length).toEqual(1);
+      const span = exporter.getFinishedSpans()[0];
+      const dataKeys = Object.keys(span.attributes).filter((key) =>
+        key.startsWith('lcp.element.data-'),
+      );
+      expect(dataKeys).toEqual(['lcp.element.data-foo']);
+      expect(span.attributes['lcp.element.data-foo']).toEqual('42');
+      expect(span.attributes['lcp.element.data-bar']).toBeUndefined();
+      expect(span.attributes).not.toMatchObject({
+        'lcp.element.data-foo': '42',
+        'lcp.element.data-bar': 'cats',
+      });
     });
   });
 

@@ -98,6 +98,7 @@ Pass these options to the HoneycombWebSDK:
 | enabled | optional | boolean | `true` | Where or not to enable this auto instrumentation. |
 | lcp| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
 | lcp.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
+| lcp.dataAttributes| optional| `string[]` | `undefined` | an array of data-* attribute names to filter. By default it will send all `data-*` attribute-value pairs with the key `lcp.element.data-someAttr`, `[]` will send none.
 | cls| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
 | cls.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 | inp| optional| VitalOptsWithTimings | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).

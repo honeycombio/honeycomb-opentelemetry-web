@@ -90,7 +90,8 @@ interface VitalOpts extends ReportOpts {
 
 interface LcpVitalOpts extends VitalOpts {
   /**
-   * Will send the values of these data attributes if they appear on an LCP event
+   * Will filter the values of these data attributes if provided, otherwise will send all data-* attributes an LCP entry
+   * An empty allow list, such as { dataAttributes: [] } will disable sending data-* attributes
    */
   dataAttributes?: string[];
 }
@@ -452,10 +453,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     span.end();
   };
 
-  onReportLCP = (
-    lcp: LCPMetricWithAttribution,
-    lcpOpts: LcpVitalOpts = { dataAttributes: [] },
-  ) => {
+  onReportLCP = (lcp: LCPMetricWithAttribution, lcpOpts: LcpVitalOpts = {}) => {
     const { applyCustomAttributes, dataAttributes } = lcpOpts;
     if (!this.isEnabled()) return;
 
@@ -484,14 +482,24 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
-    if (dataAttributes && dataAttributes.length >= 0) {
-      dataAttributes?.forEach((dataAttr) => {
-        const value = lcpEntry?.element?.getAttribute(dataAttr);
-        if (value !== null && value !== undefined) {
-          span.setAttribute(`${attrPrefix}.element.${dataAttr}`, value);
-        }
-      });
-    }
+    lcpEntry?.element?.getAttributeNames().forEach((attrName) => {
+      // Skip non data-* attributes
+      if (!attrName.startsWith('data-')) {
+        return;
+      }
+      // If dataAttributes is supplied, skip ones not in the allow list
+      if (
+        dataAttributes &&
+        dataAttributes.length >= 0 &&
+        !dataAttributes.includes(attrName)
+      ) {
+        return;
+      }
+      const attrValue = lcpEntry?.element?.getAttribute(attrName);
+      if (attrValue !== null && attrValue !== undefined) {
+        span.setAttribute(`${attrPrefix}.element.${attrName}`, attrValue);
+      }
+    });
 
     if (applyCustomAttributes) {
       applyCustomAttributes(lcp, span);
