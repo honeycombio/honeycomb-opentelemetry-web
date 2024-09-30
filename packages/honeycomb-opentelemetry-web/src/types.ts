@@ -95,7 +95,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   sampleRate?: number;
 
-  /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production.
+  /** The debug flag enables additional logging that is useful when debugging your application. Do not use in production.
    * Defaults to 'false'.
    */
   debug?: boolean;
@@ -134,6 +134,11 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   /** Config options for web vitals instrumentation. Enabled by default. */
   webVitalsInstrumentationConfig?: WebVitalsInstrumentationConfig;
   globalErrorsInstrumentationConfig?: GlobalErrorsInstrumentationConfig;
+
+  /**
+   * Controls the verbosity of the logs. Defaults to 'info'.
+   */
+  logLevel?: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
 }
 
 /* Configure which fields to include in the `entry_page` resource attributes. By default,
