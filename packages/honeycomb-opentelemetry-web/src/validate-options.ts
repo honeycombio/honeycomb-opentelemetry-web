@@ -32,33 +32,56 @@ export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
     '🔕 Failed to get proper auth response from Honeycomb. No local visualization available.',
   );
 
+enum LogLevel {
+  DEBUG,
+  INFO,
+  WARN,
+  ERROR,
+}
+
 export const validateOptionsWarnings = (options?: HoneycombOptions) => {
+  const logLevel = options?.logLevel
+    ? LogLevel[options.logLevel]
+    : LogLevel.INFO;
+
   if (options?.skipOptionsValidation) {
-    console.debug(SKIPPING_OPTIONS_VALIDATION_MSG);
+    if (logLevel === LogLevel.DEBUG) {
+      console.debug(SKIPPING_OPTIONS_VALIDATION_MSG);
+    }
     return;
   }
   // warn if api key is missing
-  if (!options?.apiKey) {
+  if (!options?.apiKey && logLevel <= LogLevel.WARN) {
     console.warn(MISSING_API_KEY_ERROR);
   }
 
   // warn if service name is missing
-  if (!options?.serviceName) {
+  if (!options?.serviceName && logLevel <= LogLevel.WARN) {
     console.warn(MISSING_SERVICE_NAME_ERROR);
   }
 
   // warn if dataset is set while using an environment-aware key
-  if (options?.apiKey && !isClassic(options?.apiKey) && options?.dataset) {
+  if (
+    options?.apiKey &&
+    !isClassic(options?.apiKey) &&
+    options?.dataset &&
+    logLevel <= LogLevel.WARN
+  ) {
     console.warn(IGNORED_DATASET_ERROR);
   }
 
   // warn if dataset is missing if using classic key
-  if (options?.apiKey && isClassic(options?.apiKey) && !options?.dataset) {
+  if (
+    options?.apiKey &&
+    isClassic(options?.apiKey) &&
+    !options?.dataset &&
+    logLevel <= LogLevel.WARN
+  ) {
     console.warn(MISSING_DATASET_ERROR);
   }
 
   // warn if custom sampler provided
-  if (options?.sampler) {
+  if (options?.sampler && logLevel === LogLevel.DEBUG) {
     console.debug(SAMPLER_OVERRIDE_WARNING);
   }
 
