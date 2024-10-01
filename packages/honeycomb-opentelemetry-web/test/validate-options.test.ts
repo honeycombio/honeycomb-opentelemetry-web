@@ -42,7 +42,27 @@ describe('console warnings', () => {
         SKIPPING_OPTIONS_VALIDATION_MSG,
       );
     });
+
+    it('should not show any warnings or debug logs if log level is higher than debug level', () => {
+      new HoneycombWebSDK({
+        skipOptionsValidation: true,
+        logLevel: 'INFO',
+      });
+      expect(debugSpy).not.toHaveBeenCalled();
+    });
+
+    it("should show debug logs if log level is 'DEBUG'", () => {
+      new HoneycombWebSDK({
+        skipOptionsValidation: true,
+        logLevel: 'DEBUG',
+      });
+      expect(debugSpy).toHaveBeenNthCalledWith(
+        1,
+        SKIPPING_OPTIONS_VALIDATION_MSG,
+      );
+    });
   });
+
   describe('when skipOptionsValidation is false', () => {
     it('should show the API key missing warning', () => {
       new HoneycombWebSDK({
@@ -82,6 +102,14 @@ describe('console warnings', () => {
       });
 
       expect(debugSpy).toHaveBeenLastCalledWith(SAMPLER_OVERRIDE_WARNING);
+    });
+
+    it("should not show any warnings if log level is higher than 'WARN'", () => {
+      new HoneycombWebSDK({
+        logLevel: 'ERROR',
+      });
+
+      expect(warningSpy).not.toHaveBeenCalled();
     });
   });
 });
