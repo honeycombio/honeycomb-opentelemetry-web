@@ -1,4 +1,4 @@
-import { HoneycombOptions } from './types';
+import { HoneycombOptions, LogLevel } from './types';
 import {
   createHoneycombSDKLogMessage,
   defaultOptions,
@@ -32,17 +32,10 @@ export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
     '🔕 Failed to get proper auth response from Honeycomb. No local visualization available.',
   );
 
-enum LogLevel {
-  DEBUG,
-  INFO,
-  WARN,
-  ERROR,
-}
-
 export const validateOptionsWarnings = (options?: HoneycombOptions) => {
   const logLevel = options?.logLevel
     ? LogLevel[options.logLevel]
-    : LogLevel.INFO;
+    : LogLevel.DEBUG;
 
   if (options?.skipOptionsValidation) {
     if (logLevel === LogLevel.DEBUG) {

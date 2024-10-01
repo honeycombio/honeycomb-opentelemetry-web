@@ -170,3 +170,10 @@ export type EntryPageConfig = {
    * Defaults to 'false' */
   search?: boolean;
 };
+
+export enum LogLevel {
+  DEBUG,
+  INFO,
+  WARN,
+  ERROR,
+}
