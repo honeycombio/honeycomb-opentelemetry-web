@@ -136,7 +136,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   globalErrorsInstrumentationConfig?: GlobalErrorsInstrumentationConfig;
 
   /**
-   * Controls the verbosity of the logs. Defaults to 'info'.
+   * Controls the verbosity of the logs. Defaults to 'DEBUG'. Current options are 'DEBUG', 'INFO', 'WARN', and 'ERROR'.
    */
   logLevel?: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
 }
