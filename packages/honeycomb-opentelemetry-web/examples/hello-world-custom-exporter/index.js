@@ -1,6 +1,4 @@
-import {
-  HoneycombWebSDK,
-} from '@honeycombio/opentelemetry-web';
+import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { trace } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
@@ -34,9 +32,7 @@ const main = () => {
     webVitalsInstrumentationConfig: {
       vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
     },
-    traceExporters: [
-      new ConsoleSpanExporter(),
-    ],
+    traceExporters: [new ConsoleSpanExporter()],
   });
 
   sdk.start();

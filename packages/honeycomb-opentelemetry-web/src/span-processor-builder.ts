@@ -43,7 +43,7 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
     new BatchSpanProcessor(
       configureCompositeExporter([
         configureHoneycombHttpJsonTraceExporter(options),
-        ...honeycombTraceExporters
+        ...honeycombTraceExporters,
       ]),
     ),
   );
