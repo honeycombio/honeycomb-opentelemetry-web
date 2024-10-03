@@ -1,5 +1,4 @@
 import {
-  getDefaultTraceExporter,
   HoneycombWebSDK,
 } from '@honeycombio/opentelemetry-web';
 import { trace } from '@opentelemetry/api';
@@ -36,8 +35,6 @@ const main = () => {
       vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
     },
     traceExporters: [
-      // comment out to only use the console exporter
-      getDefaultTraceExporter(hcoConfig),
       new ConsoleSpanExporter(),
     ],
   });
