@@ -9,15 +9,12 @@ const configDefaults = {
 };
 
 const main = () => {
-  const hcoConfig = {
-    // defaults to sending to US instance of Honeycomb
-    // endpoint: "https://api.eu1.honeycomb.io/v1/traces", // uncomment to send to EU instance
-    apiKey: 'api-key-goes-here',
-  };
 
   // Initialize Honeycomb SDK
   const sdk = new HoneycombWebSDK({
-    ...hcoConfig,
+    // defaults to sending to US instance of Honeycomb
+    // endpoint: "https://api.eu1.honeycomb.io/v1/traces", // uncomment to send to EU instance
+    apiKey: 'api-key-goes-here',
     serviceName: 'hny-web-distro-example:hello-world-web', // Replace with your application name. Honeycomb will name your dataset using this variable.
     debug: true,
     instrumentations: [
