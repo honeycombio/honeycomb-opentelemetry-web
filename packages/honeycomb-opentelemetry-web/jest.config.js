@@ -9,7 +9,5 @@ module.exports = {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
-  modulePathIgnorePatterns: [
-    '<rootDir>/examples/',
-  ],
+  modulePathIgnorePatterns: ['<rootDir>/examples/'],
 };
