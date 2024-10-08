@@ -25,7 +25,7 @@
     "lint": "eslint .",
     "lint:ci": "eslint src test",
     "lint:examples": "npm run lint:examples-prep && eslint examples",
-    "lint:examples-prep": "cd ./examples/hello-world-web && npm ci && cd ../hello-world-cjs/ && npm ci && cd ../hello-world-react-create-app/ && npm ci && cd ../custom-with-collector-ts/ && npm ci",
+    "lint:examples-prep": "cd ./examples/hello-world-web && npm ci && cd ../hello-world-cjs/ && npm ci && cd ../hello-world-react-create-app/ && npm ci && cd ../custom-with-collector-ts/ && npm ci && cd ../hello-world-custom-exporter && npm ci",
     "lint:fix": "eslint . --fix",
     "test:smoke-docker": "docker-compose up --build --detach",
     "test:smoke-cypress": "npx cypress run --headed --browser chrome",

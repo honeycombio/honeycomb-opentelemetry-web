@@ -88,6 +88,13 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   spanProcessors?: SpanProcessor[];
 
+  /** Provide an array of exporters
+   * Use this to configure custom tracing services in addition
+   * to the default honeycomb one.
+   * E.g. You want to send data to another service.
+   */
+  traceExporters?: SpanExporter[];
+
   /** The sample rate used to determine whether a trace is exported.
    * This must be a whole positive number. Only 1 out of every `sampleRate` traces will be randomly selected to be sent.
    * Set to 0 to drop everything.
