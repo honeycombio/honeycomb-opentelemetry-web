@@ -3,10 +3,11 @@ module.exports = {
   transform: {
     '^.+\\.ts?$': 'ts-jest',
   },
-  transformIgnorePatterns: ['^.+\\.js$'],
+  transformIgnorePatterns: ['^.+\\.js$', './node_modules/*'],
   preset: 'ts-jest/presets/js-with-ts',
-  testEnvironment: 'jsdom',
-  modulePathIgnorePatterns: [
-    '<rootDir>/examples/hello-world-react-create-app/',
-  ],
+  testEnvironment: 'jest-fixed-jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
+  modulePathIgnorePatterns: ['<rootDir>/examples/'],
 };

@@ -34,7 +34,7 @@ orbs:
 executors:
   node:
     docker:
-      - image: cimg/node:16.16
+      - image: cimg/node:18.19
   github:
     docker:
       - image: cibuilds/github:0.13.0
