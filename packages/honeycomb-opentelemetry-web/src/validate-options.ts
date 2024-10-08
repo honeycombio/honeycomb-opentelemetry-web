@@ -1,4 +1,5 @@
-import { HoneycombOptions, LogLevel } from './types';
+import { DiagLogLevel } from '@opentelemetry/api';
+import { HoneycombOptions } from './types';
 import {
   createHoneycombSDKLogMessage,
   defaultOptions,
@@ -33,23 +34,24 @@ export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
   );
 
 export const validateOptionsWarnings = (options?: HoneycombOptions) => {
-  const logLevel = options?.logLevel
-    ? LogLevel[options.logLevel]
-    : LogLevel.DEBUG;
+  const logLevel: DiagLogLevel = options?.logLevel
+    ? options.logLevel
+    : DiagLogLevel.DEBUG;
+  console.log('logLevel:', logLevel);
 
   if (options?.skipOptionsValidation) {
-    if (logLevel === LogLevel.DEBUG) {
+    if (logLevel === DiagLogLevel.DEBUG) {
       console.debug(SKIPPING_OPTIONS_VALIDATION_MSG);
     }
     return;
   }
   // warn if api key is missing
-  if (!options?.apiKey && logLevel <= LogLevel.WARN) {
+  if (!options?.apiKey && logLevel >= DiagLogLevel.WARN) {
     console.warn(MISSING_API_KEY_ERROR);
   }
 
   // warn if service name is missing
-  if (!options?.serviceName && logLevel <= LogLevel.WARN) {
+  if (!options?.serviceName && logLevel >= DiagLogLevel.WARN) {
     console.warn(MISSING_SERVICE_NAME_ERROR);
   }
 
@@ -58,7 +60,7 @@ export const validateOptionsWarnings = (options?: HoneycombOptions) => {
     options?.apiKey &&
     !isClassic(options?.apiKey) &&
     options?.dataset &&
-    logLevel <= LogLevel.WARN
+    logLevel >= DiagLogLevel.WARN
   ) {
     console.warn(IGNORED_DATASET_ERROR);
   }
@@ -68,13 +70,13 @@ export const validateOptionsWarnings = (options?: HoneycombOptions) => {
     options?.apiKey &&
     isClassic(options?.apiKey) &&
     !options?.dataset &&
-    logLevel <= LogLevel.WARN
+    logLevel >= DiagLogLevel.WARN
   ) {
     console.warn(MISSING_DATASET_ERROR);
   }
 
   // warn if custom sampler provided
-  if (options?.sampler && logLevel === LogLevel.DEBUG) {
+  if (options?.sampler && logLevel === DiagLogLevel.DEBUG) {
     console.debug(SAMPLER_OVERRIDE_WARNING);
   }
 

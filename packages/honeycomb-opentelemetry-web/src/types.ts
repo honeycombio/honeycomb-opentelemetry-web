@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import type { ContextManager } from '@opentelemetry/api';
+import type { ContextManager, DiagLogLevel } from '@opentelemetry/api';
 import { TextMapPropagator } from '@opentelemetry/api';
 import { Instrumentation } from '@opentelemetry/instrumentation';
 import {
@@ -136,9 +136,10 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   globalErrorsInstrumentationConfig?: GlobalErrorsInstrumentationConfig;
 
   /**
-   * Controls the verbosity of the logs. Defaults to 'DEBUG'. Current options are 'DEBUG', 'INFO', 'WARN', and 'ERROR'.
+   * Controls the verbosity of logs. Utilizes OpenTelemetry's `DiagLogLevel` enums. Defaults to 'DEBUG'.
+   * Current options include 'NONE', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'VERBOSE', and 'ALL'.
    */
-  logLevel?: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
+  logLevel?: DiagLogLevel;
 }
 
 /* Configure which fields to include in the `entry_page` resource attributes. By default,
@@ -170,10 +171,3 @@ export type EntryPageConfig = {
    * Defaults to 'false' */
   search?: boolean;
 };
-
-export enum LogLevel {
-  DEBUG,
-  INFO,
-  WARN,
-  ERROR,
-}
