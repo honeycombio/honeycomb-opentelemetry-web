@@ -44,7 +44,7 @@ describe('console warnings', () => {
       );
     });
 
-    it('should not show any warnings or debug logs if log level is higher than debug level', () => {
+    it('should not show any warnings or debug logs if log level is lower than DEBUG level', () => {
       new HoneycombWebSDK({
         skipOptionsValidation: true,
         logLevel: DiagLogLevel.INFO,
@@ -105,7 +105,7 @@ describe('console warnings', () => {
       expect(debugSpy).toHaveBeenLastCalledWith(SAMPLER_OVERRIDE_WARNING);
     });
 
-    it("should not show any warnings if log level is higher than 'WARN'", () => {
+    it("should not show any warnings if log level is lower than 'WARN'", () => {
       new HoneycombWebSDK({
         logLevel: DiagLogLevel.ERROR,
       });
