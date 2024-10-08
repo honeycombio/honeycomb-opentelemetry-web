@@ -37,7 +37,6 @@ export const validateOptionsWarnings = (options?: HoneycombOptions) => {
   const logLevel: DiagLogLevel = options?.logLevel
     ? options.logLevel
     : DiagLogLevel.DEBUG;
-  console.log('logLevel:', logLevel);
 
   if (options?.skipOptionsValidation) {
     if (logLevel === DiagLogLevel.DEBUG) {

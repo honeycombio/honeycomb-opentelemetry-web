@@ -136,7 +136,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   globalErrorsInstrumentationConfig?: GlobalErrorsInstrumentationConfig;
 
   /**
-   * Controls the verbosity of logs. Utilizes OpenTelemetry's `DiagLogLevel` enums. Defaults to 'DEBUG'.
+   * Controls the verbosity of logs. Utilizes OpenTelemetry's `DiagLogLevel` enum. Defaults to 'DEBUG'.
    * Current options include 'NONE', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'VERBOSE', and 'ALL'.
    */
   logLevel?: DiagLogLevel;
