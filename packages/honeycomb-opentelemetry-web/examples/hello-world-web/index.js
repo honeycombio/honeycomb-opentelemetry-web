@@ -27,7 +27,7 @@ const main = () => {
     webVitalsInstrumentationConfig: {
       vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
       lcp: {
-        dataAttributes: ['data-hello'],
+        dataAttributes: ['hello', 'barBiz'],
       },
     },
   });

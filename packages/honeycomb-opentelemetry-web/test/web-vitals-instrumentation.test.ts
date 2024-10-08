@@ -56,9 +56,10 @@ const CLSAttr = {
   'cls.entries': '',
   'cls.my_custom_attr': 'custom_attr',
 };
-const lcpElement = document.createElement('button');
-lcpElement.setAttribute('data-foo', '42');
-lcpElement.setAttribute('data-bar', 'cats');
+const div = document.createElement('div');
+div.innerHTML = `<div id="lcp-element" data-answer="42" data-famous-cats="Mr. Mistoffelees" data-has-cats>👋 Hello World</div>`;
+const lcpElement = div.firstElementChild;
+
 const LCP: LCPMetricWithAttribution = {
   name: 'LCP',
   value: 2500,
@@ -387,7 +388,7 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(exporter.getFinishedSpans()[0].name).toEqual('LCP');
     });
 
-    it('should include add data-* attributes when dataAttributes is undefined', () => {
+    it('should include add data-* attributes as span attributes when dataAttributes is undefined', () => {
       const instr = new WebVitalsInstrumentation({
         vitalsToTrack: ['LCP'],
       });
@@ -399,8 +400,9 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(exporter.getFinishedSpans().length).toEqual(1);
       const span = exporter.getFinishedSpans()[0];
       expect(span.attributes).toMatchObject({
-        'lcp.element.data-foo': '42',
-        'lcp.element.data-bar': 'cats',
+        'lcp.element.data.answer': '42',
+        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+        'lcp.element.data.hasCats': '',
       });
     });
     it('should not include any data-* attributes when dataAttributes is []', () => {
@@ -414,12 +416,11 @@ describe('Web Vitals Instrumentation Tests', () => {
       });
       expect(exporter.getFinishedSpans().length).toEqual(1);
       const span = exporter.getFinishedSpans()[0];
-      const dataKeys = Object.keys(span.attributes).filter((key) =>
-        key.startsWith('lcp.element.data-'),
-      );
-      expect(dataKeys).toEqual([]);
-      expect(span.attributes['lcp.element.data-foo']).toBeUndefined();
-      expect(span.attributes['lcp.element.data-bar']).toBeUndefined();
+      expect(span.attributes).not.toMatchObject({
+        'lcp.element.data.answer': '42',
+        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+        'lcp.element.data.hasCats': '',
+      });
     });
     it('should only include any data-* attributes that match dataAttributes array', () => {
       const instr = new WebVitalsInstrumentation({
@@ -428,19 +429,19 @@ describe('Web Vitals Instrumentation Tests', () => {
       instr.enable();
       instr.onReportLCP(LCP, {
         applyCustomAttributes: () => {},
-        dataAttributes: ['data-foo'],
+        dataAttributes: ['answer'],
       });
       expect(exporter.getFinishedSpans().length).toEqual(1);
       const span = exporter.getFinishedSpans()[0];
-      const dataKeys = Object.keys(span.attributes).filter((key) =>
-        key.startsWith('lcp.element.data-'),
-      );
-      expect(dataKeys).toEqual(['lcp.element.data-foo']);
-      expect(span.attributes['lcp.element.data-foo']).toEqual('42');
-      expect(span.attributes['lcp.element.data-bar']).toBeUndefined();
+      expect(span.attributes['lcp.element.data.answer']).toEqual('42');
+      expect(span.attributes['lcp.element.famousCats']).toBeUndefined();
+      expect(span.attributes['lcp.element.hasCats']).toBeUndefined();
+      expect(span.attributes).toMatchObject({
+        'lcp.element.data.answer': '42',
+      });
       expect(span.attributes).not.toMatchObject({
-        'lcp.element.data-foo': '42',
-        'lcp.element.data-bar': 'cats',
+        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+        'lcp.element.data.hasCats': '',
       });
     });
   });

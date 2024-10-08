@@ -482,24 +482,35 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
-    lcpEntry?.element?.getAttributeNames().forEach((attrName) => {
-      // Skip non data-* attributes
-      if (!attrName.startsWith('data-')) {
-        return;
+    const el: HTMLElement = lcpEntry?.element as HTMLElement;
+    if (el.dataset) {
+      for (const attrName in el.dataset) {
+        const attrValue = el.dataset[attrName];
+        if (
+          // Value exists (including the empty string AND either
+          attrValue !== undefined &&
+          // dataAttributes is undefined (i.e. send all values as span attributes) OR
+          (dataAttributes === undefined ||
+            // dataAttributes is specified AND attrName is in dataAttributes (i.e attribute name is in the supplied allowList)
+            (dataAttributes && attrName in dataAttributes))
+        ) {
+          span.setAttribute(
+            `${attrPrefix}.element.data.${attrName}`,
+            attrValue,
+          );
+        }
       }
-      // If dataAttributes is supplied, skip ones not in the allow list
-      if (
-        dataAttributes &&
-        dataAttributes.length >= 0 &&
-        !dataAttributes.includes(attrName)
-      ) {
-        return;
-      }
-      const attrValue = lcpEntry?.element?.getAttribute(attrName);
-      if (attrValue !== null && attrValue !== undefined) {
-        span.setAttribute(`${attrPrefix}.element.${attrName}`, attrValue);
-      }
-    });
+    }
+    if (dataAttributes)
+      dataAttributes?.forEach((attrName) => {
+        const attrValue = el.dataset[attrName];
+        if (attrValue !== undefined) {
+          span.setAttribute(
+            `${attrPrefix}.element.data.${attrName}`,
+            attrValue,
+          );
+        }
+      });
 
     if (applyCustomAttributes) {
       applyCustomAttributes(lcp, span);
