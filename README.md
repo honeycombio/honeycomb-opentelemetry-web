@@ -89,7 +89,7 @@ Pass these options to the HoneycombWebSDK:
 | spanProcessors | optional                                         | SpanProcessor[] | | Array of [span processors](https://opentelemetry.io/docs/languages/java/instrumentation/#span-processor) to apply to all generated spans.  |
 |  webVitalsInstrumentationConfig|optional|WebVitalsInstrumentationConfig| `{ enabled: true }` | See [WebVitalsInstrumentationConfig](####WebVitalsInstrumentationConfig). |
 |  globalErrorsInstrumentationConfig |optional| GlobalErrorsInstrumentationConfig|  `{ enabled: true }` | See [GlobalErrorsInstrumentationConfig](####GlobalErrorsInstrumentationConfig).
-| logLevel              | optional                                    | DiagLogLevel | DiagLogLevel.INFO       | Controls the verbosity of logs printed to the console. Currently, only controls logs printed for SDK option validation. |
+| logLevel              | optional                                    | DiagLogLevel | DiagLogLevel.DEBUG       | Controls the verbosity of logs printed to the console. Currently, only controls logs printed for SDK option validation. |
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 
