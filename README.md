@@ -98,7 +98,7 @@ Pass these options to the HoneycombWebSDK:
 | enabled | optional | boolean | `true` | Where or not to enable this auto instrumentation. |
 | lcp| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
 | lcp.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
-| lcp.dataAttributes| optional| `string[]` | `undefined` | an array of data-* attribute names to filter. By default it will send all `data-*` attribute-value pairs with the key `lcp.element.data-someAttr`, `[]` will send none.
+| lcp.dataAttributes| optional| `string[]` | `undefined`  | An array of attribute names to filter reported as `lcp.element.data.someAttr` <br/> <li/> `undefined` will send all `data-*` attribute-value pairs. <li/> `[]` will send none <li/> `['myAttr']` will send `data-my-attr` <p/> An attribute that's defined, but that has no specified value like `<div data-my-attr />` will be sent as  `{`lcp.element.data.myAttr`: '' }`
 | cls| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
 | cls.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 | inp| optional| VitalOptsWithTimings | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
