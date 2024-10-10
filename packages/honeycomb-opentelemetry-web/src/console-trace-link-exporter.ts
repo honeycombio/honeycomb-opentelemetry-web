@@ -45,8 +45,9 @@ class ConsoleTraceLinkExporter implements SpanExporter {
     }
 
     if (!serviceName || !apikey) {
-      this._logLevel >= DiagLogLevel.DEBUG &&
+      if (this._logLevel >= DiagLogLevel.DEBUG) {
         console.debug(MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS);
+      }
       return;
     }
 
@@ -76,8 +77,9 @@ class ConsoleTraceLinkExporter implements SpanExporter {
         }
       })
       .catch(() => {
-        this._logLevel >= DiagLogLevel.INFO &&
+        if (this._logLevel >= DiagLogLevel.INFO) {
           console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
+        }
       });
   }
 
@@ -88,13 +90,12 @@ class ConsoleTraceLinkExporter implements SpanExporter {
     if (this._traceUrl) {
       spans.forEach((span) => {
         // only log root spans (ones without a parent span)
-        if (!span.parentSpanId) {
-          this._logLevel >= DiagLogLevel.INFO &&
-            console.log(
-              createHoneycombSDKLogMessage(
-                `Honeycomb link: ${this._traceUrl}=${span.spanContext().traceId}`,
-              ),
-            );
+        if (!span.parentSpanId && this._logLevel >= DiagLogLevel.INFO) {
+          console.log(
+            createHoneycombSDKLogMessage(
+              `Honeycomb link: ${this._traceUrl}=${span.spanContext().traceId}`,
+            ),
+          );
         }
       });
     }
