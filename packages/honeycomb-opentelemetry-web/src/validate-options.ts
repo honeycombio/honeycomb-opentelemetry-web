@@ -39,7 +39,7 @@ export const validateOptionsWarnings = (options?: HoneycombOptions) => {
     : DiagLogLevel.DEBUG;
 
   if (options?.skipOptionsValidation) {
-    if (logLevel === DiagLogLevel.DEBUG) {
+    if (logLevel >= DiagLogLevel.DEBUG) {
       console.debug(SKIPPING_OPTIONS_VALIDATION_MSG);
     }
     return;
@@ -75,7 +75,7 @@ export const validateOptionsWarnings = (options?: HoneycombOptions) => {
   }
 
   // warn if custom sampler provided
-  if (options?.sampler && logLevel === DiagLogLevel.DEBUG) {
+  if (options?.sampler && logLevel >= DiagLogLevel.DEBUG) {
     console.debug(SAMPLER_OVERRIDE_WARNING);
   }
 
