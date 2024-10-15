@@ -90,6 +90,7 @@ Pass these options to the HoneycombWebSDK:
 | traceExporters | optional                                         | SpanExporter[] | | Array of [span exporters](https://opentelemetry.io/docs/languages/js/exporters) | optional |
 |  webVitalsInstrumentationConfig|optional|WebVitalsInstrumentationConfig| `{ enabled: true }` | See [WebVitalsInstrumentationConfig](####WebVitalsInstrumentationConfig). |
 |  globalErrorsInstrumentationConfig |optional| GlobalErrorsInstrumentationConfig|  `{ enabled: true }` | See [GlobalErrorsInstrumentationConfig](####GlobalErrorsInstrumentationConfig).
+| logLevel              | optional                                    | DiagLogLevel | DiagLogLevel.DEBUG       | Controls the verbosity of logs printed to the console. |
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 

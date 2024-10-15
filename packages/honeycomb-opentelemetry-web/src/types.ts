@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import type { ContextManager } from '@opentelemetry/api';
+import type { ContextManager, DiagLogLevel } from '@opentelemetry/api';
 import { TextMapPropagator } from '@opentelemetry/api';
 import { Instrumentation } from '@opentelemetry/instrumentation';
 import {
@@ -102,7 +102,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   sampleRate?: number;
 
-  /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production.
+  /** The debug flag enables additional logging that is useful when debugging your application. Do not use in production.
    * Defaults to 'false'.
    */
   debug?: boolean;
@@ -141,6 +141,12 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   /** Config options for web vitals instrumentation. Enabled by default. */
   webVitalsInstrumentationConfig?: WebVitalsInstrumentationConfig;
   globalErrorsInstrumentationConfig?: GlobalErrorsInstrumentationConfig;
+
+  /**
+   * Controls the verbosity of logs. Utilizes OpenTelemetry's `DiagLogLevel` enum. Defaults to 'DEBUG'.
+   * Current options include 'NONE', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'VERBOSE', and 'ALL'.
+   */
+  logLevel?: DiagLogLevel;
 }
 
 /* Configure which fields to include in the `entry_page` resource attributes. By default,

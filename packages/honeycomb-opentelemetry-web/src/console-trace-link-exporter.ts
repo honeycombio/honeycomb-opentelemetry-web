@@ -10,6 +10,7 @@ import {
   FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS,
   MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS,
 } from './validate-options';
+import { DiagLogLevel } from '@opentelemetry/api';
 
 /**
  * Builds and returns a {@link SpanExporter} that logs Honeycomb URLs for completed traces
@@ -22,7 +23,11 @@ export function configureConsoleTraceLinkExporter(
   options?: HoneycombOptions,
 ): SpanExporter {
   const apiKey = getTracesApiKey(options);
-  return new ConsoleTraceLinkExporter(options?.serviceName, apiKey);
+  return new ConsoleTraceLinkExporter(
+    options?.serviceName,
+    apiKey,
+    options?.logLevel,
+  );
 }
 
 /**
@@ -32,10 +37,17 @@ export function configureConsoleTraceLinkExporter(
  */
 class ConsoleTraceLinkExporter implements SpanExporter {
   private _traceUrl = '';
+  private _logLevel: DiagLogLevel = DiagLogLevel.DEBUG;
 
-  constructor(serviceName?: string, apikey?: string) {
+  constructor(serviceName?: string, apikey?: string, logLevel?: DiagLogLevel) {
+    if (logLevel) {
+      this._logLevel = logLevel;
+    }
+
     if (!serviceName || !apikey) {
-      console.debug(MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS);
+      if (this._logLevel >= DiagLogLevel.DEBUG) {
+        console.debug(MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS);
+      }
       return;
     }
 
@@ -65,7 +77,9 @@ class ConsoleTraceLinkExporter implements SpanExporter {
         }
       })
       .catch(() => {
-        console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
+        if (this._logLevel >= DiagLogLevel.INFO) {
+          console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
+        }
       });
   }
 
@@ -76,7 +90,7 @@ class ConsoleTraceLinkExporter implements SpanExporter {
     if (this._traceUrl) {
       spans.forEach((span) => {
         // only log root spans (ones without a parent span)
-        if (!span.parentSpanId) {
+        if (!span.parentSpanId && this._logLevel >= DiagLogLevel.INFO) {
           console.log(
             createHoneycombSDKLogMessage(
               `Honeycomb link: ${this._traceUrl}=${span.spanContext().traceId}`,

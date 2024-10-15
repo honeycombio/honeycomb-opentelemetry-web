@@ -1,3 +1,4 @@
+import { DiagLogLevel } from '@opentelemetry/api';
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
 import {
   IGNORED_DATASET_ERROR,
@@ -42,7 +43,27 @@ describe('console warnings', () => {
         SKIPPING_OPTIONS_VALIDATION_MSG,
       );
     });
+
+    it('should not show any warnings or debug logs if log level is lower than DEBUG level', () => {
+      new HoneycombWebSDK({
+        skipOptionsValidation: true,
+        logLevel: DiagLogLevel.INFO,
+      });
+      expect(debugSpy).not.toHaveBeenCalled();
+    });
+
+    it("should show debug logs if log level is 'DEBUG'", () => {
+      new HoneycombWebSDK({
+        skipOptionsValidation: true,
+        logLevel: DiagLogLevel.DEBUG,
+      });
+      expect(debugSpy).toHaveBeenNthCalledWith(
+        1,
+        SKIPPING_OPTIONS_VALIDATION_MSG,
+      );
+    });
   });
+
   describe('when skipOptionsValidation is false', () => {
     it('should show the API key missing warning', () => {
       new HoneycombWebSDK({
@@ -82,6 +103,14 @@ describe('console warnings', () => {
       });
 
       expect(debugSpy).toHaveBeenLastCalledWith(SAMPLER_OVERRIDE_WARNING);
+    });
+
+    it("should not show any warnings if log level is lower than 'WARN'", () => {
+      new HoneycombWebSDK({
+        logLevel: DiagLogLevel.ERROR,
+      });
+
+      expect(warningSpy).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,3 +1,4 @@
+import { DiagLogLevel } from '@opentelemetry/api';
 import { HoneycombOptions } from './types';
 import {
   createHoneycombSDKLogMessage,
@@ -33,32 +34,48 @@ export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
   );
 
 export const validateOptionsWarnings = (options?: HoneycombOptions) => {
+  const logLevel: DiagLogLevel = options?.logLevel
+    ? options.logLevel
+    : DiagLogLevel.DEBUG;
+
   if (options?.skipOptionsValidation) {
-    console.debug(SKIPPING_OPTIONS_VALIDATION_MSG);
+    if (logLevel >= DiagLogLevel.DEBUG) {
+      console.debug(SKIPPING_OPTIONS_VALIDATION_MSG);
+    }
     return;
   }
   // warn if api key is missing
-  if (!options?.apiKey) {
+  if (!options?.apiKey && logLevel >= DiagLogLevel.WARN) {
     console.warn(MISSING_API_KEY_ERROR);
   }
 
   // warn if service name is missing
-  if (!options?.serviceName) {
+  if (!options?.serviceName && logLevel >= DiagLogLevel.WARN) {
     console.warn(MISSING_SERVICE_NAME_ERROR);
   }
 
   // warn if dataset is set while using an environment-aware key
-  if (options?.apiKey && !isClassic(options?.apiKey) && options?.dataset) {
+  if (
+    options?.apiKey &&
+    !isClassic(options?.apiKey) &&
+    options?.dataset &&
+    logLevel >= DiagLogLevel.WARN
+  ) {
     console.warn(IGNORED_DATASET_ERROR);
   }
 
   // warn if dataset is missing if using classic key
-  if (options?.apiKey && isClassic(options?.apiKey) && !options?.dataset) {
+  if (
+    options?.apiKey &&
+    isClassic(options?.apiKey) &&
+    !options?.dataset &&
+    logLevel >= DiagLogLevel.WARN
+  ) {
     console.warn(MISSING_DATASET_ERROR);
   }
 
   // warn if custom sampler provided
-  if (options?.sampler) {
+  if (options?.sampler && logLevel >= DiagLogLevel.DEBUG) {
     console.debug(SAMPLER_OVERRIDE_WARNING);
   }
 
