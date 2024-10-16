@@ -95,6 +95,13 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   traceExporters?: SpanExporter[];
 
+  /** Disable the default honeycomb SpanExporters
+   * `true` Disables the default honeycomb span exporter, `false` enables.
+   * in this case you should provide other exporters in the `traceExporters` field.
+   * Defaults to 'false'.
+   */
+  disableDefaultTraceExporter?: boolean;
+
   /** The sample rate used to determine whether a trace is exported.
    * This must be a whole positive number. Only 1 out of every `sampleRate` traces will be randomly selected to be sent.
    * Set to 0 to drop everything.

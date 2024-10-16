@@ -37,14 +37,18 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
     honeycombTraceExporters.push(...options.traceExporters);
   }
 
+  // Disable this if a configuration option is present
+  if (options?.disableDefaultTraceExporter !== true) {
+    honeycombTraceExporters.unshift(
+      configureHoneycombHttpJsonTraceExporter(options),
+    );
+  }
+
   // We have to configure the exporter here because the way the base SDK is setup
   // does not allow having both a `spanProcessor` and `traceExporter` configured.
   honeycombSpanProcessor.addProcessor(
     new BatchSpanProcessor(
-      configureCompositeExporter([
-        configureHoneycombHttpJsonTraceExporter(options),
-        ...honeycombTraceExporters,
-      ]),
+      configureCompositeExporter([...honeycombTraceExporters]),
     ),
   );
 

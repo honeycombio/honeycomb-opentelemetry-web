@@ -5,10 +5,14 @@ import {
   MISSING_API_KEY_ERROR,
   MISSING_DATASET_ERROR,
   MISSING_SERVICE_NAME_ERROR,
+  NO_EXPORTERS_DISABLED_DEFAULT,
   SAMPLER_OVERRIDE_WARNING,
   SKIPPING_OPTIONS_VALIDATION_MSG,
 } from '../src/validate-options';
-import { AlwaysOnSampler } from '@opentelemetry/sdk-trace-base';
+import {
+  AlwaysOnSampler,
+  ConsoleSpanExporter,
+} from '@opentelemetry/sdk-trace-base';
 const debugSpy = jest
   .spyOn(console, 'debug')
   .mockImplementation(() => undefined);
@@ -111,6 +115,48 @@ describe('console warnings', () => {
       });
 
       expect(warningSpy).not.toHaveBeenCalled();
+    });
+  });
+  describe('when the default trace exporter is disabled', () => {
+    describe('and no trace exporters are defined', () => {
+      it('should show a no exporters warning', () => {
+        new HoneycombWebSDK({
+          apiKey,
+          serviceName: ' test-service',
+          disableDefaultTraceExporter: true,
+        });
+
+        expect(warningSpy).toHaveBeenCalledWith(NO_EXPORTERS_DISABLED_DEFAULT);
+      });
+    });
+
+    describe('and traceExporter is defined', () => {
+      it('should not show any warnings', () => {
+        const customExporter = new ConsoleSpanExporter();
+        new HoneycombWebSDK({
+          apiKey,
+          serviceName: 'test-service',
+          disableDefaultTraceExporter: true,
+          traceExporter: customExporter,
+        });
+
+        expect(warningSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('and a traceExporters array is defined', () => {
+      it('should not show any warnings', () => {
+        const customExporter = new ConsoleSpanExporter();
+
+        new HoneycombWebSDK({
+          apiKey,
+          serviceName: 'test-service',
+          disableDefaultTraceExporter: true,
+          traceExporters: [customExporter],
+        });
+
+        expect(warningSpy).not.toHaveBeenCalled();
+      });
     });
   });
 });

@@ -88,6 +88,7 @@ Pass these options to the HoneycombWebSDK:
 | skipOptionsValidation | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with OpenTelemetry Collector.                                                                                                       |
 | spanProcessors | optional                                         | SpanProcessor[] | | Array of [span processors](https://opentelemetry.io/docs/languages/java/instrumentation/#span-processor) to apply to all generated spans.  |
 | traceExporters | optional                                         | SpanExporter[] | | Array of [span exporters](https://opentelemetry.io/docs/languages/js/exporters) | optional |
+| disableDefaultTraceExporter | optional                                    | boolean | false                   | Disable default honeycomb trace exporter. You can provide additional exporters via `traceExporters` config option.  |
 |  webVitalsInstrumentationConfig|optional|WebVitalsInstrumentationConfig| `{ enabled: true }` | See [WebVitalsInstrumentationConfig](####WebVitalsInstrumentationConfig). |
 |  globalErrorsInstrumentationConfig |optional| GlobalErrorsInstrumentationConfig|  `{ enabled: true }` | See [GlobalErrorsInstrumentationConfig](####GlobalErrorsInstrumentationConfig).
 | logLevel              | optional                                    | DiagLogLevel | DiagLogLevel.DEBUG       | Controls the verbosity of logs printed to the console. |
