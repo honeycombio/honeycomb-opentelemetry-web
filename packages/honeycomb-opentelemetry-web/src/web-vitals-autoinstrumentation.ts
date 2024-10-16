@@ -492,7 +492,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
           // dataAttributes is undefined (i.e. send all values as span attributes) OR
           (dataAttributes === undefined ||
             // dataAttributes is specified AND attrName is in dataAttributes (i.e attribute name is in the supplied allowList)
-            (dataAttributes && attrName in dataAttributes))
+            dataAttributes.includes(attrName))
         ) {
           span.setAttribute(
             `${attrPrefix}.element.data.${attrName}`,
@@ -501,16 +501,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
         }
       }
     }
-    if (dataAttributes)
-      dataAttributes?.forEach((attrName) => {
-        const attrValue = el.dataset[attrName];
-        if (attrValue !== undefined) {
-          span.setAttribute(
-            `${attrPrefix}.element.data.${attrName}`,
-            attrValue,
-          );
-        }
-      });
 
     if (applyCustomAttributes) {
       applyCustomAttributes(lcp, span);
