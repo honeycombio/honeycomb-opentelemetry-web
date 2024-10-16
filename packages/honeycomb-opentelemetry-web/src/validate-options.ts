@@ -83,5 +83,14 @@ export const validateOptionsWarnings = (options?: HoneycombOptions) => {
     console.debug(SAMPLER_OVERRIDE_WARNING);
   }
 
+  // warn if no exporter will be set
+  if (
+    options?.disableDefaultTraceExporter === true &&
+    !options?.traceExporter &&
+    !options?.traceExporters?.length
+  ) {
+    console.warn(NO_EXPORTERS_DISABLED_DEFAULT);
+  }
+
   return options;
 };
