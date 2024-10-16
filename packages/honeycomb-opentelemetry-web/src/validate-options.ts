@@ -33,6 +33,10 @@ export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
     '🔕 Failed to get proper auth response from Honeycomb. No local visualization available.',
   );
 
+export const NO_EXPORTERS_DISABLED_DEFAULT = createHoneycombSDKLogMessage(
+  '🔕 Default honeycomb exporter disabled but no exporters provided',
+);
+
 export const validateOptionsWarnings = (options?: HoneycombOptions) => {
   const logLevel: DiagLogLevel = options?.logLevel
     ? options.logLevel
