@@ -39,7 +39,7 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
 
   // Disable this if a configuration option is present
   if (options?.disableDefaultTraceExporter !== true) {
-    honeycombTraceExporters.push(
+    honeycombTraceExporters.unshift(
       configureHoneycombHttpJsonTraceExporter(options),
     );
   }
