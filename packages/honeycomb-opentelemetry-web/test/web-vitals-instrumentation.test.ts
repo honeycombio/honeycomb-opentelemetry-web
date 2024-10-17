@@ -434,8 +434,8 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(exporter.getFinishedSpans().length).toEqual(1);
       const span = exporter.getFinishedSpans()[0];
       expect(span.attributes['lcp.element.data.answer']).toEqual('42');
-      expect(span.attributes['lcp.element.famousCats']).toBeUndefined();
-      expect(span.attributes['lcp.element.hasCats']).toBeUndefined();
+      expect(span.attributes['lcp.element.data.famousCats']).toBeUndefined();
+      expect(span.attributes['lcp.element.data.hasCats']).toBeUndefined();
       expect(span.attributes).toMatchObject({
         'lcp.element.data.answer': '42',
       });
