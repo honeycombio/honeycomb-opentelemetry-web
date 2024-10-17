@@ -1,5 +1,22 @@
 # honeycomb-opentelemetry-web changelog
-## v0.7.0 [beta] - 2024-16-09
+## v0.8.0 [Beta] - 2024-10-17
+- fix: This code duplicated  not needed. (#329) | @wolfgangcodes
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 4 updates (#325) | @dependabot
+- maint(deps-dev): bump tslib from 2.6.3 to 2.7.0 in /packages/honeycomb-opentelemetry-web (#295) | @dependabot
+- maint(deps-dev): bump husky from 9.1.4 to 9.1.6 in /packages/honeycomb-opentelemetry-web (#293) | @dependabot
+- maint(deps-dev): bump the example-deps group across 1 directory with 2 updates (#306) | @dependabot
+- maint(deps): bump @rollup/rollup-linux-x64-gnu from 4.21.3 to 4.24.0 in /packages/honeycomb-opentelemetry-web (#321) | @dependabot
+- maint(deps-dev): bump @babel/preset-env from 7.25.3 to 7.25.8 in /packages/honeycomb-opentelemetry-web (#326) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 5 updates (#327) | @dependabot
+- feat: Allow Disabling the default Exporter (#328) | @arriIsHere
+- feat: Add log level config option to SDK (#315) | @jairo-mendoza
+- feat(honeycomb-opentelemetry-web): Add data attributtes for LCP. (#309) | @wolfgangcodes
+- feat(codeowners): team rename (#324) | @martin308
+- maint(deps): bump the otel group across 1 directory with 8 updates (#263) | @dependabot
+- feat: support multiple exporters (#303) | @arriIsHere
+- chore: Update release readme. (#302) | @wolfgangcodes
+-
+## v0.7.0 [beta] - 2024-09-16
 - maint(deps): bump the example-deps group across 1 directory with 3 updates (#288) | @dependabot
 - maint(deps-dev): bump rollup from 4.20.0 to 4.21.3 in /packages/honeycomb-opentelemetry-web (#289) | @dependabot
 - maint(deps-dev): bump lint-staged from 15.2.8 to 15.2.10 in /packages/honeycomb-opentelemetry-web (#277) | @dependabot
