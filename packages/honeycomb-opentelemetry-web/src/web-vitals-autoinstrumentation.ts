@@ -483,7 +483,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     });
 
     const el: HTMLElement = lcpEntry?.element as HTMLElement;
-    if (el.dataset) {
+    if (el?.dataset) {
       for (const attrName in el.dataset) {
         const attrValue = el.dataset[attrName];
         if (
