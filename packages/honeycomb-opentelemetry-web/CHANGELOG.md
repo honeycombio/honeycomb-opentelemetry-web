@@ -1,4 +1,7 @@
 # honeycomb-opentelemetry-web changelog
+## v0.8.1 [beta] - 2024-10-22
+- fix(honeycomb-opentelemetry-web): Add check for lcpEntry.element (#342) | @wolfgangcodes
+
 ## v0.8.0 [Beta] - 2024-10-17
 - fix: This code duplicated  not needed. (#329) | @wolfgangcodes
 - maint(deps-dev): bump the dev-dependencies group across 1 directory with 4 updates (#325) | @dependabot
