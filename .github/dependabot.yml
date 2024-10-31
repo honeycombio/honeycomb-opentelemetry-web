@@ -5,6 +5,7 @@
 
 version: 2
 updates:
+  # Packages
   - package-ecosystem: 'npm' # See documentation for possible values
     directory: '/packages/honeycomb-opentelemetry-web' # Location of package manifests
     schedule:
@@ -12,7 +13,7 @@ updates:
     labels:
       - 'type: dependencies' # Add label
     reviewers:
-      - 'honeycombio/pink-gremlins'
+      - 'honeycombio/frontend-observability'
     commit-message:
       prefix: 'maint' # Add PR title prefix
       include: 'scope'
@@ -21,32 +22,10 @@ updates:
         patterns:
           - '@opentelemetry/*' # Update all otel dependencies together
       dev-dependencies: # Update dev dependencies together instead of piecemeal
-        patterns:
-          - '@type*'
-          - 'cypress'
-          - 'eslint*'
-          - 'jest*'
-          - 'prettier'
-          - 'ts-*'
-          - 'typescript'
+        dependency-type: "development"
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major'] # Ignore major version updates for all packages.
-  - package-ecosystem: 'npm'
-    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-web' # Location of package manifests
-    schedule:
-      interval: 'weekly' # Check for updates every week
-    labels:
-      - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/pink-gremlins'
-    commit-message:
-      prefix: 'maint' # Add PR title prefix
-      include: 'scope'
-    groups:
-      example-deps:
-        patterns:
-          - '*' # Update all dependencies in example app
   - package-ecosystem: 'npm' # See documentation for possible values
     directory: '/packages/experimental-opentelemetry-web' # Location of package manifests
     schedule:
@@ -54,7 +33,7 @@ updates:
     labels:
       - 'type: dependencies' # Add label
     reviewers:
-      - 'honeycombio/pink-gremlins'
+      - 'honeycombio/frontend-observability'
     commit-message:
       prefix: 'maint' # Add PR title prefix
       include: 'scope'
@@ -63,14 +42,99 @@ updates:
         patterns:
           - '@opentelemetry/*' # Update all otel dependencies together
       dev-dependencies: # Update dev dependencies together instead of piecemeal
-        patterns:
-          - '@type*'
-          - 'cypress'
-          - 'eslint*'
-          - 'jest*'
-          - 'prettier'
-          - 'ts-*'
-          - 'typescript'
+        dependency-type: "development"
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major'] # Ignore major version updates for all packages.
+
+  # Examples
+  - package-ecosystem: 'npm'
+    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-web' # Location of package manifests
+    schedule:
+      interval: 'monthly' # Check for updates every month
+    labels:
+      - 'type: dependencies' # Add label
+    reviewers:
+      - 'honeycombio/frontend-observability'
+    commit-message:
+      prefix: 'maint' # Add PR title prefix
+      include: 'scope'
+    groups:
+      example-deps:
+        patterns:
+          - '*' # Update all dependencies together in example app
+  - package-ecosystem: 'npm'
+    directory: '/packages/honeycomb-opentelemetry-web/examples/custom-with-collector-ts' # Location of package manifests
+    schedule:
+      interval: 'monthly' # Check for updates every month
+    labels:
+      - 'type: dependencies' # Add label
+    reviewers:
+      - 'honeycombio/frontend-observability'
+    commit-message:
+      prefix: 'maint' # Add PR title prefix
+      include: 'scope'
+    groups:
+      example-deps:
+        patterns:
+          - '*' # Update all dependencies together in example app
+  - package-ecosystem: 'npm'
+    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-cdn' # Location of package manifests
+    schedule:
+      interval: 'monthly' # Check for updates every month
+    labels:
+      - 'type: dependencies' # Add label
+    reviewers:
+      - 'honeycombio/frontend-observability'
+    commit-message:
+      prefix: 'maint' # Add PR title prefix
+      include: 'scope'
+    groups:
+      example-deps:
+        patterns:
+          - '*' # Update all dependencies together in example app
+  - package-ecosystem: 'npm'
+    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-cjs' # Location of package manifests
+    schedule:
+      interval: 'monthly' # Check for updates every month
+    labels:
+      - 'type: dependencies' # Add label
+    reviewers:
+      - 'honeycombio/frontend-observability'
+    commit-message:
+      prefix: 'maint' # Add PR title prefix
+      include: 'scope'
+    groups:
+      example-deps:
+        patterns:
+          - '*' # Update all dependencies together in example app
+  - package-ecosystem: 'npm'
+    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-custom-exporter' # Location of package manifests
+    schedule:
+      interval: 'monthly' # Check for updates every month
+    labels:
+      - 'type: dependencies' # Add label
+    reviewers:
+      - 'honeycombio/frontend-observability'
+    commit-message:
+      prefix: 'maint' # Add PR title prefix
+      include: 'scope'
+    groups:
+      example-deps:
+        patterns:
+          - '*' # Update all dependencies together in example app
+  - package-ecosystem: 'npm'
+    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app' # Location of package manifests
+    schedule:
+      interval: 'monthly' # Check for updates every month
+    labels:
+      - 'type: dependencies' # Add label
+    reviewers:
+      - 'honeycombio/frontend-observability'
+    commit-message:
+      prefix: 'maint' # Add PR title prefix
+      include: 'scope'
+    groups:
+      example-deps:
+        patterns:
+          - '*' # Update all dependencies together in example app
