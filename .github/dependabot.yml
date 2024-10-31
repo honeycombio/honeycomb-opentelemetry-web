@@ -22,19 +22,7 @@ updates:
         patterns:
           - '@opentelemetry/*' # Update all otel dependencies together
       dev-dependencies: # Update dev dependencies together instead of piecemeal
-        patterns:
-          - '@babel*'
-          - '@rollup*'
-          - '@type*'
-          - 'cypress'
-          - 'eslint*'
-          - 'jest*'
-          - 'msw'
-          - 'prettier'
-          - 'rollup-plugin*'
-          - 'ts-*'
-          - 'tslib'
-          - 'typescript'
+        dependency-type: "development"
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major'] # Ignore major version updates for all packages.
@@ -54,19 +42,7 @@ updates:
         patterns:
           - '@opentelemetry/*' # Update all otel dependencies together
       dev-dependencies: # Update dev dependencies together instead of piecemeal
-        patterns:
-          - '@babel*'
-          - '@rollup*'
-          - '@type*'
-          - 'cypress'
-          - 'eslint*'
-          - 'jest*'
-          - 'msw'
-          - 'prettier'
-          - 'rollup-plugin*'
-          - 'ts-*'
-          - 'tslib'
-          - 'typescript'
+        dependency-type: "development"
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major'] # Ignore major version updates for all packages.

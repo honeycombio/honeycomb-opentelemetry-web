@@ -134,4 +134,4 @@ This will create a dependency in your `package.json` like this:
 
 Dependabot manages our dependency upgrades automatically by creating PRs to bump dependencies for us. Currently our packages get updates weekly (ignoring major version bumps, we do those manually) and examples get updates monthly.
 
- If you are adding a new dev dependency to any package, make sure to update the list of dev dependencies in `dependabot.yml` for that package so that they get grouped together and we avoid PR spam. If you add a new example, please add an entry to `dependabot.yml` for your new example so that it can get package updates with dependabot.
+If you add a new example, please add an entry to `dependabot.yml` for your new example so that it can get package updates with dependabot.
