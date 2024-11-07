@@ -82,8 +82,5 @@
     "shimmer": "^1.2.1",
     "ua-parser-js": "^1.0.39",
     "web-vitals": "^4.2.3"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.21.2"
   }
 }
