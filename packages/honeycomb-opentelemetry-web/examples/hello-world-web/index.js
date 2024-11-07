@@ -34,6 +34,8 @@ const main = () => {
   sdk.start();
   const tracer = trace.getTracer('click-tracer');
 
+  throw new Error('This is a test error');
+
   const buttonElement = document.getElementById('loadDadJoke');
 
   buttonElement.addEventListener('click', () => {

@@ -7,6 +7,7 @@ import {
   SEMATTRS_EXCEPTION_STACKTRACE,
   SEMATTRS_EXCEPTION_TYPE,
 } from '@opentelemetry/semantic-conventions';
+import { computeStackTrace } from 'tracekit';
 
 export interface GlobalErrorsInstrumentationConfig
   extends InstrumentationConfig {}
@@ -26,16 +27,27 @@ export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
     this._isEnabled = enabled;
   }
 
+  _computeStackTrace = (error: Error) => {
+    // transfrom this data from
+    // { column, func, line, url }[]
+    // to
+    // { "exception.structured_stacktrace.functions": [...function names], "exception.structured_stacktrace.lines": [...line numbers], "exception.structured_stacktrace.columns": [...column numbers], "exception.structured_stacktrace.urls": [...urls] }
+    return computeStackTrace(error).stack;
+  };
+
   onError = (event: ErrorEvent | PromiseRejectionEvent) => {
     const error: Error | undefined =
       'reason' in event ? event.reason : event.error;
     const message = error?.message;
     const type = error?.name;
+
     const attributes = {
       [SEMATTRS_EXCEPTION_TYPE]: type,
       [SEMATTRS_EXCEPTION_MESSAGE]: message,
       [SEMATTRS_EXCEPTION_STACKTRACE]: error?.stack,
+      // add to attrs here after mapping with this._computeStackTrace
     };
+
     // otel spec requires at minimum these two
     if (!message || !type) return;
     const errorSpan = this.tracer.startSpan(
