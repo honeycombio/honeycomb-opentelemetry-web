@@ -5,7 +5,6 @@ import {
 } from '@opentelemetry/sdk-trace-base';
 import { GlobalErrorsInstrumentation } from '../src/global-errors-autoinstrumentation';
 import timers from 'node:timers/promises';
-import { Attributes } from '@opentelemetry/api';
 
 describe('Global Errors Instrumentation Tests', () => {
   const exporter = new InMemorySpanExporter();
@@ -66,6 +65,3 @@ describe('Global Errors Instrumentation Tests', () => {
     });
   });
 });
-function expect(attributes: Attributes) {
-  throw new Error('Function not implemented.');
-}
