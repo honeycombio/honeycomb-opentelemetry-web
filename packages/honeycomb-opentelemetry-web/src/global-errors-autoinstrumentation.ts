@@ -7,6 +7,7 @@ import {
   SEMATTRS_EXCEPTION_STACKTRACE,
   SEMATTRS_EXCEPTION_TYPE,
 } from '@opentelemetry/semantic-conventions';
+import { computeStackTrace, StackFrame } from 'tracekit';
 
 export interface GlobalErrorsInstrumentationConfig
   extends InstrumentationConfig {}
@@ -26,6 +27,34 @@ export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
     this._isEnabled = enabled;
   }
 
+  _computeStackTrace = (error: Error | undefined) => {
+    if (!error) {
+      return {};
+    }
+
+    // OTLP does not accept arrays of objects
+    // breaking down the stack into arrays of strings/numbers
+    const structuredStack: StackFrame[] = computeStackTrace(error).stack;
+    const lines: number[] = [];
+    const columns: number[] = [];
+    const functions: string[] = [];
+    const urls: string[] = [];
+
+    for (const stackFrame of structuredStack) {
+      lines.push(stackFrame.line);
+      columns.push(stackFrame.column);
+      functions.push(stackFrame.func);
+      urls.push(stackFrame.url);
+    }
+
+    return {
+      'exception.structured_stacktrace.columns': columns,
+      'exception.structured_stacktrace.lines': lines,
+      'exception.structured_stacktrace.functions': functions,
+      'exception.structured_stacktrace.urls': urls,
+    };
+  };
+
   onError = (event: ErrorEvent | PromiseRejectionEvent) => {
     const error: Error | undefined =
       'reason' in event ? event.reason : event.error;
@@ -35,6 +64,7 @@ export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
       [SEMATTRS_EXCEPTION_TYPE]: type,
       [SEMATTRS_EXCEPTION_MESSAGE]: message,
       [SEMATTRS_EXCEPTION_STACKTRACE]: error?.stack,
+      ...this._computeStackTrace(error),
     };
     // otel spec requires at minimum these two
     if (!message || !type) return;
