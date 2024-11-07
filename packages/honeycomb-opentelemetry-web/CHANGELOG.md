@@ -1,4 +1,7 @@
 # honeycomb-opentelemetry-web changelog
+## unreleased
+- (breaking) `headers` config option only accepts string keys (see upstream change in @opentelemetry/exporter-trace-otlp-http `v0.84.0`)
+
 ## v0.8.1 [beta] - 2024-10-22
 - fix(honeycomb-opentelemetry-web): Add check for lcpEntry.element (#342) | @wolfgangcodes
 
@@ -18,7 +21,7 @@
 - maint(deps): bump the otel group across 1 directory with 8 updates (#263) | @dependabot
 - feat: support multiple exporters (#303) | @arriIsHere
 - chore: Update release readme. (#302) | @wolfgangcodes
--
+
 ## v0.7.0 [beta] - 2024-09-16
 - maint(deps): bump the example-deps group across 1 directory with 3 updates (#288) | @dependabot
 - maint(deps-dev): bump rollup from 4.20.0 to 4.21.3 in /packages/honeycomb-opentelemetry-web (#289) | @dependabot
