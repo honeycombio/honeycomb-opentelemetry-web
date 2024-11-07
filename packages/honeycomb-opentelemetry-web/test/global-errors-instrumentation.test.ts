@@ -5,6 +5,7 @@ import {
 } from '@opentelemetry/sdk-trace-base';
 import { GlobalErrorsInstrumentation } from '../src/global-errors-autoinstrumentation';
 import timers from 'node:timers/promises';
+import { Attributes } from '@opentelemetry/api';
 
 describe('Global Errors Instrumentation Tests', () => {
   const exporter = new InMemorySpanExporter();
@@ -37,6 +38,10 @@ describe('Global Errors Instrumentation Tests', () => {
         'exception.type': 'Error',
         'exception.message': 'Something happened',
         'exception.stacktrace': expect.any(String),
+        'exception.structured_stacktrace.columns': expect.any(Array),
+        'exception.structured_stacktrace.lines': expect.any(Array),
+        'exception.structured_stacktrace.functions': expect.any(Array),
+        'exception.structured_stacktrace.urls': expect.any(Array),
       });
     });
 
@@ -61,3 +66,6 @@ describe('Global Errors Instrumentation Tests', () => {
     });
   });
 });
+function expect(attributes: Attributes) {
+  throw new Error('Function not implemented.');
+}
