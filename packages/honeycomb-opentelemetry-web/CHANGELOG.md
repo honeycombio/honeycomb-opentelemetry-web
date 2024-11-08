@@ -1,6 +1,37 @@
 # honeycomb-opentelemetry-web changelog
-## unreleased
+
+## v0.9.0 [beta] - 2024-11-08
 - (breaking) `headers` config option only accepts string keys (see upstream change in @opentelemetry/exporter-trace-otlp-http `v0.84.0`)
+- docs: copy README to package directory (#384) | @mustafahaddara
+- fix(rollup): Remove x64 specific package (#382) | @martin308
+- maint(deps): bump the otel group across 1 directory with 7 updates (#381) | @dependabot
+- maint(deps): bump @rollup/rollup-linux-x64-gnu from 4.24.3 to 4.24.4 in /packages/honeycomb-opentelemetry-web (#380) | @dependabot
+- maint(deps): bump @opentelemetry/context-zone from 1.26.0 to 1.27.0 in /packages/honeycomb-opentelemetry-web/examples/hello-world-web in the example-deps group (#373) | @dependabot
+- maint(deps): bump the example-deps group in /packages/honeycomb-opentelemetry-web/examples/hello-world-custom-exporter with 4 updates (#367) | @dependabot
+- maint(deps): bump web-vitals from 4.2.3 to 4.2.4 in /packages/experimental-opentelemetry-web (#378) | @dependabot
+- maint(deps): bump @babel/runtime from 7.25.9 to 7.26.0 in /packages/experimental-opentelemetry-web (#379) | @dependabot
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 8 updates (#349) | @dependabot
+- maint(deps): bump the example-deps group across 1 directory with 10 updates (#374) | @dependabot
+- maint(deps-dev): bump the example-deps group across 1 directory with 3 updates (#372) | @dependabot
+- maint(deps-dev): bump the example-deps group in /packages/honeycomb-opentelemetry-web/examples/hello-world-cjs with 3 updates (#364) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#375) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 9 updates (#377) | @dependabot
+- maint(deps-dev): bump the example-deps group in /packages/honeycomb-opentelemetry-web/examples/hello-world-cdn with 2 updates (#360) | @dependabot
+- maint(deps): bump @rollup/rollup-linux-x64-gnu from 4.24.0 to 4.24.3 in /packages/experimental-opentelemetry-web (#363) | @dependabot
+- maint(deps): bump web-vitals from 4.2.3 to 4.2.4 in /packages/honeycomb-opentelemetry-web (#361) | @dependabot
+- maint(deps): bump @babel/runtime from 7.25.9 to 7.26.0 in /packages/honeycomb-opentelemetry-web (#365) | @dependabot
+- chore(dependabot): Dependabot maintenance (#359) | @pkanal
+- maint(deps): bump @babel/runtime from 7.24.7 to 7.25.9 in /packages/experimental-opentelemetry-web (#347) | @dependabot
+- maint(deps): bump @babel/runtime from 7.25.0 to 7.25.9 in /packages/honeycomb-opentelemetry-web (#345) | @dependabot
+- maint(deps-dev): bump @babel/plugin-transform-runtime from 7.25.4 to 7.25.9 in /packages/honeycomb-opentelemetry-web (#344) | @dependabot
+- maint(deps-dev): bump tslib from 2.7.0 to 2.8.0 in /packages/honeycomb-opentelemetry-web (#339) | @dependabot
+- maint(deps-dev): bump tslib from 2.7.0 to 2.8.0 in /packages/experimental-opentelemetry-web (#334) | @dependabot
+- maint(deps): bump ua-parser-js from 1.0.38 to 1.0.39 in /packages/honeycomb-opentelemetry-web (#338) | @dependabot
+- maint(deps-dev): bump rollup from 4.21.3 to 4.24.0 in /packages/honeycomb-opentelemetry-web (#336) | @dependabot
+- maint(deps-dev): bump @babel/preset-env from 7.25.4 to 7.25.8 in /packages/experimental-opentelemetry-web (#335) | @dependabot
+- maint(deps-dev): bump @rollup/plugin-alias from 5.1.0 to 5.1.1 in /packages/experimental-opentelemetry-web (#332) | @dependabot
+- maint(deps-dev): bump @babel/plugin-transform-runtime from 7.24.7 to 7.25.7 in /packages/experimental-opentelemetry-web (#331) | @dependabot
+- maint(deps-dev): bump serve from 14.2.3 to 14.2.4 in /packages/honeycomb-opentelemetry-web/examples/hello-world-web in the example-deps group (#341) | @dependabot
 
 ## v0.8.1 [beta] - 2024-10-22
 - fix(honeycomb-opentelemetry-web): Add check for lcpEntry.element (#342) | @wolfgangcodes
