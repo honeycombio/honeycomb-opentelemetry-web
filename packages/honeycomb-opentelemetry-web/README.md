@@ -76,22 +76,23 @@ Refer to our [Honeycomb documentation](https://docs.honeycomb.io/get-started/sta
 
 Pass these options to the HoneycombWebSDK:
 
-| name                              | required?                                        | type                              | default value           | description                                                                                                                                                               |
-| --------------------------------- | ------------------------------------------------ | --------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| apiKey                            | required[*](#send-to-an-opentelemetry-collector) | string                            |                         | [Honeycomb API Key](https://docs.honeycomb.io/working-with-your-data/settings/api-keys/) for sending traces directly to Honeycomb.                                        |
-| serviceName                       | optional                                         | string                            | unknown_service         | The name of this browser application. Your telemetry will go to a Honeycomb dataset with this name.                                                                       |
-| localVisualizations               | optional                                         | boolean                           | false                   | For each trace created, print a link to the console so that you can find it in Honeycomb. Super useful in development! Do not use in production.                          |
-| sampleRate                        | optional                                         | number                            | 1                       | If you want to send a random fraction of traces, then make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent, and the rest never be created. |
-| tracesEndpoint                    | optional                                         | string                            | `${endpoint}/v1/traces` | Populate this to send traces to a route other than /v1/traces.                                                                                                            |
-| debug                             | optional                                         | boolean                           | false                   | Enable additional logging.                                                                                                                                                |
-| dataset                           | optional                                         | string                            |                         | Populate this only if your Honeycomb environment is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic).                           |
-| skipOptionsValidation             | optional                                         | boolean                           | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with OpenTelemetry Collector.                                                                      |
-| spanProcessors                    | optional                                         | SpanProcessor[]                   |                         | Array of [span processors](https://opentelemetry.io/docs/languages/java/instrumentation/#span-processor) to apply to all generated spans.                                 |
-| traceExporters                    | optional                                         | SpanExporter[]                    |                         | Array of [span exporters](https://opentelemetry.io/docs/languages/js/exporters)                                                                                           |
-| disableDefaultTraceExporter       | optional                                         | boolean                           | false                   | Disable default honeycomb trace exporter. You can provide additional exporters via `traceExporters` config option.                                                        |
-| webVitalsInstrumentationConfig    | optional                                         | WebVitalsInstrumentationConfig    | `{ enabled: true }`     | See [WebVitalsInstrumentationConfig](####WebVitalsInstrumentationConfig).                                                                                                 |
-| globalErrorsInstrumentationConfig | optional                                         | GlobalErrorsInstrumentationConfig | `{ enabled: true }`     | See [GlobalErrorsInstrumentationConfig](####GlobalErrorsInstrumentationConfig).                                                                                           |
-| logLevel                          | optional                                         | DiagLogLevel                      | DiagLogLevel.DEBUG      | Controls the verbosity of logs printed to the console.                                                                                                                    |
+| name                              | required?                                        | type                              | default value           | description                                                                                                                                                                                     |
+| --------------------------------- | ------------------------------------------------ | --------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| apiKey                            | required[*](#send-to-an-opentelemetry-collector) | string                            |                         | [Honeycomb API Key](https://docs.honeycomb.io/working-with-your-data/settings/api-keys/) for sending traces directly to Honeycomb.                                                              |
+| serviceName                       | optional                                         | string                            | unknown_service         | The name of this browser application. Your telemetry will go to a Honeycomb dataset with this name.                                                                                             |
+| localVisualizations               | optional                                         | boolean                           | false                   | For each trace created, print a link to the console so that you can find it in Honeycomb. Super useful in development! Do not use in production.                                                |
+| sampleRate                        | optional                                         | number                            | 1                       | If you want to send a random fraction of traces, then make this a whole number greater than 1. Only 1 in `sampleRate` traces will be sent, and the rest never be created.                       |
+| tracesEndpoint                    | optional                                         | string                            | `${endpoint}/v1/traces` | Populate this to send traces to a route other than /v1/traces.                                                                                                                                  |
+| debug                             | optional                                         | boolean                           | false                   | Enable additional logging.                                                                                                                                                                      |
+| dataset                           | optional                                         | string                            |                         | Populate this only if your Honeycomb environment is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic).                                                 |
+| skipOptionsValidation             | optional                                         | boolean                           | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with OpenTelemetry Collector.                                                                                            |
+| spanProcessors                    | optional                                         | SpanProcessor[]                   |                         | Array of [span processors](https://opentelemetry.io/docs/languages/java/instrumentation/#span-processor) to apply to all generated spans.                                                       |
+| traceExporters                    | optional                                         | SpanExporter[]                    |                         | Array of [span exporters](https://opentelemetry.io/docs/languages/js/exporters)                                                                                                                 |
+| disableDefaultTraceExporter       | optional                                         | boolean                           | false                   | Disable default honeycomb trace exporter. You can provide additional exporters via `traceExporters` config option.                                                                              |
+| webVitalsInstrumentationConfig    | optional                                         | WebVitalsInstrumentationConfig    | `{ enabled: true }`     | See [WebVitalsInstrumentationConfig](####WebVitalsInstrumentationConfig).                                                                                                                       |
+| globalErrorsInstrumentationConfig | optional                                         | GlobalErrorsInstrumentationConfig | `{ enabled: true }`     | See [GlobalErrorsInstrumentationConfig](####GlobalErrorsInstrumentationConfig).                                                                                                                 |
+| logLevel                          | optional                                         | DiagLogLevel                      | DiagLogLevel.DEBUG      | Controls the verbosity of logs printed to the console.                                                                                                                                          |
+| contextManager                    | optional                                         | ContextManager                    |                         | Sets a [Context Manager](https://opentelemetry.io/docs/languages/js/context/#context-manager) for managing global span context. See [Context Management](#context-management) for more details. |
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 
@@ -132,6 +133,23 @@ Your OpenTelemetry Collector can send the traces on to Honeycomb, and your API k
   skipOptionsValidation: true // because we are not including apiKey
 }
 ```
+
+### Context Management
+OpenTelemetry uses the concept of a [Context Manager](https://opentelemetry.io/docs/languages/js/context/#context-manager) to store propagate global span context through your system. OpenTelemetry provides a context manager for browser instrumentation based on the [Zone.js](https://github.com/angular/angular/tree/main/packages/zone.js) library to track global context across asynchronous execution threads. This context manager can be plugged into this instrumentation like so:
+
+```js
+import { ZoneContextManager } from '@opentelemetry/context-zone';
+
+const sdk = new HoneycombWebSDK({
+  // other config options omitted...
+  contextManager: new ZoneContextManager()
+});
+sdk.start();
+```
+
+Zone.js has known limitations with async/await code, and [requires](https://github.com/open-telemetry/opentelemetry-js/tree/main/packages/opentelemetry-context-zone-peer-dep#installation) your code to be transpiled down to ES2015. It also may carry a performance penalty.
+
+For these reasons, we do not enable ZoneContextManager by default.
 
 ## Auto-instrumentation
 
