@@ -64,4 +64,19 @@ describe('Global Errors Instrumentation Tests', () => {
       });
     });
   });
+
+  describe('computeStackTrace', () => {
+    it('should return an empty object if error is undefined', () => {
+      expect(instr._computeStackTrace(undefined)).toEqual({});
+    });
+
+    it('should return an object with structured stack trace information', () => {
+      expect(instr._computeStackTrace(new Error('This is an error'))).toEqual({
+        'exception.structured_stacktrace.columns': expect.any(Array),
+        'exception.structured_stacktrace.lines': expect.any(Array),
+        'exception.structured_stacktrace.functions': expect.any(Array),
+        'exception.structured_stacktrace.urls': expect.any(Array),
+      });
+    });
+  });
 });
