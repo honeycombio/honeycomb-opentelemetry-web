@@ -65,7 +65,7 @@ describe('Global Errors Instrumentation Tests', () => {
     });
   });
 
-  describe('computeStackTrace', () => {
+  describe('_computeStackTrace', () => {
     it('should return an empty object if error is undefined', () => {
       expect(instr._computeStackTrace(undefined)).toEqual({});
     });
