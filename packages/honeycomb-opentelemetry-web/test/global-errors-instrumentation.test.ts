@@ -33,6 +33,7 @@ describe('Global Errors Instrumentation Tests', () => {
 
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('exception');
+      // TODO: Mock a stack trace and test that it returns the correct keys and values
       expect(span.attributes).toMatchObject({
         'exception.type': 'Error',
         'exception.message': 'Something happened',
@@ -70,6 +71,7 @@ describe('Global Errors Instrumentation Tests', () => {
       expect(instr._computeStackTrace(undefined)).toEqual({});
     });
 
+    // TODO: Mock a stack trace and test that it returns the correct keys and values
     it('should return an object with structured stack trace information', () => {
       expect(instr._computeStackTrace(new Error('This is an error'))).toEqual({
         'exception.structured_stacktrace.columns': expect.any(Array),
