@@ -182,6 +182,19 @@ Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts
 
 Fields that can change during the lifetime of the page are instead added to each span in a [SpanProcessor](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-processor).
 
+#### GlobalErrorsInstrumentationConfig
+
+You can expect the following attributes to be emitted from the global errors instrumentation, unless you have it disabled in your SDK configuration:
+| name                                         | status          | static?  | description                                                                   | example                                                                                                                                                                                                    |
+|----------------------------------------------|-----------------|----------|-------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `exception.stacktrace`                       | stable          | per-span | The entire stacktrace as a string.                                            | ReferenceError: VAR is not defined<br>&nbsp;&nbsp;&nbsp;&nbsp;at main(/index.js:37:18)<br>&nbsp;&nbsp;&nbsp;&nbsp;at <anonymous>(/index.js:68:6)<br>&nbsp;&nbsp;&nbsp;&nbsp;at <anonymous>(/index.js:68:6) |
+| `exception.message`                          | stable          | per-span | The exception's message.                                                      | VAR is not defined                                                                                                                                                                                         |
+| `exception.type`                             | stable          | per-span | The type of exception.                                                        | ReferenceError                                                                                                                                                                                             |
+| `exception.structured_stacktrace.columns`    | custom          | per-span | Array of columns extracted from `exception.stacktrace`.                       | [18, 6, 6]                                                                                                                                                                                                 |
+| `exception.structured_stacktrace.lines`      | custom          | per-span | Array of lines extracted from `exception.stacktrace`.                         | [37, 68, 68]                                                                                                                                                                                               |
+| `exception.structured_stacktrace.functions`  | custom          | per-span | Array of function names extracted from `exception.stacktrace`.                | [main, \<anonymous\>, \<anonymous\>]                                                                                                                                                                       |
+| `exception.structured_stacktrace.urls`       | custom          | per-span | Array of urls or directories extracted from `exception.stacktrace`.           | [/index.js, /index.js, /index.js]                                                                                                                                                                          |
+
 ## Migration Practices
 
 This wrapper can change faster than OpenTelemetry, and yet be more stable. This section describes how we do that.
