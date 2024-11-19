@@ -193,7 +193,7 @@ You can expect the following attributes to be emitted from the global errors ins
 | `exception.structured_stacktrace.columns`    | custom          | per-span | Array of columns extracted from `exception.stacktrace`.                       | [18, 6, 6]                                                                                                                                                                                                 |
 | `exception.structured_stacktrace.lines`      | custom          | per-span | Array of lines extracted from `exception.stacktrace`.                         | [37, 68, 68]                                                                                                                                                                                               |
 | `exception.structured_stacktrace.functions`  | custom          | per-span | Array of function names extracted from `exception.stacktrace`.                | [main, \<anonymous\>, \<anonymous\>]                                                                                                                                                                       |
-| `exception.structured_stacktrace.urls`       | custom          | per-span | Array of urls or directories extracted from `exception.stacktrace`.           | [/index.js, /index.js, /index.js]         
+| `exception.structured_stacktrace.urls`       | custom          | per-span | Array of urls or directories extracted from `exception.stacktrace`.           | [/index.js, /index.js, /index.js]                                                                                                                                                                          |
 
 ## Migration Practices
 
