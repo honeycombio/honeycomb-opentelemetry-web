@@ -253,7 +253,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   constructor({
     enabled = true,
-    vitalsToTrack = ['CLS', 'LCP', 'INP'],
+    vitalsToTrack = ['CLS', 'LCP', 'INP', 'TTFB', 'FCP'],
     lcp,
     cls,
     inp,
