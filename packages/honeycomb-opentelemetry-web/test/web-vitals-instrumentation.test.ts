@@ -630,14 +630,14 @@ describe('Web Vitals Instrumentation Tests', () => {
   });
 
   describe('config.vitalsToTrack', () => {
-    it(`should default to ['CLS', 'LCP', 'INP'] when an empty config`, () => {
+    it(`should default to ['CLS', 'LCP', 'INP', 'TTFB', 'FCP'] when an empty config`, () => {
       const instr = new WebVitalsInstrumentation();
-      expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP']);
+      expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP', 'TTFB', 'FCP']);
     });
 
-    it(`should default to ['CLS', 'LCP', 'INP'] when OTHER configuration options`, () => {
+    it(`should default to ['CLS', 'LCP', 'INP', 'TTFB', 'FCP'] when OTHER configuration options`, () => {
       const instr = new WebVitalsInstrumentation({ enabled: false });
-      expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP']);
+      expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP', 'TTFB', 'FCP']);
     });
 
     it('should be overridden vitalsToTrack is explicity passed', () => {
