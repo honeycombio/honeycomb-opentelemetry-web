@@ -1,5 +1,20 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.10.0 [beta] - 2024-11-27
+
+- maint(deps): bump the otel group in /packages/experimental-opentelemetry-web with 8 updates (#395) | @dependabot
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 9 updates (#397) | @dependabot
+ (main)- maint(deps-dev): bump the dev-dependencies group in /packages/experimental-opentelemetry-web with 3 updates (#396) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 4 updates (#398) | @dependabot
+- fix: Fix TTFB and FCP metrics not appearing (#394) | @jairo-mendoza
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 3 updates (#388) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 4 updates (#391) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 2 updates (#392) | @dependabot
+- docs: Update readme's to include new errors attributes (#393) | @jairo-mendoza
+- feat: Update tests to use mocked stacktrace (#390) | @jairo-mendoza
+- feat: Add additional fields collected by the TraceKit package for stack traces (#383) | @jairo-mendoza
+- docs: add documentation on ContextManagers and Zone.js (#386) | @MustafaHaddara
+
 ## v0.9.0 [beta] - 2024-11-08
 - (breaking) `headers` config option only accepts string keys (see upstream change in @opentelemetry/exporter-trace-otlp-http `v0.84.0`)
 - docs: copy README to package directory (#384) | @mustafahaddara
