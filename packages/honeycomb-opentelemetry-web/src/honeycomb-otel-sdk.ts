@@ -27,7 +27,7 @@ export class HoneycombWebSDK extends WebSDK {
           options?.globalErrorsInstrumentationConfig,
         ),
       );
-    }
+    }``
 
     super({
       ...options,
