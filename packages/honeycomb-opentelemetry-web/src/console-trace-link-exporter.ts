@@ -36,7 +36,7 @@ export function configureConsoleTraceLinkExporter(
 
 export const getUrlRoots = (endpoint = '') => {
   const url = new URL(endpoint);
-  const subdomainRegex = /(api)([.|-])?(.*?)(\.?)(honeycomb.io)(.*)/;
+  const subdomainRegex = /(api)([.|-])?(.*?)(\.?)(honeycomb\.io)(.*)/;
   const matches = subdomainRegex.exec(url.host);
   if (matches === null) {
     return {
