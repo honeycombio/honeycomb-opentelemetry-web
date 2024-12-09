@@ -28,6 +28,9 @@ export const MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS =
   createHoneycombSDKLogMessage(
     '🔕 Disabling local visualizations - must have both service name and API key configured.',
   );
+export const MISSING_FIELDS_FOR_GENERATING_LINKS = createHoneycombSDKLogMessage(
+  '🔕 Disabling local visualizations - cannot infer auth and ui url roots from endpoint url.',
+);
 export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
   createHoneycombSDKLogMessage(
     '🔕 Failed to get proper auth response from Honeycomb. No local visualization available.',
