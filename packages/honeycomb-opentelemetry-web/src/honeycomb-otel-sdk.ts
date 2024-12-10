@@ -28,7 +28,6 @@ export class HoneycombWebSDK extends WebSDK {
         ),
       );
     }
-    ``;
 
     super({
       ...options,
