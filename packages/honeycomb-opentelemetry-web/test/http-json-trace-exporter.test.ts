@@ -84,15 +84,12 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.export(
-        [fakeSpan],
-        (result) => {
-          if (result.code === ExportResultCode.SUCCESS) {
-            console.log('success');
-            resolve(null);
-          }
-        },
-      );
+      traceExporter.export([fakeSpan], (result) => {
+        if (result.code === ExportResultCode.SUCCESS) {
+          console.log('success');
+          resolve(null);
+        }
+      });
     });
 
     expect(req).not.toBeNull();
@@ -111,15 +108,12 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.export(
-        [fakeSpan],
-        (result) => {
-          if (result.code === ExportResultCode.SUCCESS) {
-            console.log('success');
-            resolve(null);
-          }
-        },
-      );
+      traceExporter.export([fakeSpan], (result) => {
+        if (result.code === ExportResultCode.SUCCESS) {
+          console.log('success');
+          resolve(null);
+        }
+      });
     });
 
     expect(req).not.toBeNull();
@@ -139,15 +133,12 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.export(
-        [fakeSpan],
-        (result) => {
-          if (result.code === ExportResultCode.SUCCESS) {
-            console.log('success');
-            resolve(null);
-          }
-        },
-      );
+      traceExporter.export([fakeSpan], (result) => {
+        if (result.code === ExportResultCode.SUCCESS) {
+          console.log('success');
+          resolve(null);
+        }
+      });
     });
 
     expect(req).not.toBeNull();
