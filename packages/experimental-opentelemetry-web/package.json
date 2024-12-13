@@ -82,5 +82,17 @@
     "shimmer": "^1.2.1",
     "ua-parser-js": "^1.0.39",
     "web-vitals": "^4.2.3"
-  }
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honeycombio/honeycomb-opentelemetry-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/honeycombio/honeycomb-opentelemetry-web/issues"
+  },
+  "homepage": "https://github.com/honeycombio/honeycomb-opentelemetry-web#readme"
 }

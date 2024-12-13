@@ -1,0 +1,6 @@
+{
+  "workspaces": [
+    "packages/honeycomb-opentelemetry-web",
+    "packages/experimental-opentelemetry-web"
+  ]
+}
