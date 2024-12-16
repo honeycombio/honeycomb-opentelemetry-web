@@ -8,7 +8,7 @@ import {
   TEAM_HEADER_KEY,
 } from '../src/http-json-trace-exporter';
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api';
-import { hrTime, hrTimeDuration } from '@opentelemetry/core';
+import { ExportResultCode, hrTime, hrTimeDuration } from '@opentelemetry/core';
 import { IResource } from '@opentelemetry/resources';
 
 import { DEFAULT_API_ENDPOINT } from '../src/util';
@@ -84,14 +84,12 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.send(
-        [fakeSpan],
-        () => {
+      traceExporter.export([fakeSpan], (result) => {
+        if (result.code === ExportResultCode.SUCCESS) {
           console.log('success');
           resolve(null);
-        },
-        () => {},
-      );
+        }
+      });
     });
 
     expect(req).not.toBeNull();
@@ -110,14 +108,12 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.send(
-        [fakeSpan],
-        () => {
+      traceExporter.export([fakeSpan], (result) => {
+        if (result.code === ExportResultCode.SUCCESS) {
           console.log('success');
           resolve(null);
-        },
-        () => {},
-      );
+        }
+      });
     });
 
     expect(req).not.toBeNull();
@@ -137,14 +133,12 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.send(
-        [fakeSpan],
-        () => {
+      traceExporter.export([fakeSpan], (result) => {
+        if (result.code === ExportResultCode.SUCCESS) {
           console.log('success');
           resolve(null);
-        },
-        () => {},
-      );
+        }
+      });
     });
 
     expect(req).not.toBeNull();
