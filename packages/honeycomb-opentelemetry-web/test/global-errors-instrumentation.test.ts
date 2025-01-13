@@ -3,7 +3,10 @@ import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
-import { GlobalErrorsInstrumentation } from '../src/global-errors-autoinstrumentation';
+import {
+  getStructuredStackTrace,
+  GlobalErrorsInstrumentation,
+} from '../src/global-errors-autoinstrumentation';
 import timers from 'node:timers/promises';
 
 describe('Global Errors Instrumentation Tests', () => {
@@ -81,7 +84,7 @@ describe('Global Errors Instrumentation Tests', () => {
 
   describe('_computeStackTrace', () => {
     it('should return an empty object if error is undefined', () => {
-      expect(instr._computeStackTrace(undefined)).toEqual({});
+      expect(getStructuredStackTrace(undefined)).toEqual({});
     });
 
     it('should return an object with structured stack trace information', () => {
@@ -97,7 +100,7 @@ describe('Global Errors Instrumentation Tests', () => {
         '    at http://example.com/js/test.js:67:5\n' + // stack frame 5
         '    at namedFunc4 (http://example.com/js/script.js:100001:10002)'; // stack frame 6
 
-      const structuredStack = instr._computeStackTrace(err);
+      const structuredStack = getStructuredStackTrace(err);
 
       expect(structuredStack).toEqual({
         'exception.structured_stacktrace.columns': [
