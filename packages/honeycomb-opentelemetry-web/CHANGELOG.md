@@ -1,5 +1,21 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.11.0 [beta] - 2025-01-14
+
+### ✨ Features
+
+- feat(honeycomb-opentelemetry-web): Add support for differing subdomains for debug link exporter. (#406) | @wolfgangcodes
+- feat: Add `recordException` helper function (#431) | @pkanal
+
+### 🛠️ Maintenance
+
+- maint(deps): bump the otel group across 1 directory with 7 updates (#432) | @dependabot
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 8 updates (#417) | @dependabot
+- maint(deps): bump ua-parser-js from 1.0.39 to 1.0.40 in /packages/honeycomb-opentelemetry-web (#419) | @dependabot
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 8 updates (#407) | @dependabot
+- feat(honeycomb-opentelemetry-web): Add support for differing subdomains for debug link exporter. (#406) | @wolfgangcodes
+
+
 ## v0.10.0 [beta] - 2024-11-27
 
 - maint(deps): bump the otel group in /packages/experimental-opentelemetry-web with 8 updates (#395) | @dependabot
