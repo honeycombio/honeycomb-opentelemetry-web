@@ -26,7 +26,10 @@ const getExternalDepsFromPackageJSON = () => {
   return (id) => pattern.test(id);
 };
 
-const entryPoint = './src/index.ts';
+const entryPoint = {
+  index: './src/index.ts',
+  'experimental/index': './src/experimental/index.ts',
+};
 
 const modulePlugins = [
   autoExternal(),
@@ -46,13 +49,13 @@ const modulePlugins = [
 
 const cjsConfig = {
   input: entryPoint,
-  output: { file: 'dist/cjs/index.js', format: 'cjs' },
+  output: { dir: 'dist/cjs', format: 'cjs' },
   plugins: [...modulePlugins],
 };
 
 const esmConfig = {
   input: entryPoint,
-  output: { file: 'dist/esm/index.js', format: 'esm' },
+  output: { dir: 'dist/esm', format: 'esm' },
   plugins: [...modulePlugins],
 };
 
@@ -98,7 +101,7 @@ const cdnConfig = {
 
 const typesConfig = {
   input: entryPoint,
-  output: { file: 'dist/types/index.d.ts', format: 'esm' },
+  output: { dir: 'dist/types/', format: 'esm' },
   plugins: [
     autoExternal(),
     dts(),
