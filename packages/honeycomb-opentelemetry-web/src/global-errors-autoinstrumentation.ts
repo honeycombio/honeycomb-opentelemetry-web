@@ -47,7 +47,7 @@ export function getStructuredStackTrace(error: Error | undefined) {
 
 export function recordException(
   error: Error,
-  attributes: Attributes,
+  attributes: Attributes = {},
   tracer: Tracer = trace.getTracer(LIBRARY_NAME),
 ) {
   const message = error.message;
