@@ -89,5 +89,17 @@
     "tracekit": "^0.4.7",
     "ua-parser-js": "^1.0.37",
     "web-vitals": "^4.2.3"
-  }
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honeycombio/honeycomb-opentelemetry-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/honeycombio/honeycomb-opentelemetry-web/issues"
+  },
+  "homepage": "https://github.com/honeycombio/honeycomb-opentelemetry-web#readme"
 }
