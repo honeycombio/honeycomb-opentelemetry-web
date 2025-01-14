@@ -7,7 +7,7 @@ const configDefaults = {
   ignoreNetworkEvents: true,
 };
 
-const main = () => {z
+const main = () => {
   // Initialize Honeycomb SDK
   const sdk = new HoneycombWebSDK({
     // defaults to sending to US instance of Honeycomb
