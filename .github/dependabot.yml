@@ -26,26 +26,6 @@ updates:
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major'] # Ignore major version updates for all packages.
-  - package-ecosystem: 'npm' # See documentation for possible values
-    directory: '/packages/experimental-opentelemetry-web' # Location of package manifests
-    schedule:
-      interval: 'weekly' # Check for updates every week
-    labels:
-      - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/frontend-observability'
-    commit-message:
-      prefix: 'maint' # Add PR title prefix
-      include: 'scope'
-    groups:
-      otel:
-        patterns:
-          - '@opentelemetry/*' # Update all otel dependencies together
-      dev-dependencies: # Update dev dependencies together instead of piecemeal
-        dependency-type: "development"
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major'] # Ignore major version updates for all packages.
 
   # Examples
   - package-ecosystem: 'npm'
