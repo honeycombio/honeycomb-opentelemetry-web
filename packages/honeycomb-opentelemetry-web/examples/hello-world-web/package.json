@@ -23,7 +23,6 @@
     "chokidar": "^4.0.3",
     "chokidar-cli": "^3.0.0",
     "esbuild": "0.24.2",
-    "eslint-import-resolver-exports": "^1.0.0-beta.5",
     "serve": "^14.2.4"
   }
 }
