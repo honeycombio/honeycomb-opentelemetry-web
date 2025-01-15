@@ -46,7 +46,14 @@
     "example:install:hello-world-cjs": "cd ./examples/hello-world-cjs && npm ci",
     "example:install:hello-world-custom-exporter": "cd ./examples/hello-world-custom-exporter && npm ci",
     "example:install:hello-world-react-create-app": "cd ./examples/hello-world-react-create-app && npm ci",
-    "example:install:hello-world-web": "cd ./examples/hello-world-web && npm ci"
+    "example:install:hello-world-web": "cd ./examples/hello-world-web && npm ci",
+    "example:start:custom-with-collector-ts": "cd ./examples/custom-with-collector-ts && npm start",
+    "example:start:experimental/user-interaction-instrumentation": "cd ./examples/experimental/user-interaction-instrumentation && npm start",
+    "example:start:hello-world-cdn": "cd ./examples/hello-world-cdn && npm start",
+    "example:start:hello-world-cjs": "cd ./examples/hello-world-cjs && npm start",
+    "example:start:hello-world-custom-exporter": "cd ./examples/hello-world-custom-exporter && npm start",
+    "example:start:hello-world-react-create-app": "cd ./examples/hello-world-react-create-app && npm start",
+    "example:start:hello-world-web": "cd ./examples/hello-world-web && npm start"
   },
   "author": "Honeycomb <support@honeycomb.io> (https://www.honeycomb.io/)",
   "license": "Apache-2.0",
