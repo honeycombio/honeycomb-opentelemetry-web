@@ -3,13 +3,19 @@
   "version": "0.11.0",
   "description": "Honeycomb OpenTelemetry Wrapper for Browser Applications",
   "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
   "exports": {
-    "types": "./dist/types/index.d.ts",
-    "require": "./dist/cjs/index.js",
-    "import": "./dist/esm/index.js",
-    "default": "./dist/esm/index.js"
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./experimental": {
+      "types": "./dist/types/experimental/index.d.ts",
+      "require": "./dist/cjs/experimental/index.js",
+      "import": "./dist/esm/experimental/index.js",
+      "default": "./dist/esm/experimental/index.js"
+    }
   },
   "files": [
     "dist",
@@ -24,8 +30,6 @@
     "format": "prettier --write \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "lint": "eslint .",
     "lint:ci": "eslint src test",
-    "lint:examples": "npm run lint:examples-prep && eslint examples",
-    "lint:examples-prep": "cd ./examples/hello-world-web && npm ci && cd ../hello-world-cjs/ && npm ci && cd ../hello-world-react-create-app/ && npm ci && cd ../custom-with-collector-ts/ && npm ci && cd ../hello-world-custom-exporter && npm ci",
     "lint:fix": "eslint . --fix",
     "test:smoke-docker": "docker-compose up --build --detach",
     "test:smoke-cypress": "npx cypress run --headed --browser chrome",
@@ -34,7 +38,23 @@
     "test:unsmoke": "docker-compose down",
     "test": "jest --config ./jest.config.js --no-cache",
     "test:update-snapshots": "jest --config ./jest.config.js --no-cache -u",
-    "test:ci": "jest --config ./jest.config.js --ci --runInBand --reporters=default --reporters=jest-junit --no-cache"
+    "test:ci": "jest --config ./jest.config.js --ci --runInBand --reporters=default --reporters=jest-junit --no-cache",
+    "example:lint:all": "npm run example:install:all && eslint examples",
+    "example:install:all": "npm run example:install:custom-with-collector-ts && npm run example:install:experimental/user-interaction-instrumentation && npm run example:install:hello-world-cdn && npm run example:install:hello-world-cjs && npm run example:install:hello-world-custom-exporter && npm run example:install:hello-world-react-create-app && npm run example:install:hello-world-web",
+    "example:install:custom-with-collector-ts": "cd ./examples/custom-with-collector-ts && npm ci",
+    "example:install:experimental/user-interaction-instrumentation": "cd ./examples/experimental/user-interaction-instrumentation && npm ci",
+    "example:install:hello-world-cdn": "cd ./examples/hello-world-cdn && npm ci",
+    "example:install:hello-world-cjs": "cd ./examples/hello-world-cjs && npm ci",
+    "example:install:hello-world-custom-exporter": "cd ./examples/hello-world-custom-exporter && npm ci",
+    "example:install:hello-world-react-create-app": "cd ./examples/hello-world-react-create-app && npm ci",
+    "example:install:hello-world-web": "cd ./examples/hello-world-web && npm ci",
+    "example:start:custom-with-collector-ts": "cd ./examples/custom-with-collector-ts && npm start",
+    "example:start:experimental/user-interaction-instrumentation": "cd ./examples/experimental/user-interaction-instrumentation && npm start",
+    "example:start:hello-world-cdn": "cd ./examples/hello-world-cdn && npm start",
+    "example:start:hello-world-cjs": "cd ./examples/hello-world-cjs && npm start",
+    "example:start:hello-world-custom-exporter": "cd ./examples/hello-world-custom-exporter && npm start",
+    "example:start:hello-world-react-create-app": "cd ./examples/hello-world-react-create-app && npm start",
+    "example:start:hello-world-web": "cd ./examples/hello-world-web && npm start"
   },
   "author": "Honeycomb <support@honeycomb.io> (https://www.honeycomb.io/)",
   "license": "Apache-2.0",
@@ -55,6 +75,7 @@
     "eslint": "~8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-react-app": "^7.0.1",
+    "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import": "^2.29.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",

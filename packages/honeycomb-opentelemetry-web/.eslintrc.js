@@ -41,4 +41,9 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: ['./tsconfig.eslint.json', './tsconfig.json'],
   },
+  settings: {
+    'import/resolver': {
+      typescript: {},
+    },
+  },
 };
