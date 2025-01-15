@@ -6,14 +6,14 @@
     "@honeycombio/opentelemetry-web": "file:../..",
     "@opentelemetry/auto-instrumentations-web": "^0.40.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^22.10.1",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/node": "^22.10.6",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
     "install": "^0.13.0",
-    "npm": "^10.9.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^7.0.1",
+    "npm": "^11.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
     "web-vitals": "^4.0.1"
@@ -38,11 +38,11 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.0.1",
+    "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
     "eslint": "^8.57.0",
     "eslint-config-react-app": "^7.0.1",
-    "eslint-plugin-react": "^7.37.2",
-    "globals": "^15.12.0"
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^15.14.0"
   }
 }
