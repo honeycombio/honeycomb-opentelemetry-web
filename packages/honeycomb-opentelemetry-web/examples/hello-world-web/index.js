@@ -30,6 +30,7 @@ const main = () => {
         dataAttributes: ['hello', 'barBiz'],
       },
     },
+    localVisualizations: true,
   });
   sdk.start();
   const tracer = trace.getTracer('click-tracer');
