@@ -4,6 +4,7 @@ import { HoneycombOptions } from './types';
 import {
   createHoneycombSDKLogMessage,
   getTracesApiKey,
+  getTracesEndpoint,
   isClassic,
 } from './util';
 import {
@@ -24,7 +25,9 @@ export function configureConsoleTraceLinkExporter(
   options?: HoneycombOptions,
 ): SpanExporter {
   const apiKey = getTracesApiKey(options);
-  const { authRoot, uiRoot } = getUrlRoots(options?.endpoint);
+  const { authRoot, uiRoot } = getUrlRoots(
+    options?.tracesEndpoint || getTracesEndpoint(options),
+  );
   return new ConsoleTraceLinkExporter(
     options?.serviceName,
     apiKey,

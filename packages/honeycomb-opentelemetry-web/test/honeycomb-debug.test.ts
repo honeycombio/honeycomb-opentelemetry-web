@@ -69,5 +69,34 @@ describe('when debug is set to true', () => {
         `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${testConfig.sampleRate}'`,
       );
     });
+    it('should log the configured options to the console when endpoint is omitted', () => {
+      const testConfig = {
+        debug: true,
+        apiKey: 'my-key',
+        serviceName: 'my-service',
+        sampleRate: 2,
+      };
+      new HoneycombWebSDK(testConfig);
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        3,
+        '@honeycombio/opentelemetry-web: 🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
+      );
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        4,
+        `@honeycombio/opentelemetry-web: API Key configured for traces: '${testConfig.apiKey}'`,
+      );
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        5,
+        `@honeycombio/opentelemetry-web: Service Name configured for traces: '${testConfig.serviceName}'`,
+      );
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        6,
+        `@honeycombio/opentelemetry-web: Endpoint configured for traces: 'https://api.honeycomb.io/v1/traces'`,
+      );
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        7,
+        `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${testConfig.sampleRate}'`,
+      );
+    });
   });
 });
