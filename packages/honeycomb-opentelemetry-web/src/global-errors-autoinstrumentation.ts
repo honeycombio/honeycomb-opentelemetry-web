@@ -30,12 +30,16 @@ export function getStructuredStackTrace(error: Error | undefined) {
   const functions: string[] = [];
   const urls: string[] = [];
 
-  for (const stackFrame of structuredStack) {
+  if (!Array.isArray(structuredStack)) {
+    return {};
+  }
+
+  structuredStack.forEach((stackFrame) => {
     lines.push(stackFrame.line);
     columns.push(stackFrame.column);
     functions.push(stackFrame.func);
     urls.push(stackFrame.url);
-  }
+  });
 
   return {
     'exception.structured_stacktrace.columns': columns,

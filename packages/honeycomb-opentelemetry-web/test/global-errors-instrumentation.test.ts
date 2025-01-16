@@ -8,6 +8,13 @@ import {
   GlobalErrorsInstrumentation,
 } from '../src/global-errors-autoinstrumentation';
 import timers from 'node:timers/promises';
+import * as tracekit from 'tracekit';
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock('tracekit', () => ({
+  __esModule: true,
+  ...jest.requireActual('tracekit'),
+}));
 
 describe('Global Errors Instrumentation Tests', () => {
   const exporter = new InMemorySpanExporter();
@@ -85,6 +92,17 @@ describe('Global Errors Instrumentation Tests', () => {
   describe('_computeStackTrace', () => {
     it('should return an empty object if error is undefined', () => {
       expect(getStructuredStackTrace(undefined)).toEqual({});
+    });
+
+    it('should return an empty object if StackTrace.stack is null', () => {
+      const spy = jest.spyOn(tracekit, 'computeStackTrace');
+      // @ts-expect-error bad data from 3rd part lib
+      spy.mockReturnValueOnce({ stack: null });
+
+      const err = new Error('This is an error');
+      err.stack = 'garbo';
+      expect(getStructuredStackTrace(err)).toEqual({});
+      spy.mockRestore();
     });
 
     it('should return an object with structured stack trace information', () => {
