@@ -30,7 +30,7 @@ export function getStructuredStackTrace(error: Error | undefined) {
   const functions: string[] = [];
   const urls: string[] = [];
 
-  if (!structuredStack) {
+  if (!Array.isArray(structuredStack)) {
     return {};
   }
 
