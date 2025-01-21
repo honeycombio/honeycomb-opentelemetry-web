@@ -17,6 +17,16 @@ import { computeStackTrace, StackFrame } from 'tracekit';
 
 const LIBRARY_NAME = '@honeycombio/instrumentation-global-errors';
 
+/**
+ * Extracts and structures the stack trace from an error object.
+ *
+ * This function breaks down the stack trace into arrays of strings and numbers
+ * to comply with OTLP (OpenTelemetry Protocol) requirements, which do not accept
+ * arrays of objects.
+ *
+ * @param {Error | undefined} error - The error object from which to extract the stack trace.
+ * @returns {Object} An object containing structured stack trace information with arrays of columns, lines, functions, and URLs.
+ */
 export function getStructuredStackTrace(error: Error | undefined) {
   if (!error) {
     return {};
@@ -49,6 +59,13 @@ export function getStructuredStackTrace(error: Error | undefined) {
   };
 }
 
+/**
+ * Records an exception as a span in the OpenTelemetry tracer.
+ *
+ * @param {Error} error - The error object to record.
+ * @param {Attributes} [attributes={}] - Additional attributes to add to the span.
+ * @param {Tracer} [tracer=trace.getTracer(LIBRARY_NAME)] - The tracer to use for recording the span.
+ */
 export function recordException(
   error: Error,
   attributes: Attributes = {},
