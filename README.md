@@ -25,7 +25,7 @@ This package sets up OpenTelemetry for tracing, using our recommended practices,
 * Convenient packaging
 * An informative debug mode
 * Links to traces in Honeycomb
-* Automatically enabled Web Vitals instrumentation
+* Automatically enabled [Web Vitals](https://web.dev/articles/vitals) & error instrumentation
 
 <!-- TODO: determine whether we must call this a distro instead of a wrapper. -->
 
@@ -61,7 +61,7 @@ import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations
 const sdk = new HoneycombWebSDK({
   apiKey: 'api-key-goes-here',
   serviceName: 'your-great-browser-application',
-  instrumentations: [getWebAutoInstrumentations(), new WebVitalsInstrumentation()], // add automatic instrumentation
+  instrumentations: [getWebAutoInstrumentations()], // add automatic instrumentation
 });
 sdk.start();
 ```
@@ -95,7 +95,7 @@ Pass these options to the HoneycombWebSDK:
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 
-#### WebVitalsInstrumentationConfig
+#### `WebVitalsInstrumentationConfig`
 | name | required? | type | default value | description |
 | ---- | --------- | ---- | ------------- | ----------- |
 | enabled | optional | boolean | `true` | Where or not to enable this auto instrumentation. |
@@ -114,11 +114,42 @@ Pass these options to the HoneycombWebSDK:
 | ttf| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
 | ttf.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
 
-#### GlobalErrorsInstrumentationConfig
+#### `GlobalErrorsInstrumentationConfig`
+
 | name | required? | type | default value | description |
 | ---- | --------- | ---- | ------------- | ----------- |
 | enabled | optional | boolean | `true` | Where or not to enable this auto instrumentation. |
 
+#### `recordException` Helper Function
+
+The `recordException` function is a utility to send exception spans with semantic attributes from anywhere in your JS app (e.g. a global app error function, React error boundary etc.)
+
+##### Parameters
+
+| Parameter   | Type       | Default Value                          | Description                                                                 |
+|-------------|------------|----------------------------------------|-----------------------------------------------------------------------------|
+| `error`     | `Error`    | N/A                                    | The error object to record. This should be an instance of the JavaScript `Error` class. |
+| `attributes`| `Attributes`| `{}`                                  | Additional attributes to add to the span. This can include any custom metadata you want to associate with the error. |
+| `tracer`    | `Tracer`   | `trace.getTracer(LIBRARY_NAME)`        | The tracer to use for recording the span. If not provided, the default tracer for the library will be used. |
+
+```js
+recordException(
+  error: Error,
+  attributes?: Attributes,
+  tracer?: Tracer
+): void
+```
+
+```js
+import { recordException } from '@honeycombio/opentelemetry-web';
+
+try {
+  // Some code that may throw an error
+  throw new Error('Something went wrong!');
+} catch (error) {
+  recordException(error);
+}
+```
 
 ### Send to an OpenTelemetry Collector
 
