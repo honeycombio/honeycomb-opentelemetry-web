@@ -4,6 +4,7 @@ import { VERSION } from './version';
 import {
   Attributes,
   context,
+  Span,
   SpanStatusCode,
   trace,
   Tracer,
@@ -70,6 +71,7 @@ export function recordException(
   error: Error,
   attributes: Attributes = {},
   tracer: Tracer = trace.getTracer(LIBRARY_NAME),
+  applyCustomAttributesOnSpan?: (span: Span, error: Error) => void,
 ) {
   const message = error.message;
   const type = error.name;
@@ -87,12 +89,24 @@ export function recordException(
     context.active(),
   );
 
+  if (applyCustomAttributesOnSpan) {
+    applyCustomAttributesOnSpan(errorSpan, error);
+  }
+
   errorSpan.setStatus({ code: SpanStatusCode.ERROR, message });
   errorSpan.end();
 }
 
 export interface GlobalErrorsInstrumentationConfig
-  extends InstrumentationConfig {}
+  extends InstrumentationConfig {
+  /**
+   * A callback function for adding custom attributes to the span when an error is recorded.
+   *
+   * @param {Span} span - The span to which custom attributes will be added.
+   * @param {Error} error - The error object that is being recorded.
+   */
+  applyCustomAttributesOnSpan?: (span: Span, error: Error) => void;
+}
 
 /**
  * Global errors auto-instrumentation, sends spans automatically for exceptions that reach the window.
@@ -100,20 +114,30 @@ export interface GlobalErrorsInstrumentationConfig
  */
 export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
   private _isEnabled: boolean;
-  constructor({ enabled = true }: GlobalErrorsInstrumentationConfig = {}) {
-    const config: GlobalErrorsInstrumentationConfig = { enabled };
+  readonly applyCustomAttributesOnSpan?: (span: Span, error: Error) => void;
+  // protected _config: GlobalErrorsInstrumentationConfig;
+  constructor({
+    enabled = true,
+    applyCustomAttributesOnSpan,
+  }: GlobalErrorsInstrumentationConfig = {}) {
+    const config: GlobalErrorsInstrumentationConfig = {
+      enabled,
+      applyCustomAttributesOnSpan,
+    };
     super(LIBRARY_NAME, VERSION, config);
     if (enabled) {
       this.enable();
     }
     this._isEnabled = enabled;
+    this.applyCustomAttributesOnSpan = applyCustomAttributesOnSpan;
   }
 
   onError = (event: ErrorEvent | PromiseRejectionEvent) => {
     const error: Error | undefined =
       'reason' in event ? event.reason : event.error;
+    console.log(this.applyCustomAttributesOnSpan);
     if (error) {
-      recordException(error, {}, this.tracer);
+      recordException(error, {}, this.tracer, this.applyCustomAttributesOnSpan);
     }
   };
 

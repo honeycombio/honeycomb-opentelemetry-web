@@ -24,17 +24,16 @@ describe('Global Errors Instrumentation Tests', () => {
   provider.register();
   let instr: GlobalErrorsInstrumentation;
 
-  beforeEach(() => {
-    instr = new GlobalErrorsInstrumentation();
-    instr.enable();
-  });
-
-  afterEach(() => {
-    instr.disable();
-    exporter.reset();
-  });
-
   describe('when enabled', () => {
+    beforeEach(() => {
+      instr = new GlobalErrorsInstrumentation();
+      instr.enable();
+    });
+
+    afterEach(() => {
+      instr.disable();
+      exporter.reset();
+    });
     it('should create a span when an error escapes', async () => {
       const err = new Error('Something happened');
       err.stack =
@@ -89,7 +88,43 @@ describe('Global Errors Instrumentation Tests', () => {
     });
   });
 
-  describe('_computeStackTrace', () => {
+  describe('when adding custom attributes through a callback function', () => {
+    beforeEach(() => {
+      instr = new GlobalErrorsInstrumentation({
+        applyCustomAttributesOnSpan: (span, error) => {
+          span.setAttribute('app.important-attr', 'things are on fire');
+          span.setAttribute(
+            'app.error-message-formatted',
+            `error 123: ${error.message}`,
+          );
+        },
+      });
+      instr.enable();
+    });
+
+    afterEach(() => {
+      instr.disable();
+      exporter.reset();
+    });
+
+    it('should add custom attributes to every span span', async () => {
+      const err = new Error('Something happened');
+      setTimeout(() => {
+        throw err;
+      });
+      await timers.setTimeout();
+
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.name).toBe('exception');
+      console.log(span.attributes['app.important-attr']);
+      expect(span.attributes).toMatchObject({
+        'app.important-attr': 'things are on fire',
+        'app.error-message-formatted': 'error 123: Something happened',
+      });
+    });
+  });
+
+  describe('getStructuredStackTrace', () => {
     it('should return an empty object if error is undefined', () => {
       expect(getStructuredStackTrace(undefined)).toEqual({});
     });
