@@ -18,6 +18,8 @@ import { computeStackTrace, StackFrame } from 'tracekit';
 
 const LIBRARY_NAME = '@honeycombio/instrumentation-global-errors';
 
+type ApplyCustomErrorAttributesOnSpanFn = (span: Span, error: Error) => void;
+
 /**
  * Extracts and structures the stack trace from an error object.
  *
@@ -66,12 +68,13 @@ export function getStructuredStackTrace(error: Error | undefined) {
  * @param {Error} error - The error object to record.
  * @param {Attributes} [attributes={}] - Additional attributes to add to the span.
  * @param {Tracer} [tracer=trace.getTracer(LIBRARY_NAME)] - The tracer to use for recording the span.
+ * @param {ApplyCustomErrorAttributesOnSpanFn} applyCustomAttributesOnSpan - Callback function to add custom attributes to the span and mutate the span.
  */
 export function recordException(
   error: Error,
   attributes: Attributes = {},
   tracer: Tracer = trace.getTracer(LIBRARY_NAME),
-  applyCustomAttributesOnSpan?: (span: Span, error: Error) => void,
+  applyCustomAttributesOnSpan?: ApplyCustomErrorAttributesOnSpanFn,
 ) {
   const message = error.message;
   const type = error.name;
@@ -105,7 +108,7 @@ export interface GlobalErrorsInstrumentationConfig
    * @param {Span} span - The span to which custom attributes will be added.
    * @param {Error} error - The error object that is being recorded.
    */
-  applyCustomAttributesOnSpan?: (span: Span, error: Error) => void;
+  applyCustomAttributesOnSpan?: ApplyCustomErrorAttributesOnSpanFn;
 }
 
 /**
@@ -114,8 +117,7 @@ export interface GlobalErrorsInstrumentationConfig
  */
 export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
   private _isEnabled: boolean;
-  readonly applyCustomAttributesOnSpan?: (span: Span, error: Error) => void;
-  // protected _config: GlobalErrorsInstrumentationConfig;
+  readonly applyCustomAttributesOnSpan?: ApplyCustomErrorAttributesOnSpanFn;
   constructor({
     enabled = true,
     applyCustomAttributesOnSpan,
