@@ -20,7 +20,7 @@ NOTE: the `X.Y.Z` at the end of each tag will be replaced with the version numbe
     git checkout main && git fetch
     ```
 
-2. Checkout a new branch for the release `release-YYYY-MM-DD` (i.e. `release-2024-09-16`)
+2. Checkout a new branch for the release `release-honeycomb-opentelemetry-web-vX.Y.Z` (i.e. `release-honeycomb-opentelemetry-web-v0.12.0`)
 
     ```shell
     git checkout -b release-honeycomb-opentelemetry-web-vX.Y.Z
@@ -32,9 +32,9 @@ NOTE: the `X.Y.Z` at the end of each tag will be replaced with the version numbe
 
 3. `cd` into the package you'd like to release i.e.
 
-    ```shell
-    cd packages/honeycomb-opentelemetry-web`
-    ```
+   ```shell
+   cd packages/honeycomb-opentelemetry-web
+   ```
 
 4. Clear `node_modules` and install dependencies
 
@@ -63,9 +63,9 @@ NOTE: the `X.Y.Z` at the end of each tag will be replaced with the version numbe
 8. Update `version.ts` with the new version number.
 9. Update the `CHANGELOG.md` using:
 
-    ```shell
-      `git log --pretty='%C(green)%d%Creset- %s | %an'`
-    ```
+   ```shell
+    git log --pretty='%C(green)%d%Creset- %s | %an'
+   ```
 
     - Copy the latest commits and paste them into the package's `CHANGELOG.md`
     - Update the author names to GitHub handles
