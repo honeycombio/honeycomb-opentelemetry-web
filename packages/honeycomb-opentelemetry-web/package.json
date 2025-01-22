@@ -97,7 +97,6 @@
   "dependencies": {
     "@babel/runtime": "^7.24.7",
     "@opentelemetry/api": "~1.9.0",
-    "@opentelemetry/auto-instrumentations-web": "^0.45.0",
     "@opentelemetry/core": "~1.30.0",
     "@opentelemetry/exporter-trace-otlp-http": "~0.57.0",
     "@opentelemetry/instrumentation": "~0.57.0",
@@ -110,5 +109,8 @@
     "tracekit": "^0.4.7",
     "ua-parser-js": "^1.0.37",
     "web-vitals": "^4.2.3"
+  },
+  "peerDependencies": {
+    "@opentelemetry/auto-instrumentations-web": "^0.45.0"
   }
 }
