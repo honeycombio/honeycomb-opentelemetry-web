@@ -12,8 +12,8 @@ Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser. 
 
 Latest release:
 
-* built with OpenTelemetry JS [Stable v1.30.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.30.0)[Experimental v0.57.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.54.0), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0)
-* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.45.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.42.0)
+- built with OpenTelemetry JS [Stable v1.30.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.30.1) [Experimental v0.57.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.57.1), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0)
+- compatible with OpenTelemetry Auto-Instrumentations for Web [~0.45.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.45.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
