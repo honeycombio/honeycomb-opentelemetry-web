@@ -1,5 +1,26 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.12.0 [beta] - 2025-01-21
+
+### ✨ Features
+
+- feat(error-autoinstrumentation): Add applyCustomAttribitesToSpan config option (#447) | @pkanal
+- docs: Docs for recordException function (#446) | @pkanal
+- fix: Fallback to default trace endpoint for link exporter. (#444) | @wolfgangcodes
+- fix: Add guard for null stack from tracekit. (#442) | @wolfgangcodes
+
+### 🛠️ Maintenance
+
+- maint(deps-dev): bump @testing-library/user-event from 14.5.2 to 14.6.0 in /packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app in the example-deps group (#440) | @dependabot
+- maint(deps): bump @opentelemetry/context-zone from 1.30.0 to 1.30.1 in /packages/honeycomb-opentelemetry-web/examples/hello-world-web in the example-deps group (#439) | @dependabot
+- maint(deps): bump @opentelemetry/context-zone from 1.30.0 to 1.30.1 in /packages/honeycomb-opentelemetry-web/examples/hello-world-custom-exporter in the example-deps group (#438) | @dependabot
+- maint(deps-dev): bump ts-loader from 9.5.1 to 9.5.2 in /packages/honeycomb-opentelemetry-web/examples/custom-with-collector-ts in the example-deps group (#437) | @dependabot
+- maint(deps-dev): bump rollup from 4.30.1 to 4.31.0 in /packages/honeycomb-opentelemetry-web in the dev-dependencies group (#445) | @dependabot
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 7 updates (#441) | @dependabot
+- maint: Remove experimental-opentelemetry-web (#435) | @wolfgangcodes
+- maint(deps): bump the example-deps group across 1 directory with 10 updates (#436) | @dependabot
+- maint: Move experimental user-interaction-instrumentation into honeycomb-opentelemetry-web/experimental so we can remove experimental-opentelemetry-web (#434) | @wolfgangcodes
+
 ## v0.11.0 [beta] - 2025-01-14
 
 ### ✨ Features
