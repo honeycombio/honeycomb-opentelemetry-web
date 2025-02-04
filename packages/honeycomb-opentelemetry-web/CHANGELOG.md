@@ -1,5 +1,17 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.12.1 [beta] - 2025-02-04
+
+### 🛠️ Maintenance
+
+- maint(deps-dev): bump rollup from 4.32.0 to 4.34.1 in /packages/honeycomb-opentelemetry-web in the dev-dependencies group (#455) | @dependabot
+- maint(deps): bump the example-deps group in /packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app with 6 updates (#454) | @dependabot
+- fix: Update README.md (#453) | @maecapozzi
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#451) | @dependabot
+- maint(deps): bump @babel/runtime from 7.26.0 to 7.26.7 in /packages/honeycomb-opentelemetry-web (#452) | @dependabot
+- chore: Update versions and links (#450) | @martin308
+- fix: releasing.md updates (#449) | @martin308
+
 ## v0.12.0 [beta] - 2025-01-21
 
 ### ✨ Features
