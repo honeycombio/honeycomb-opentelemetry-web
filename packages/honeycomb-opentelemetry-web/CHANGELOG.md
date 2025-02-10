@@ -1,5 +1,16 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.13.1 [beta] - 2025-02-10
+
+### 🐛 Fixes
+
+- fix: Export experimental packages as part of the core package (#459) | @pkanal
+
+### 🛠️ Maintenance
+
+- maint(deps): bump @opentelemetry/semantic-conventions from 1.28.0 to 1.29.0 in /packages/honeycomb-opentelemetry-web in the otel group (#457) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 5 updates (#458) | @dependabot
+
 ## v0.12.1 [beta] - 2025-02-04
 
 ### 🛠️ Maintenance
