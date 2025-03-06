@@ -1,3 +1,4 @@
+import { DiagLogLevel } from '@opentelemetry/api';
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
 import {
   CUSTOM_COLLECTOR_VALIDATION_MSG,
@@ -5,10 +6,14 @@ import {
   MISSING_API_KEY_ERROR,
   MISSING_DATASET_ERROR,
   MISSING_SERVICE_NAME_ERROR,
+  NO_EXPORTERS_DISABLED_DEFAULT,
   SAMPLER_OVERRIDE_WARNING,
   SKIPPING_OPTIONS_VALIDATION_MSG,
 } from '../src/validate-options';
-import { AlwaysOnSampler } from '@opentelemetry/sdk-trace-base';
+import {
+  AlwaysOnSampler,
+  ConsoleSpanExporter,
+} from '@opentelemetry/sdk-trace-base';
 const debugSpy = jest
   .spyOn(console, 'debug')
   .mockImplementation(() => undefined);
@@ -43,7 +48,27 @@ describe('console warnings', () => {
         SKIPPING_OPTIONS_VALIDATION_MSG,
       );
     });
+
+    it('should not show any warnings or debug logs if log level is lower than DEBUG level', () => {
+      new HoneycombWebSDK({
+        skipOptionsValidation: true,
+        logLevel: DiagLogLevel.INFO,
+      });
+      expect(debugSpy).not.toHaveBeenCalled();
+    });
+
+    it("should show debug logs if log level is 'DEBUG'", () => {
+      new HoneycombWebSDK({
+        skipOptionsValidation: true,
+        logLevel: DiagLogLevel.DEBUG,
+      });
+      expect(debugSpy).toHaveBeenNthCalledWith(
+        1,
+        SKIPPING_OPTIONS_VALIDATION_MSG,
+      );
+    });
   });
+
   describe('when skipOptionsValidation is false', () => {
     it('should not show warnings when using a custom endpoint', () => {
       new HoneycombWebSDK({
@@ -103,6 +128,56 @@ describe('console warnings', () => {
       });
 
       expect(debugSpy).toHaveBeenLastCalledWith(SAMPLER_OVERRIDE_WARNING);
+    });
+
+    it("should not show any warnings if log level is lower than 'WARN'", () => {
+      new HoneycombWebSDK({
+        logLevel: DiagLogLevel.ERROR,
+      });
+
+      expect(warningSpy).not.toHaveBeenCalled();
+    });
+  });
+  describe('when the default trace exporter is disabled', () => {
+    describe('and no trace exporters are defined', () => {
+      it('should show a no exporters warning', () => {
+        new HoneycombWebSDK({
+          apiKey,
+          serviceName: ' test-service',
+          disableDefaultTraceExporter: true,
+        });
+
+        expect(warningSpy).toHaveBeenCalledWith(NO_EXPORTERS_DISABLED_DEFAULT);
+      });
+    });
+
+    describe('and traceExporter is defined', () => {
+      it('should not show any warnings', () => {
+        const customExporter = new ConsoleSpanExporter();
+        new HoneycombWebSDK({
+          apiKey,
+          serviceName: 'test-service',
+          disableDefaultTraceExporter: true,
+          traceExporter: customExporter,
+        });
+
+        expect(warningSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('and a traceExporters array is defined', () => {
+      it('should not show any warnings', () => {
+        const customExporter = new ConsoleSpanExporter();
+
+        new HoneycombWebSDK({
+          apiKey,
+          serviceName: 'test-service',
+          disableDefaultTraceExporter: true,
+          traceExporters: [customExporter],
+        });
+
+        expect(warningSpy).not.toHaveBeenCalled();
+      });
     });
   });
 });

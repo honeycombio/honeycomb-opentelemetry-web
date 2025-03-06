@@ -4,7 +4,7 @@ parameters:
   build-web-distro:
     type: boolean
     default: false
-  build-react-distro:
+  build-experimental:
     type: boolean
     default: false
 
@@ -20,13 +20,6 @@ filters_publish_web: &filters_publish_web
     branches:
       ignore: /.*/
 
-filters_publish_react: &filters_publish_react
-  filters:
-    tags:
-      only: /^honeycomb-react-user-instrumentation-v[0-9].*/
-    branches:
-      ignore: /.*/
-
 orbs:
   bats: circleci/bats@1.0.0
   cypress: cypress-io/cypress@3
@@ -34,7 +27,7 @@ orbs:
 executors:
   node:
     docker:
-      - image: cimg/node:16.16
+      - image: cimg/node:18.19
   github:
     docker:
       - image: cibuilds/github:0.13.0
@@ -83,13 +76,13 @@ jobs:
       - attach_workspace:
           at: ./
       - run: npm run lint:ci
-  
+
   lint-examples:
     executor: node
     steps:
       - attach_workspace:
           at: ./
-      - run: npm run lint:examples
+      - run: npm run example:lint:all
 
   test:
     executor: node
@@ -157,7 +150,7 @@ jobs:
 workflows:
   build-web-distro:
     when:
-      condition: << pipeline.parameters.build-web-distro >> 
+      condition: << pipeline.parameters.build-web-distro >>
     jobs:
       - checkout-and-install:
           <<: *filters_always
@@ -200,37 +193,4 @@ workflows:
             - build
             - smoke_test
 
-  build-react-distro:
-    when:
-      condition: << pipeline.parameters.build-react-distro >> 
-    jobs:
-      - checkout-and-install:
-          <<: *filters_always
-          package-path: packages/honeycomb-react-user-instrumentation
-      - check-format:
-          <<: *filters_always
-          requires:
-            - checkout-and-install
-      - lint:
-          <<: *filters_always
-          requires:
-            - checkout-and-install
-      - test:
-          <<: *filters_always
-          requires:
-            - checkout-and-install
-      - build:
-          <<: *filters_always
-          requires:
-            - checkout-and-install
-            - test
-      - publish_github:
-          <<: *filters_publish_react
-          context: Honeycomb Secrets for Public Repos
-          requires:
-            - build
-      - publish_npm:
-          <<: *filters_publish_react
-          context: Honeycomb Secrets for Public Repos
-          requires:
-            - build
+ 

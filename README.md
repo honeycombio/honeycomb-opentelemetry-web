@@ -4,15 +4,16 @@
 [![CircleCI](https://circleci.com/gh/honeycombio/honeycomb-opentelemetry-web.svg?style=shield)](https://circleci.com/gh/honeycombio/honeycomb-opentelemetry-web)
 [![npm](https://img.shields.io/npm/v/@honeycombio/opentelemetry-web)](https://www.npmjs.com/package/@honeycombio/opentelemetry-web)
 
-Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser.
+Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser. Detailed documentation for setup, instrumentation and troubleshooting can be found [here](https://docs.honeycomb.io/get-started/start-building/web/).
+
 <!-- TODO: happy badges of the OTel versions we are using -->
 <!-- TODO: evergreen question of whether to use fields or attributes -->
 **STATUS: this library is in BETA.** Data shapes are stable and safe for production. We are actively seeking feedback to ensure usability.
 
 Latest release:
 
-* built with OpenTelemetry JS [Stable v1.25.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.25.1), [Experimental v0.52.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.52.1), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0)
-* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.39.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.39.0)
+- built with OpenTelemetry JS [Stable v1.30.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.30.1) [Experimental v0.57.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.57.1), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0)
+- compatible with OpenTelemetry Auto-Instrumentations for Web [~0.45.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.45.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
@@ -24,7 +25,7 @@ This package sets up OpenTelemetry for tracing, using our recommended practices,
 * Convenient packaging
 * An informative debug mode
 * Links to traces in Honeycomb
-* Automatically enabled Web Vitals instrumentation
+* Automatically enabled [Web Vitals](https://web.dev/articles/vitals) & error instrumentation
 
 <!-- TODO: determine whether we must call this a distro instead of a wrapper. -->
 
@@ -60,7 +61,7 @@ import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations
 const sdk = new HoneycombWebSDK({
   apiKey: 'api-key-goes-here',
   serviceName: 'your-great-browser-application',
-  instrumentations: [getWebAutoInstrumentations(), new WebVitalsInstrumentation()], // add automatic instrumentation
+  instrumentations: [getWebAutoInstrumentations()], // add automatic instrumentation
 });
 sdk.start();
 ```
@@ -69,7 +70,7 @@ sdk.start();
 
 ![Honeycomb screen, with "Home" circled on the left, and the dropdown circled at the top.](docs/honeycomb-home.png)
 
-Refer to our [Honeycomb documentation](https://docs.honeycomb.io/get-started/start-building/rum/) for more information on instrumentation and troubleshooting.
+Refer to our [Honeycomb documentation](https://docs.honeycomb.io/get-started/start-building/web/) for more information on instrumentation and troubleshooting.
 
 ## SDK Configuration
 
@@ -86,8 +87,72 @@ Pass these options to the HoneycombWebSDK:
 | dataset               | optional                                         | string  |                         | Populate this only if your Honeycomb environment is still [Classic](https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic).                                   |
 | skipOptionsValidation | optional                                         | boolean | false                   | Do not require any fields.[*](#send-to-an-opentelemetry-collector) Use with OpenTelemetry Collector.                                                                                                       |
 | spanProcessors | optional                                         | SpanProcessor[] | | Array of [span processors](https://opentelemetry.io/docs/languages/java/instrumentation/#span-processor) to apply to all generated spans.  |
+| traceExporters | optional                                         | SpanExporter[] | | Array of [span exporters](https://opentelemetry.io/docs/languages/js/exporters) | optional |
+| disableDefaultTraceExporter | optional                                    | boolean | false                   | Disable default honeycomb trace exporter. You can provide additional exporters via `traceExporters` config option.  |
+|  webVitalsInstrumentationConfig|optional|WebVitalsInstrumentationConfig| `{ enabled: true }` | See [WebVitalsInstrumentationConfig](####WebVitalsInstrumentationConfig). |
+|  globalErrorsInstrumentationConfig |optional| GlobalErrorsInstrumentationConfig|  `{ enabled: true }` | See [GlobalErrorsInstrumentationConfig](####GlobalErrorsInstrumentationConfig).
+| logLevel              | optional                                    | DiagLogLevel | DiagLogLevel.DEBUG       | Controls the verbosity of logs printed to the console. |
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
+
+#### `WebVitalsInstrumentationConfig`
+| name | required? | type | default value | description |
+| ---- | --------- | ---- | ------------- | ----------- |
+| enabled | optional | boolean | `true` | Whether or not to enable this auto instrumentation. |
+| lcp| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| lcp.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
+| lcp.dataAttributes| optional| `string[]` | `undefined`  | An array of attribute names to filter reported as `lcp.element.data.someAttr` <br/> <li/> `undefined` will send all `data-*` attribute-value pairs. <li/> `[]` will send none <li/> `['myAttr']` will send the value of `data-my-attr` or `''` if it's not supplied. <p/> Note: An attribute that's defined, but that has no specified value such as `<div data-my-attr />` will be sent as  `{`lcp.element.data.myAttr`: '' }` which is inline with the [dataset API]( https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset).
+| cls| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| cls.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
+| inp| optional| VitalOptsWithTimings | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| inp.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
+| inp.includeTimingsAsSpans| optional| boolean | `false` | When true will emit `PerformanceLongAnimationFrameTiming` and `PerformanceScriptTiming` as spans.
+| fid| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| fid.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
+| fcp| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| fcp.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
+| ttf| optional| VitalOpts | `undefined` | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).
+| ttf.applyCustomAttributes| optional| function | `undefined` | A function for adding custom attributes to core web vitals spans.
+
+#### `GlobalErrorsInstrumentationConfig`
+
+| name | required? | type | default value | description |
+| ---- | --------- | ---- | ------------- | ----------- |
+| enabled | optional | boolean | `true` | Whether or not to enable this auto instrumentation. |
+| applyCustomAttributesOnSpan | optional | function | n/a | A callback function for adding custom attributes to the span when an error is recorded. Will automatically be applied to all spans generated by the auto-instrumentation. |
+
+#### `recordException` Helper Function
+
+The `recordException` function is a utility to send exception spans with semantic attributes from anywhere in your JS app (e.g. a global app error function, React error boundary etc.)
+
+##### Parameters
+
+| Parameter   | Type       | Default Value                          | Description                                                                 |
+|-------------|------------|----------------------------------------|-----------------------------------------------------------------------------|
+| `error`     | `Error`    | N/A                                    | The error object to record. This should be an instance of the JavaScript `Error` class. |
+| `attributes`| `Attributes`| `{}`                                  | Additional attributes to add to the span. This can include any custom metadata you want to associate with the error. Will likely be deprecated in favour of using the callback function option `applyCustomAttributesOnSpan` in the future. |
+| `tracer`    | `Tracer`   | `trace.getTracer(LIBRARY_NAME)`        | The tracer to use for recording the span. If not provided, the default tracer for the library will be used. |
+| `applyCustomAttributesOnSpan`    | function   | n/a | A callback function for adding custom attributes to the span when an error is recorded. |
+
+```js
+recordException(
+  error: Error,
+  attributes?: Attributes,
+  tracer?: Tracer,
+  applyCustomAttributesOnSpan?
+): void
+```
+
+```js
+import { recordException } from '@honeycombio/opentelemetry-web';
+
+try {
+  // Some code that may throw an error
+  throw new Error('Something went wrong!');
+} catch (error) {
+  recordException(error);
+}
+```
 
 ### Send to an OpenTelemetry Collector
 
@@ -150,6 +215,19 @@ The SDK adds these fields to all telemetry:
 Static fields are added to the [Resource](https://opentelemetry.io/docs/concepts/resources/), so they are same for every span emitted for the loaded page.
 
 Fields that can change during the lifetime of the page are instead added to each span in a [SpanProcessor](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-processor).
+
+#### GlobalErrorsInstrumentationConfig
+
+You can expect the following attributes to be emitted from the global errors instrumentation, unless you have it disabled in your SDK configuration:
+| name                                         | status          | static?  | description                                                                   | example                                                                                                                                                                                                    |
+|----------------------------------------------|-----------------|----------|-------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `exception.stacktrace`                       | stable          | per-span | The entire stacktrace as a string.                                            | ReferenceError: VAR is not defined<br>&nbsp;&nbsp;&nbsp;&nbsp;at main(/index.js:37:18)<br>&nbsp;&nbsp;&nbsp;&nbsp;at <anonymous>(/index.js:68:6)<br>&nbsp;&nbsp;&nbsp;&nbsp;at <anonymous>(/index.js:68:6) |
+| `exception.message`                          | stable          | per-span | The exception's message.                                                      | VAR is not defined                                                                                                                                                                                         |
+| `exception.type`                             | stable          | per-span | The type of exception.                                                        | ReferenceError                                                                                                                                                                                             |
+| `exception.structured_stacktrace.columns`    | custom          | per-span | Array of columns extracted from `exception.stacktrace`.                       | [18, 6, 6]                                                                                                                                                                                                 |
+| `exception.structured_stacktrace.lines`      | custom          | per-span | Array of lines extracted from `exception.stacktrace`.                         | [37, 68, 68]                                                                                                                                                                                               |
+| `exception.structured_stacktrace.functions`  | custom          | per-span | Array of function names extracted from `exception.stacktrace`.                | [main, \<anonymous\>, \<anonymous\>]                                                                                                                                                                       |
+| `exception.structured_stacktrace.urls`       | custom          | per-span | Array of urls or directories extracted from `exception.stacktrace`.           | [/index.js, /index.js, /index.js]                                                                                                                                                                          |
 
 ## Migration Practices
 

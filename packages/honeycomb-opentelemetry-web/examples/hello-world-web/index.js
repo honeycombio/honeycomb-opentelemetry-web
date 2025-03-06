@@ -26,7 +26,11 @@ const main = () => {
     contextManager: new ZoneContextManager(),
     webVitalsInstrumentationConfig: {
       vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
+      lcp: {
+        dataAttributes: ['hello', 'barBiz'],
+      },
     },
+    localVisualizations: true,
   });
   sdk.start();
   const tracer = trace.getTracer('click-tracer');

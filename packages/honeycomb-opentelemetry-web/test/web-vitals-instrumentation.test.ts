@@ -56,6 +56,9 @@ const CLSAttr = {
   'cls.entries': '',
   'cls.my_custom_attr': 'custom_attr',
 };
+const div = document.createElement('div');
+div.innerHTML = `<div id="lcp-element" data-answer="42" data-famous-cats="Mr. Mistoffelees" data-has-cats>👋 Hello World</div>`;
+const lcpElement = div.firstElementChild;
 
 const LCP: LCPMetricWithAttribution = {
   name: 'LCP',
@@ -72,6 +75,19 @@ const LCP: LCPMetricWithAttribution = {
     resourceLoadDuration: 20,
     elementRenderDelay: 20,
     resourceLoadDelay: 100,
+    lcpEntry: {
+      duration: 0,
+      element: lcpElement,
+      entryType: 'largest-contentful-paint',
+      id: '',
+      loadTime: 0,
+      name: '',
+      renderTime: 74.09999999403954,
+      size: 4382,
+      startTime: 74.09999999403954,
+      url: '',
+      toJSON: () => '',
+    },
   },
 };
 
@@ -303,11 +319,13 @@ describe('Web Vitals Instrumentation Tests', () => {
   describe('CLS', () => {
     it('should create a span when enabled', () => {
       const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportCLS(CLS, (cls, span) => {
-        span.setAttributes({
-          'cls.entries': cls.entries.toString(),
-          'cls.my_custom_attr': 'custom_attr',
-        });
+      webVitalsInstr.onReportCLS(CLS, {
+        applyCustomAttributes: (cls, span) => {
+          span.setAttributes({
+            'cls.entries': cls.entries.toString(),
+            'cls.my_custom_attr': 'custom_attr',
+          });
+        },
       });
 
       const span = exporter.getFinishedSpans()[0];
@@ -323,11 +341,11 @@ describe('Web Vitals Instrumentation Tests', () => {
         vitalsToTrack: ['CLS'],
       });
       instr.disable();
-      instr.onReportCLS(CLS, () => {});
+      instr.onReportCLS(CLS, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(0);
       instr.enable();
-      instr.onReportCLS(CLS, () => {});
+      instr.onReportCLS(CLS, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('CLS');
@@ -337,11 +355,14 @@ describe('Web Vitals Instrumentation Tests', () => {
   describe('LCP', () => {
     it('should create a span when enabled', () => {
       const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportLCP(LCP, (lcp, span) => {
-        span.setAttributes({
-          'lcp.entries': lcp.entries.toString(),
-          'lcp.my_custom_attr': 'custom_attr',
-        });
+      webVitalsInstr.onReportLCP(LCP, {
+        dataAttributes: [],
+        applyCustomAttributes: (lcp, span) => {
+          span.setAttributes({
+            'lcp.entries': lcp.entries.toString(),
+            'lcp.my_custom_attr': 'custom_attr',
+          });
+        },
       });
 
       const span = exporter.getFinishedSpans()[0];
@@ -357,25 +378,84 @@ describe('Web Vitals Instrumentation Tests', () => {
         vitalsToTrack: ['LCP'],
       });
       instr.disable();
-      instr.onReportLCP(LCP, () => {});
+      instr.onReportLCP(LCP, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(0);
       instr.enable();
-      instr.onReportLCP(LCP, () => {});
+      instr.onReportLCP(LCP, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('LCP');
+    });
+
+    it('should include add data-* attributes as span attributes when dataAttributes is undefined', () => {
+      const instr = new WebVitalsInstrumentation({
+        vitalsToTrack: ['LCP'],
+      });
+      instr.enable();
+      instr.onReportLCP(LCP, {
+        applyCustomAttributes: () => {},
+        dataAttributes: undefined,
+      });
+      expect(exporter.getFinishedSpans().length).toEqual(1);
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.attributes).toMatchObject({
+        'lcp.element.data.answer': '42',
+        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+        'lcp.element.data.hasCats': '',
+      });
+    });
+    it('should not include any data-* attributes when dataAttributes is []', () => {
+      const instr = new WebVitalsInstrumentation({
+        vitalsToTrack: ['LCP'],
+      });
+      instr.enable();
+      instr.onReportLCP(LCP, {
+        applyCustomAttributes: () => {},
+        dataAttributes: [],
+      });
+      expect(exporter.getFinishedSpans().length).toEqual(1);
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.attributes).not.toMatchObject({
+        'lcp.element.data.answer': '42',
+        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+        'lcp.element.data.hasCats': '',
+      });
+    });
+    it('should only include any data-* attributes that match dataAttributes array', () => {
+      const instr = new WebVitalsInstrumentation({
+        vitalsToTrack: ['LCP'],
+      });
+      instr.enable();
+      instr.onReportLCP(LCP, {
+        applyCustomAttributes: () => {},
+        dataAttributes: ['answer'],
+      });
+      expect(exporter.getFinishedSpans().length).toEqual(1);
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.attributes['lcp.element.data.answer']).toEqual('42');
+      expect(span.attributes['lcp.element.data.famousCats']).toBeUndefined();
+      expect(span.attributes['lcp.element.data.hasCats']).toBeUndefined();
+      expect(span.attributes).toMatchObject({
+        'lcp.element.data.answer': '42',
+      });
+      expect(span.attributes).not.toMatchObject({
+        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+        'lcp.element.data.hasCats': '',
+      });
     });
   });
 
   describe('INP', () => {
     it('should create a span when enabled', () => {
       const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportINP(INP, (inp, span) => {
-        span.setAttributes({
-          'inp.entries': inp.entries.toString(),
-          'inp.my_custom_attr': 'custom_attr',
-        });
+      webVitalsInstr.onReportINP(INP, {
+        applyCustomAttributes: (inp, span) => {
+          span.setAttributes({
+            'inp.entries': inp.entries.toString(),
+            'inp.my_custom_attr': 'custom_attr',
+          });
+        },
       });
 
       const span = exporter.getFinishedSpans()[0];
@@ -388,20 +468,18 @@ describe('Web Vitals Instrumentation Tests', () => {
 
     it('should create a include timings when enabled', () => {
       const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportINP(
-        INPWithTimings,
-        (inp, span) => {
+      webVitalsInstr.onReportINP(INPWithTimings, {
+        applyCustomAttributes: (inp, span) => {
           span.setAttributes({
             'inp.entries': inp.entries.toString(),
             'inp.my_custom_attr': 'custom_attr',
           });
         },
-        true,
-      );
+        includeTimingsAsSpans: true,
+      });
 
       const [scriptTimingSpan, timingSpan, inpSpan] =
         exporter.getFinishedSpans();
-      console.log({ timingSpan });
       expect(inpSpan.name).toBe('INP');
       expect(inpSpan.instrumentationLibrary.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
@@ -433,11 +511,11 @@ describe('Web Vitals Instrumentation Tests', () => {
         vitalsToTrack: ['INP'],
       });
       instr.disable();
-      instr.onReportINP(INP, () => {});
+      instr.onReportINP(INP, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(0);
       instr.enable();
-      instr.onReportINP(INP, () => {});
+      instr.onReportINP(INP, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('INP');
@@ -447,11 +525,13 @@ describe('Web Vitals Instrumentation Tests', () => {
   describe('FCP', () => {
     it('should create a span when enabled', () => {
       const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportFCP(FCP, (fcp, span) => {
-        span.setAttributes({
-          'fcp.entries': fcp.entries.toString(),
-          'fcp.my_custom_attr': 'custom_attr',
-        });
+      webVitalsInstr.onReportFCP(FCP, {
+        applyCustomAttributes: (fcp, span) => {
+          span.setAttributes({
+            'fcp.entries': fcp.entries.toString(),
+            'fcp.my_custom_attr': 'custom_attr',
+          });
+        },
       });
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('FCP');
@@ -466,11 +546,11 @@ describe('Web Vitals Instrumentation Tests', () => {
         vitalsToTrack: ['FCP'],
       });
       instr.disable();
-      instr.onReportFCP(FCP, () => {});
+      instr.onReportFCP(FCP, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(0);
       instr.enable();
-      instr.onReportFCP(FCP, () => {});
+      instr.onReportFCP(FCP, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('FCP');
@@ -480,11 +560,13 @@ describe('Web Vitals Instrumentation Tests', () => {
   describe('TTFB', () => {
     it('should create a span when enabled', () => {
       const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportTTFB(TTFB, (ttfb, span) => {
-        span.setAttributes({
-          'ttfb.entries': ttfb.entries.toString(),
-          'ttfb.my_custom_attr': 'custom_attr',
-        });
+      webVitalsInstr.onReportTTFB(TTFB, {
+        applyCustomAttributes: (ttfb, span) => {
+          span.setAttributes({
+            'ttfb.entries': ttfb.entries.toString(),
+            'ttfb.my_custom_attr': 'custom_attr',
+          });
+        },
       });
 
       const span = exporter.getFinishedSpans()[0];
@@ -500,11 +582,11 @@ describe('Web Vitals Instrumentation Tests', () => {
         vitalsToTrack: ['TTFB'],
       });
       instr.disable();
-      instr.onReportTTFB(TTFB, () => {});
+      instr.onReportTTFB(TTFB, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(0);
       instr.enable();
-      instr.onReportTTFB(TTFB, () => {});
+      instr.onReportTTFB(TTFB, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('TTFB');
@@ -514,11 +596,13 @@ describe('Web Vitals Instrumentation Tests', () => {
   describe('FID', () => {
     it('should create a span when enabled', () => {
       const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportFID(FID, (fid, span) => {
-        span.setAttributes({
-          'fid.entries': fid.entries.toString(),
-          'fid.my_custom_attr': 'custom_attr',
-        });
+      webVitalsInstr.onReportFID(FID, {
+        applyCustomAttributes: (fid, span) => {
+          span.setAttributes({
+            'fid.entries': fid.entries.toString(),
+            'fid.my_custom_attr': 'custom_attr',
+          });
+        },
       });
 
       const span = exporter.getFinishedSpans()[0];
@@ -534,11 +618,11 @@ describe('Web Vitals Instrumentation Tests', () => {
         vitalsToTrack: ['FID'],
       });
       instr.disable();
-      instr.onReportFID(FID, () => {});
+      instr.onReportFID(FID, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(0);
       instr.enable();
-      instr.onReportFID(FID, () => {});
+      instr.onReportFID(FID, { applyCustomAttributes: () => {} });
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('FID');
@@ -546,14 +630,14 @@ describe('Web Vitals Instrumentation Tests', () => {
   });
 
   describe('config.vitalsToTrack', () => {
-    it(`should default to ['CLS', 'LCP', 'INP'] when an empty config`, () => {
+    it(`should default to ['CLS', 'LCP', 'INP', 'TTFB', 'FCP'] when an empty config`, () => {
       const instr = new WebVitalsInstrumentation();
-      expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP']);
+      expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP', 'TTFB', 'FCP']);
     });
 
-    it(`should default to ['CLS', 'LCP', 'INP'] when OTHER configuration options`, () => {
+    it(`should default to ['CLS', 'LCP', 'INP', 'TTFB', 'FCP'] when OTHER configuration options`, () => {
       const instr = new WebVitalsInstrumentation({ enabled: false });
-      expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP']);
+      expect(instr.vitalsToTrack).toEqual(['CLS', 'LCP', 'INP', 'TTFB', 'FCP']);
     });
 
     it('should be overridden vitalsToTrack is explicity passed', () => {

@@ -4,12 +4,15 @@ import { HoneycombOptions } from './types';
 import {
   createHoneycombSDKLogMessage,
   getTracesApiKey,
+  getTracesEndpoint,
   isClassic,
 } from './util';
 import {
   FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS,
+  MISSING_FIELDS_FOR_GENERATING_LINKS,
   MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS,
 } from './validate-options';
+import { DiagLogLevel } from '@opentelemetry/api';
 
 /**
  * Builds and returns a {@link SpanExporter} that logs Honeycomb URLs for completed traces
@@ -22,9 +25,47 @@ export function configureConsoleTraceLinkExporter(
   options?: HoneycombOptions,
 ): SpanExporter {
   const apiKey = getTracesApiKey(options);
-  return new ConsoleTraceLinkExporter(options?.serviceName, apiKey);
+  const { authRoot, uiRoot } = getUrlRoots(
+    options?.tracesEndpoint || getTracesEndpoint(options),
+  );
+  return new ConsoleTraceLinkExporter(
+    options?.serviceName,
+    apiKey,
+    options?.logLevel,
+    authRoot,
+    uiRoot,
+  );
 }
 
+export const getUrlRoots = (endpoint = '') => {
+  const url = new URL(endpoint);
+  const subdomainRegex = /(api)([.|-])?(.*?)(\.?)(honeycomb\.io)(.*)/;
+  const matches = subdomainRegex.exec(url.host);
+  if (matches === null) {
+    return {
+      authRoot: undefined,
+      uiRoot: undefined,
+    };
+  }
+  const isDashSubdomain = matches[2] === '-';
+  let apiSubdomain;
+  let uiSubdomain;
+  if (isDashSubdomain) {
+    apiSubdomain = `api-${matches[3]}`;
+    uiSubdomain = `ui-${matches[3]}`;
+  } else {
+    apiSubdomain = matches[3] ? `api.${matches[3]}` : 'api';
+    uiSubdomain = matches[3] ? `ui.${matches[3]}` : 'ui';
+  }
+
+  const authRoot = `${url.protocol}//${apiSubdomain}.honeycomb.io/1/auth`;
+  const uiRoot = `${url.protocol}//${uiSubdomain}.honeycomb.io`;
+
+  return {
+    authRoot,
+    uiRoot,
+  };
+};
 /**
  * A custom {@link SpanExporter} that logs Honeycomb URLs for completed traces.
  *
@@ -32,10 +73,30 @@ export function configureConsoleTraceLinkExporter(
  */
 class ConsoleTraceLinkExporter implements SpanExporter {
   private _traceUrl = '';
+  private _logLevel: DiagLogLevel = DiagLogLevel.DEBUG;
 
-  constructor(serviceName?: string, apikey?: string) {
+  constructor(
+    serviceName?: string,
+    apikey?: string,
+    logLevel?: DiagLogLevel,
+    authRoot?: string,
+    uiRoot?: string,
+  ) {
+    if (logLevel) {
+      this._logLevel = logLevel;
+    }
+
     if (!serviceName || !apikey) {
-      console.debug(MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS);
+      if (this._logLevel >= DiagLogLevel.DEBUG) {
+        console.debug(MISSING_FIELDS_FOR_LOCAL_VISUALIZATIONS);
+      }
+      return;
+    }
+
+    if (!authRoot || !uiRoot) {
+      if (this._logLevel >= DiagLogLevel.DEBUG) {
+        console.debug(MISSING_FIELDS_FOR_GENERATING_LINKS);
+      }
       return;
     }
 
@@ -44,7 +105,7 @@ class ConsoleTraceLinkExporter implements SpanExporter {
         'x-honeycomb-team': apikey,
       },
     };
-    fetch('https://api.honeycomb.io/1/auth', options)
+    fetch(authRoot, options)
       .then((resp) => {
         if (resp.ok) {
           return resp.json();
@@ -59,13 +120,16 @@ class ConsoleTraceLinkExporter implements SpanExporter {
             serviceName,
             respData.team?.slug,
             respData.environment?.slug,
+            uiRoot,
           );
         } else {
           throw new Error();
         }
       })
       .catch(() => {
-        console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
+        if (this._logLevel >= DiagLogLevel.INFO) {
+          console.log(FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS);
+        }
       });
   }
 
@@ -76,7 +140,7 @@ class ConsoleTraceLinkExporter implements SpanExporter {
     if (this._traceUrl) {
       spans.forEach((span) => {
         // only log root spans (ones without a parent span)
-        if (!span.parentSpanId) {
+        if (!span.parentSpanId && this._logLevel >= DiagLogLevel.INFO) {
           console.log(
             createHoneycombSDKLogMessage(
               `Honeycomb link: ${this._traceUrl}=${span.spanContext().traceId}`,
@@ -107,8 +171,9 @@ export function buildTraceUrl(
   serviceName: string,
   team: string,
   environment?: string,
+  uiRoot?: string,
 ): string {
-  let url = `https://ui.honeycomb.io/${team}`;
+  let url = `${uiRoot}/${team}`;
   if (!isClassic(apikey) && environment) {
     url += `/environments/${environment}`;
   }

@@ -16,10 +16,18 @@ export function configureHoneycombHttpJsonTraceExporter(
   const apiKey = getTracesApiKey(options);
   return new OTLPTraceExporter({
     url: getTracesEndpoint(options),
-    headers: {
-      [TEAM_HEADER_KEY]: apiKey,
-      [DATASET_HEADER_KEY]: isClassic(apiKey) ? options?.dataset : undefined,
-      ...options?.headers,
-    },
+    headers: configureHeaders(options, apiKey),
   });
+}
+
+function configureHeaders(options?: HoneycombOptions, apiKey?: string) {
+  const headers = { ...options?.headers };
+  if (apiKey && !headers[TEAM_HEADER_KEY]) {
+    headers[TEAM_HEADER_KEY] = apiKey;
+  }
+  if (isClassic(apiKey) && options?.dataset) {
+    headers[DATASET_HEADER_KEY] = options?.dataset;
+  }
+
+  return headers;
 }

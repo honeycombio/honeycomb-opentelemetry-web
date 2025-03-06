@@ -129,3 +129,9 @@ This will create a dependency in your `package.json` like this:
     "@honeycombio/opentelemetry-web": "file:honeycombio-opentelemetry-web-0.1.42.tgz",
   }
 ```
+
+## Dependabot
+
+Dependabot manages our dependency upgrades automatically by creating PRs to bump dependencies for us. Currently our packages get updates weekly (ignoring major version bumps, we do those manually) and examples get updates monthly.
+
+If you add a new example, please add an entry to `dependabot.yml` for your new example so that it can get package updates with dependabot.

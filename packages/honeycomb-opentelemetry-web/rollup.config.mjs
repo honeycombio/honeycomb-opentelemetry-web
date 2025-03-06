@@ -1,34 +1,16 @@
-import { createRequire } from 'node:module';
 import { DEFAULT_EXTENSIONS } from '@babel/core';
-import { fileURLToPath } from 'node:url';
 import analyze from 'rollup-plugin-analyzer';
-import babel from '@rollup/plugin-babel';
+import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';
-import nodeResolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 import autoExternal from 'rollup-plugin-auto-external';
 
-const require = createRequire(import.meta.url);
-const pkg = require('./package.json');
-
-// get dependencies and peer dependencies as declared in package.json
-const getExternalDepsFromPackageJSON = () => {
-  const externalArr = [
-    ...Object.keys(pkg.dependencies || {}),
-    ...Object.keys(pkg.peerDependencies || {}),
-    ...Object.keys(pkg.optionalDependencies || {}),
-  ];
-
-  if (externalArr.length === 0) {
-    return () => false;
-  }
-  const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`);
-  return (id) => pattern.test(id);
+const entryPoint = {
+  index: './src/index.ts',
+  'experimental/index': './src/experimental/index.ts',
 };
-
-const entryPoint = './src/index.ts';
 
 const modulePlugins = [
   autoExternal(),
@@ -48,19 +30,59 @@ const modulePlugins = [
 
 const cjsConfig = {
   input: entryPoint,
-  output: { file: 'dist/cjs/index.js', format: 'cjs' },
+  output: { dir: 'dist/cjs', format: 'cjs' },
   plugins: [...modulePlugins],
 };
 
 const esmConfig = {
   input: entryPoint,
-  output: { file: 'dist/esm/index.js', format: 'esm' },
+  output: { dir: 'dist/esm', format: 'esm' },
   plugins: [...modulePlugins],
+};
+
+const IGNORE_WARNINGS = ['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY', 'EVAL'];
+const printHeader = () => ({
+  name: 'rollup-plugin-print-header',
+  load(source) {
+    if (this.getModuleInfo(source).isEntry) {
+      console.log('⚠️ ignoring warnings: ', IGNORE_WARNINGS.join(', '));
+    }
+  },
+});
+const cdnConfig = {
+  onwarn(warning, defaultHandler) {
+    if (IGNORE_WARNINGS.includes(warning.code)) {
+      return;
+    }
+    defaultHandler(warning);
+  },
+  input: './src/cdn.ts',
+  output: {
+    file: 'dist/umd/index.js',
+    format: 'umd',
+    name: 'HNY',
+  },
+  plugins: [
+    printHeader(),
+    commonjs({ sourceMap: false }),
+    nodeResolve({ browser: true, sourceMap: false }),
+    typescript(),
+    babel({
+      babelHelpers: 'bundled',
+      extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
+      sourceMaps: false,
+    }),
+    analyze({
+      hideDeps: true,
+      limit: 0,
+      summaryOnly: true,
+    }),
+  ],
 };
 
 const typesConfig = {
   input: entryPoint,
-  output: { file: 'dist/types/index.d.ts', format: 'esm' },
+  output: { dir: 'dist/types/', format: 'esm' },
   plugins: [
     autoExternal(),
     dts(),
@@ -72,6 +94,6 @@ const typesConfig = {
   ],
 };
 
-const config = [cjsConfig, esmConfig, typesConfig];
+const config = [cjsConfig, esmConfig, typesConfig, cdnConfig];
 
 export default config;

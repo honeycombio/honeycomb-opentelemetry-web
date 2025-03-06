@@ -85,14 +85,22 @@ interface VitalOpts extends ReportOpts {
    *  }
    * }
    */
-  applyCustomAttributes: ApplyCustomAttributesFn;
+  applyCustomAttributes?: ApplyCustomAttributesFn;
 }
 
-interface VitalOptsWithTimings extends VitalOpts {
+interface LcpVitalOpts extends VitalOpts {
+  /**
+   * Will filter the values of these data attributes if provided, otherwise will send all data-* attributes an LCP entry
+   * An empty allow list, such as { dataAttributes: [] } will disable sending data-* attributes
+   */
+  dataAttributes?: string[];
+}
+
+interface InpVitalOpts extends VitalOpts {
   /**
    * if this is true it will create spans from the PerformanceLongAnimationFrameTiming frames
    */
-  includeTimingsAsSpans: boolean;
+  includeTimingsAsSpans?: boolean;
 }
 
 // To avoid importing InstrumentationAbstract from:
@@ -210,13 +218,13 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   vitalsToTrack?: Array<Metric['name']>;
 
   /** Config specific to LCP (Largest Contentful Paint) */
-  lcp?: VitalOpts;
+  lcp?: LcpVitalOpts;
 
   /** Config specific to CLS (Cumulative Layout Shift) */
   cls?: VitalOpts;
 
   /** Config specific to INP (Interaction to Next Paint) */
-  inp?: VitalOptsWithTimings;
+  inp?: InpVitalOpts;
 
   /** Config specific to FID (First Input Delay) */
   fid?: VitalOpts;
@@ -235,9 +243,9 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
  */
 export class WebVitalsInstrumentation extends InstrumentationAbstract {
   readonly vitalsToTrack: Array<Metric['name']>;
-  readonly lcpOpts?: VitalOpts;
+  readonly lcpOpts?: LcpVitalOpts;
   readonly clsOpts?: VitalOpts;
-  readonly inpOpts?: VitalOptsWithTimings;
+  readonly inpOpts?: InpVitalOpts;
   readonly fidOpts?: VitalOpts;
   readonly fcpOpts?: VitalOpts;
   readonly ttfbOpts?: VitalOpts;
@@ -245,7 +253,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   constructor({
     enabled = true,
-    vitalsToTrack = ['CLS', 'LCP', 'INP'],
+    vitalsToTrack = ['CLS', 'LCP', 'INP', 'TTFB', 'FCP'],
     lcp,
     cls,
     inp,
@@ -280,41 +288,37 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   private _setupWebVitalsCallbacks() {
     if (this.vitalsToTrack.includes('CLS')) {
       onCLS((vital) => {
-        this.onReportCLS(vital, this.clsOpts?.applyCustomAttributes);
+        this.onReportCLS(vital, this.clsOpts);
       }, this.clsOpts);
     }
 
     if (this.vitalsToTrack.includes('LCP')) {
       onLCP((vital) => {
-        this.onReportLCP(vital, this.lcpOpts?.applyCustomAttributes);
+        this.onReportLCP(vital, this.lcpOpts);
       }, this.lcpOpts);
     }
 
     if (this.vitalsToTrack.includes('INP')) {
       onINP((vital) => {
-        this.onReportINP(
-          vital,
-          this.inpOpts?.applyCustomAttributes,
-          this.inpOpts?.includeTimingsAsSpans,
-        );
+        this.onReportINP(vital, this.inpOpts);
       }, this.inpOpts);
     }
 
     if (this.vitalsToTrack.includes('FID')) {
       onFID((vital) => {
-        this.onReportFID(vital, this.fidOpts?.applyCustomAttributes);
+        this.onReportFID(vital, this.fidOpts);
       }, this.fidOpts);
     }
 
     if (this.vitalsToTrack.includes('TTFB')) {
       onTTFB((vital) => {
-        this.onReportTTFB(vital, this.ttfbOpts?.applyCustomAttributes);
+        this.onReportTTFB(vital, this.ttfbOpts);
       }, this.ttfbOpts);
     }
 
     if (this.vitalsToTrack.includes('FCP')) {
       onFCP((vital) => {
-        this.onReportFCP(vital, this.fcpOpts?.applyCustomAttributes);
+        this.onReportFCP(vital, this.fcpOpts);
       }, this.fcpOpts);
     }
   }
@@ -417,10 +421,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     });
   }
 
-  onReportCLS = (
-    cls: CLSMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
-  ) => {
+  onReportCLS = (cls: CLSMetricWithAttribution, clsOpts: VitalOpts = {}) => {
+    const { applyCustomAttributes } = clsOpts;
     if (!this.isEnabled()) return;
 
     const { name, attribution } = cls;
@@ -451,10 +453,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     span.end();
   };
 
-  onReportLCP = (
-    lcp: LCPMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
-  ) => {
+  onReportLCP = (lcp: LCPMetricWithAttribution, lcpOpts: LcpVitalOpts = {}) => {
+    const { applyCustomAttributes, dataAttributes } = lcpOpts;
     if (!this.isEnabled()) return;
 
     const { name, attribution } = lcp;
@@ -465,6 +465,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       resourceLoadDelay,
       resourceLoadDuration,
       elementRenderDelay,
+      lcpEntry,
     }: LCPAttribution = attribution;
     const attrPrefix = this.getAttrPrefix(name);
 
@@ -481,6 +482,26 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
+    const el: HTMLElement = lcpEntry?.element as HTMLElement;
+    if (el?.dataset) {
+      for (const attrName in el.dataset) {
+        const attrValue = el.dataset[attrName];
+        if (
+          // Value exists (including the empty string AND either
+          attrValue !== undefined &&
+          // dataAttributes is undefined (i.e. send all values as span attributes) OR
+          (dataAttributes === undefined ||
+            // dataAttributes is specified AND attrName is in dataAttributes (i.e attribute name is in the supplied allowList)
+            dataAttributes.includes(attrName))
+        ) {
+          span.setAttribute(
+            `${attrPrefix}.element.data.${attrName}`,
+            attrValue,
+          );
+        }
+      }
+    }
+
     if (applyCustomAttributes) {
       applyCustomAttributes(lcp, span);
     }
@@ -490,9 +511,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   onReportINP = (
     inp: INPMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
-    includeTimingsAsSpans = false,
+    inpOpts: InpVitalOpts = { includeTimingsAsSpans: false },
   ) => {
+    const { applyCustomAttributes, includeTimingsAsSpans } = inpOpts;
     if (!this.isEnabled()) return;
 
     const { name, attribution } = inp;
@@ -550,10 +571,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     );
   };
 
-  onReportFCP = (
-    fcp: FCPMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
-  ) => {
+  onReportFCP = (fcp: FCPMetricWithAttribution, fcpOpts: VitalOpts = {}) => {
+    const { applyCustomAttributes } = fcpOpts;
     if (!this.isEnabled()) return;
 
     const { name, attribution } = fcp;
@@ -580,10 +599,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   /**
    *  @deprecated this will be removed in the next major version, use INP instead.
    */
-  onReportFID = (
-    fid: FIDMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
-  ) => {
+  onReportFID = (fid: FIDMetricWithAttribution, fidOpts: VitalOpts = {}) => {
+    const { applyCustomAttributes } = fidOpts;
     if (!this.isEnabled()) return;
 
     const { name, attribution } = fid;
@@ -608,8 +625,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   onReportTTFB = (
     ttfb: TTFBMetricWithAttribution,
-    applyCustomAttributes?: ApplyCustomAttributesFn,
+    ttfbOpts: VitalOpts = {},
   ) => {
+    const { applyCustomAttributes } = ttfbOpts;
     if (!this.isEnabled()) return;
 
     const { name, attribution } = ttfb;

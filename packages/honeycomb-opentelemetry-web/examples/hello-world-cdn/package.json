@@ -1,0 +1,20 @@
+{
+  "name": "hello-world-cdn",
+  "version": "0.0.1",
+  "description": "An example vanilla that uses cjs modules that works with Honeycomb's OpenTelemetry Web Distro",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "cd $npm_config_local_prefix/../../ && npm run build && cd $npm_config_local_prefix &&  mkdir -p ./dist/umd/ && cp -vR $npm_config_local_prefix/../../dist/umd/index.js ./dist/umd",
+    "start": "npm run build && serve .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "chokidar": "^4.0.3",
+    "chokidar-cli": "^3.0.0",
+    "serve": "^14.2.4"
+  }
+}

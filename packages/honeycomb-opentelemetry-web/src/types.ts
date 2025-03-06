@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import type { ContextManager } from '@opentelemetry/api';
+import type { ContextManager, DiagLogLevel } from '@opentelemetry/api';
 import { TextMapPropagator } from '@opentelemetry/api';
 import { Instrumentation } from '@opentelemetry/instrumentation';
 import {
@@ -66,7 +66,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   endpoint?: string;
 
   /** Optionally pass extra headers to the exporter. Commonly used if sending to a collector that requires authentication */
-  headers?: { [key: string]: string | number };
+  headers?: { [key: string]: string };
 
   /** The API endpoint where traces telemetry is sent. Defaults to endpoint if not set. */
   tracesEndpoint?: string;
@@ -88,6 +88,20 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   spanProcessors?: SpanProcessor[];
 
+  /** Provide an array of exporters
+   * Use this to configure custom tracing services in addition
+   * to the default honeycomb one.
+   * E.g. You want to send data to another service.
+   */
+  traceExporters?: SpanExporter[];
+
+  /** Disable the default honeycomb SpanExporters
+   * `true` Disables the default honeycomb span exporter, `false` enables.
+   * in this case you should provide other exporters in the `traceExporters` field.
+   * Defaults to 'false'.
+   */
+  disableDefaultTraceExporter?: boolean;
+
   /** The sample rate used to determine whether a trace is exported.
    * This must be a whole positive number. Only 1 out of every `sampleRate` traces will be randomly selected to be sent.
    * Set to 0 to drop everything.
@@ -95,7 +109,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   sampleRate?: number;
 
-  /** The debug flag enables additional logging that us useful when debugging your application. Do not use in production.
+  /** The debug flag enables additional logging that is useful when debugging your application. Do not use in production.
    * Defaults to 'false'.
    */
   debug?: boolean;
@@ -134,6 +148,12 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   /** Config options for web vitals instrumentation. Enabled by default. */
   webVitalsInstrumentationConfig?: WebVitalsInstrumentationConfig;
   globalErrorsInstrumentationConfig?: GlobalErrorsInstrumentationConfig;
+
+  /**
+   * Controls the verbosity of logs. Utilizes OpenTelemetry's `DiagLogLevel` enum. Defaults to 'DEBUG'.
+   * Current options include 'NONE', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'VERBOSE', and 'ALL'.
+   */
+  logLevel?: DiagLogLevel;
 }
 
 /* Configure which fields to include in the `entry_page` resource attributes. By default,
