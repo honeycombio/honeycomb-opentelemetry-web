@@ -21,6 +21,9 @@ export const MISSING_DATASET_ERROR = createHoneycombSDKLogMessage(
 export const SKIPPING_OPTIONS_VALIDATION_MSG = createHoneycombSDKLogMessage(
   '⏭️ Skipping options validation. To re-enable, set skipOptionsValidation option or HONEYCOMB_SKIP_OPTIONS_VALIDATION to false.',
 );
+export const CUSTOM_COLLECTOR_VALIDATION_MSG = createHoneycombSDKLogMessage(
+  '⏭️ Skipping options validation, because a custom collector is being used.',
+);
 export const SAMPLER_OVERRIDE_WARNING = createHoneycombSDKLogMessage(
   '🔨 Default deterministic sampler has been overridden. Honeycomb requires a resource attribute called SampleRate to properly show weighted values. Non-deterministic sampleRate could lead to missing spans in Honeycomb. See our docs for more details. https://docs.honeycomb.io/getting-data-in/opentelemetry/node-distro/#sampling-without-the-honeycomb-sdk',
 );
@@ -35,10 +38,24 @@ export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
   createHoneycombSDKLogMessage(
     '🔕 Failed to get proper auth response from Honeycomb. No local visualization available.',
   );
-
 export const NO_EXPORTERS_DISABLED_DEFAULT = createHoneycombSDKLogMessage(
   '🔕 Default honeycomb exporter disabled but no exporters provided',
 );
+
+/**
+ * Returns true iff the endpoint is *not* a Honeycomb endpoint, such as api.honeycomb.io or
+ * api.eu1.honeycomb.io.
+ */
+const isCustomCollector = (endpoint: string) => {
+  try {
+    const url = new URL(endpoint);
+    return !url.hostname.endsWith('.honeycomb.io');
+  } catch {
+    // If URL.parse fails, assume this isn't a custom collector,
+    // so that normal options validation happens.
+    return false;
+  }
+};
 
 export const validateOptionsWarnings = (options?: HoneycombOptions) => {
   const logLevel: DiagLogLevel = options?.logLevel
@@ -51,6 +68,15 @@ export const validateOptionsWarnings = (options?: HoneycombOptions) => {
     }
     return;
   }
+
+  const endpoint = options?.tracesEndpoint ?? options?.endpoint;
+  if (endpoint && isCustomCollector(endpoint)) {
+    if (logLevel >= DiagLogLevel.DEBUG) {
+      console.debug(CUSTOM_COLLECTOR_VALIDATION_MSG);
+    }
+    return;
+  }
+
   // warn if api key is missing
   if (!options?.apiKey && logLevel >= DiagLogLevel.WARN) {
     console.warn(MISSING_API_KEY_ERROR);

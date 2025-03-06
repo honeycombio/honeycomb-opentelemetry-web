@@ -42,7 +42,7 @@ describe('when debug is set to true', () => {
     it('should log the configured options to the console', () => {
       const testConfig = {
         debug: true,
-        endpoint: 'http://shenanigans:1234',
+        endpoint: 'http://shenanigans.honeycomb.io:1234',
         apiKey: 'my-key',
         serviceName: 'my-service',
         sampleRate: 2,
