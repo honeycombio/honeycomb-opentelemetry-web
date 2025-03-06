@@ -12,8 +12,8 @@ Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser. 
 
 Latest release:
 
-* built with OpenTelemetry JS [Stable v1.28.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.27.0)[Experimental v0.55.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.54.0), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0)
-* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.43.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.42.0)
+* built with OpenTelemetry JS [Stable v1.30.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.30.0)[Experimental v0.57.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.57.0), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0)
+* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.45.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.45.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
@@ -254,20 +254,8 @@ When an option is not available upstream, we give it a name. If that option beco
 1. We mark the old name as deprecated in this documentation, and issue a warning in debug mode.
 1. After this period, the old name will be ignored (at the next major version bump).
 
-## Development
+## Change Log
 
-See [DEVELOPING.md](./DEVELOPING.md)
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
-
-## Support
-
-See [SUPPORT.md](./SUPPORT.md)
-
-## Code of Conduct
-
-See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+See [CHANGELOG.md](./CHANGELOG.md)
 
 [browser-semconv]: https://github.com/scheler/opentelemetry-specification/blob/browser-events/specification/resource/semantic_conventions/browser.md
