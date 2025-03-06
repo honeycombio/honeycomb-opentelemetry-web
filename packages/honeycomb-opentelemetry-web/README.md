@@ -12,8 +12,8 @@ Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser. 
 
 Latest release:
 
-* built with OpenTelemetry JS [Stable v1.28.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.27.0)[Experimental v0.55.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.54.0), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0)
-* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.43.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.42.0)
+* built with OpenTelemetry JS [Stable v1.30.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v1.30.0)[Experimental v0.57.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.57.0), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0)
+* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.45.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.45.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
@@ -25,7 +25,7 @@ This package sets up OpenTelemetry for tracing, using our recommended practices,
 * Convenient packaging
 * An informative debug mode
 * Links to traces in Honeycomb
-* Automatically enabled Web Vitals instrumentation
+* Automatically enabled [Web Vitals](https://web.dev/articles/vitals) & error instrumentation
 
 <!-- TODO: determine whether we must call this a distro instead of a wrapper. -->
 
@@ -96,7 +96,7 @@ Pass these options to the HoneycombWebSDK:
 
 `*` Note: the `apiKey` field is required because this SDK really wants to help you send data directly to Honeycomb.
 
-#### WebVitalsInstrumentationConfig
+#### `WebVitalsInstrumentationConfig`
 | name                      | required? | type                 | default value | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 |---------------------------|-----------|----------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | enabled                   | optional  | boolean              | `true`        | Where or not to enable this auto instrumentation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -115,10 +115,45 @@ Pass these options to the HoneycombWebSDK:
 | ttf                       | optional  | VitalOpts            | `undefined`   | Pass-through config options for web-vitals. See [ReportOpts](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#reportopts).                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ttf.applyCustomAttributes | optional  | function             | `undefined`   | A function for adding custom attributes to core web vitals spans.                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
-#### GlobalErrorsInstrumentationConfig
+#### `GlobalErrorsInstrumentationConfig`
 | name    | required? | type    | default value | description                                       |
 |---------|-----------|---------|---------------|---------------------------------------------------|
 | enabled | optional  | boolean | `true`        | Where or not to enable this auto instrumentation. |
+| enabled | optional | boolean | `true` | Whether or not to enable this auto instrumentation. |
+| applyCustomAttributesOnSpan | optional | function | n/a | A callback function for adding custom attributes to the span when an error is recorded. Will automatically be applied to all spans generated by the auto-instrumentation. |
+
+#### `recordException` Helper Function
+
+The `recordException` function is a utility to send exception spans with semantic attributes from anywhere in your JS app (e.g. a global app error function, React error boundary etc.)
+
+##### Parameters
+
+| Parameter   | Type       | Default Value                          | Description                                                                 |
+|-------------|------------|----------------------------------------|-----------------------------------------------------------------------------|
+| `error`     | `Error`    | N/A                                    | The error object to record. This should be an instance of the JavaScript `Error` class. |
+| `attributes`| `Attributes`| `{}`                                  | Additional attributes to add to the span. This can include any custom metadata you want to associate with the error. Will likely be deprecated in favour of using the callback function option `applyCustomAttributesOnSpan` in the future. |
+| `tracer`    | `Tracer`   | `trace.getTracer(LIBRARY_NAME)`        | The tracer to use for recording the span. If not provided, the default tracer for the library will be used. |
+| `applyCustomAttributesOnSpan`    | function   | n/a | A callback function for adding custom attributes to the span when an error is recorded. |
+
+```js
+recordException(
+  error: Error,
+  attributes?: Attributes,
+  tracer?: Tracer,
+  applyCustomAttributesOnSpan?
+): void
+```
+
+```js
+import { recordException } from '@honeycombio/opentelemetry-web';
+
+try {
+  // Some code that may throw an error
+  throw new Error('Something went wrong!');
+} catch (error) {
+  recordException(error);
+}
+```
 
 
 ### Send to an OpenTelemetry Collector
@@ -254,20 +289,8 @@ When an option is not available upstream, we give it a name. If that option beco
 1. We mark the old name as deprecated in this documentation, and issue a warning in debug mode.
 1. After this period, the old name will be ignored (at the next major version bump).
 
-## Development
+## Change Log
 
-See [DEVELOPING.md](./DEVELOPING.md)
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
-
-## Support
-
-See [SUPPORT.md](./SUPPORT.md)
-
-## Code of Conduct
-
-See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+See [CHANGELOG.md](./CHANGELOG.md)
 
 [browser-semconv]: https://github.com/scheler/opentelemetry-specification/blob/browser-events/specification/resource/semantic_conventions/browser.md
