@@ -1,6 +1,7 @@
 import { DiagLogLevel } from '@opentelemetry/api';
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
 import {
+  CUSTOM_COLLECTOR_VALIDATION_MSG,
   IGNORED_DATASET_ERROR,
   MISSING_API_KEY_ERROR,
   MISSING_DATASET_ERROR,
@@ -69,6 +70,26 @@ describe('console warnings', () => {
   });
 
   describe('when skipOptionsValidation is false', () => {
+    it('should not show warnings when using a custom endpoint', () => {
+      new HoneycombWebSDK({
+        endpoint: 'http://localhost',
+      });
+      expect(debugSpy).toHaveBeenNthCalledWith(
+        1,
+        CUSTOM_COLLECTOR_VALIDATION_MSG,
+      );
+    });
+
+    it('should not show warnings when using a custom traces endpoint', () => {
+      new HoneycombWebSDK({
+        tracesEndpoint: 'http://localhost',
+      });
+      expect(debugSpy).toHaveBeenNthCalledWith(
+        1,
+        CUSTOM_COLLECTOR_VALIDATION_MSG,
+      );
+    });
+
     it('should show the API key missing warning', () => {
       new HoneycombWebSDK({
         serviceName: 'test-service',
