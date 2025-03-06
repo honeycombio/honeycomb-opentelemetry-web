@@ -47,7 +47,7 @@ describe('console warnings', () => {
   describe('when skipOptionsValidation is false', () => {
     it('should not show warnings when using a custom endpoint', () => {
       new HoneycombWebSDK({
-        endpoint: "http://localhost"
+        endpoint: 'http://localhost',
       });
       expect(debugSpy).toHaveBeenNthCalledWith(
         1,
@@ -57,7 +57,7 @@ describe('console warnings', () => {
 
     it('should not show warnings when using a custom traces endpoint', () => {
       new HoneycombWebSDK({
-        tracesEndpoint: "http://localhost"
+        tracesEndpoint: 'http://localhost',
       });
       expect(debugSpy).toHaveBeenNthCalledWith(
         1,

@@ -42,13 +42,13 @@ export const FAILED_AUTH_FOR_LOCAL_VISUALIZATIONS =
 const isCustomCollector = (endpoint: string) => {
   try {
     const url = new URL(endpoint);
-    return !url.hostname.endsWith(".honeycomb.io");
+    return !url.hostname.endsWith('.honeycomb.io');
   } catch {
     // If URL.parse fails, assume this isn't a custom collector,
     // so that normal options validation happens.
     return false;
   }
-}
+};
 
 export const validateOptionsWarnings = (options?: HoneycombOptions) => {
   if (options?.skipOptionsValidation) {
