@@ -1,5 +1,31 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.14.0 [beta] - 2025-03-19
+
+### ✨ Features
+
+- feat: Add node export to package json (#483) | David Hewitt
+- docs: Updates READMEs to match project structure. (#478) | Bee Klimt
+
+### 🐛 Fixes
+
+- fix: Dont validate options when using a custom collector. (#477) | Bee Klimt
+
+### 🛠️ Maintenance
+
+- chore: remove unused gh action (#468) | Mustafa Haddara
+- maint(deps): bump @babel/runtime from 7.26.7 to 7.26.9 in /packages/honeycomb-opentelemetry-web (#463) | dependabot[bot]
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#474) | dependabot[bot]
+- maint(deps-dev): bump webpack from 5.97.1 to 5.98.0 in /packages/honeycomb-opentelemetry-web/examples/custom-with-collector-ts in the example-deps group (#473) | dependabot[bot]
+- maint(deps-dev): bump esbuild from 0.24.2 to 0.25.0 in /packages/honeycomb-opentelemetry-web/examples/hello-world-custom-exporter in the example-deps group (#471) | dependabot[bot]
+- maint(deps): bump the example-deps group in /packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app with 5 updates (#472) | dependabot[bot]
+- maint(deps-dev): bump esbuild from 0.24.2 to 0.25.0 in /packages/honeycomb-opentelemetry-web/examples/hello-world-cjs in the example-deps group (#470) | dependabot[bot]
+- maint(deps-dev): bump esbuild from 0.24.2 to 0.25.0 in /packages/honeycomb-opentelemetry-web/examples/hello-world-web in the example-deps group (#469) | dependabot[bot]
+- maint(deps): bump the otel group across 1 directory with 5 updates (#465) | dependabot[bot]
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 8 updates (#466) | dependabot[bot]
+- maint(deps-dev): bump the dev-dependencies group across 1 directory with 3 updates (#482) | dependabot[bot]
+- maint(deps): bump @babel/runtime from 7.26.9 to 7.26.10 in /packages/honeycomb-opentelemetry-web (#481) | dependabot[bot]
+
 ## v0.13.0 [beta] - 2025-02-10
 
 ### 🐛 Fixes
