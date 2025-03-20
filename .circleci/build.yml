@@ -27,7 +27,7 @@ orbs:
 executors:
   node:
     docker:
-      - image: cimg/node:18.19
+      - image: cimg/node:lts
   github:
     docker:
       - image: cibuilds/github:0.13.0
@@ -192,5 +192,3 @@ workflows:
           requires:
             - build
             - smoke_test
-
- 
