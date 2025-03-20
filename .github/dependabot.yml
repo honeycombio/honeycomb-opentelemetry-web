@@ -29,82 +29,14 @@ updates:
 
   # Examples
   - package-ecosystem: 'npm'
-    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-web' # Location of package manifests
-    schedule:
-      interval: 'monthly' # Check for updates every month
-    labels:
-      - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/frontend-observability'
-    commit-message:
-      prefix: 'maint' # Add PR title prefix
-      include: 'scope'
-    groups:
-      example-deps:
-        patterns:
-          - '*' # Update all dependencies together in example app
-  - package-ecosystem: 'npm'
-    directory: '/packages/honeycomb-opentelemetry-web/examples/custom-with-collector-ts' # Location of package manifests
-    schedule:
-      interval: 'monthly' # Check for updates every month
-    labels:
-      - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/frontend-observability'
-    commit-message:
-      prefix: 'maint' # Add PR title prefix
-      include: 'scope'
-    groups:
-      example-deps:
-        patterns:
-          - '*' # Update all dependencies together in example app
-  - package-ecosystem: 'npm'
-    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-cdn' # Location of package manifests
-    schedule:
-      interval: 'monthly' # Check for updates every month
-    labels:
-      - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/frontend-observability'
-    commit-message:
-      prefix: 'maint' # Add PR title prefix
-      include: 'scope'
-    groups:
-      example-deps:
-        patterns:
-          - '*' # Update all dependencies together in example app
-  - package-ecosystem: 'npm'
-    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-cjs' # Location of package manifests
-    schedule:
-      interval: 'monthly' # Check for updates every month
-    labels:
-      - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/frontend-observability'
-    commit-message:
-      prefix: 'maint' # Add PR title prefix
-      include: 'scope'
-    groups:
-      example-deps:
-        patterns:
-          - '*' # Update all dependencies together in example app
-  - package-ecosystem: 'npm'
-    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-custom-exporter' # Location of package manifests
-    schedule:
-      interval: 'monthly' # Check for updates every month
-    labels:
-      - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/frontend-observability'
-    commit-message:
-      prefix: 'maint' # Add PR title prefix
-      include: 'scope'
-    groups:
-      example-deps:
-        patterns:
-          - '*' # Update all dependencies together in example app
-  - package-ecosystem: 'npm'
-    directory: '/packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app' # Location of package manifests
+    directories:
+      - '/packages/honeycomb-opentelemetry-web/examples/hello-world-web'
+      - '/packages/honeycomb-opentelemetry-web/examples/custom-with-collector-ts'
+      - '/packages/honeycomb-opentelemetry-web/examples/hello-world-cdn'
+      - '/packages/honeycomb-opentelemetry-web/examples/hello-world-cjs'
+      - '/packages/honeycomb-opentelemetry-web/examples/hello-world-custom-exporter'
+      - '/packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app'
+      - '/packages/honeycomb-opentelemetry-web/examples/experimental/user-interaction-instrumentation'
     schedule:
       interval: 'monthly' # Check for updates every month
     labels:
