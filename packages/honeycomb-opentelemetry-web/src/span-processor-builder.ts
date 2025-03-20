@@ -7,7 +7,9 @@ import {
   Span,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { createSessionSpanProcessor } from '@opentelemetry/web-common';
 import { Context } from '@opentelemetry/api';
+import { defaultSessionProvider } from 'default-session-provider';
 import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
 import { configureCompositeExporter } from './composite-exporter';
 import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter';
@@ -57,6 +59,13 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
 
   // we always want to add the browser attrs span processor
   honeycombSpanProcessor.addProcessor(new BrowserAttributesSpanProcessor());
+
+  const sessionProvider = options?.sessionProvider || defaultSessionProvider;
+
+  const sessionSpanProcessor = createSessionSpanProcessor(
+    sessionProvider,
+  );
+  honeycombSpanProcessor.addProcessor(sessionSpanProcessor);
 
   // if there is a user provided span processor, add it to the composite span processor
   if (options?.spanProcessor) {
