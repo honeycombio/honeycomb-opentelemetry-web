@@ -62,9 +62,7 @@ export const configureSpanProcessors = (options?: HoneycombOptions) => {
 
   const sessionProvider = options?.sessionProvider || defaultSessionProvider;
 
-  const sessionSpanProcessor = createSessionSpanProcessor(
-    sessionProvider,
-  );
+  const sessionSpanProcessor = createSessionSpanProcessor(sessionProvider);
   honeycombSpanProcessor.addProcessor(sessionSpanProcessor);
 
   // if there is a user provided span processor, add it to the composite span processor
