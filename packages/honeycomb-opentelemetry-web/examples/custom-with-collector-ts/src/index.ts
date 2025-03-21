@@ -62,8 +62,8 @@ const onClick = () => {
   });
 };
 
-const setupAPICall = () => {
-  document.getElementById('loadDadJoke')!.onclick = () => {
+const setupFetchCall = () => {
+  document.getElementById('loadDadJokeFetch')!.onclick = () => {
     fetch('https://icanhazdadjoke.com/', {
       headers: {
         'content-type': 'application/json',
@@ -82,9 +82,34 @@ const setupAPICall = () => {
   };
 };
 
+const setupXHRCall = () => {
+  document.getElementById('loadDadJokeXHR')!.onclick = () => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://icanhazdadjoke.com/');
+    xhr.setRequestHeader('content-type', 'application/json');
+    xhr.setRequestHeader('accept', 'application/json');
+
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        document.getElementById('dadJokeText')!.innerText = data.joke;
+      } else {
+        console.error('Request failed:', xhr.status);
+      }
+    };
+
+    xhr.onerror = function () {
+      console.error('Request failed');
+    };
+
+    xhr.send();
+  };
+};
+
 const main = () => {
   tracing();
   trackButton(onClick);
-  setupAPICall();
+  setupFetchCall();
+  setupXHRCall();
 };
 main();
