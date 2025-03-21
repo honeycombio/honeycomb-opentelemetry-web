@@ -12,7 +12,7 @@ const main = () => {
   const sdk = new HoneycombWebSDK({
     // defaults to sending to US instance of Honeycomb
     // endpoint: "https://api.eu1.honeycomb.io/v1/traces", // uncomment to send to EU instance
-    apiKey: 'hcaik_01jpwyt5m5rxy9smp892kagfe6e7wgwxxrfax2k1zfyaxcdag7qb7cbrjr', // Replace with your Honeycomb Ingest API Key
+    apiKey: 'api-key', // Replace with your Honeycomb Ingest API Key
     serviceName: 'hny-web-distro-example:hello-world-web', // Replace with your application name. Honeycomb will name your dataset using this variable.
     debug: true,
     instrumentations: [
