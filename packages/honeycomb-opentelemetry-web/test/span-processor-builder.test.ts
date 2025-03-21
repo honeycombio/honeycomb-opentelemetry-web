@@ -124,7 +124,7 @@ describe('configureSpanProcessors', () => {
       'page.url':
         'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
       'url.path': '/some-page',
-      'session.id': expect.stringMatching(/\A[a-z0-9]{32}\z/),
+      'session.id': expect.stringMatching(/^[a-z0-9]{32}$/),
     });
   });
 
@@ -149,7 +149,7 @@ describe('configureSpanProcessors', () => {
         'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
       'processor1.name': 'TestSpanProcessorOne',
       'url.path': '/some-page',
-      'session.id': expect.stringMatching(/\A[a-z0-9]{32}\z/),
+      'session.id': expect.stringMatching(/^[a-z0-9]{32}$/),
     });
   });
 
@@ -173,7 +173,7 @@ describe('configureSpanProcessors', () => {
       'processor1.name': 'TestSpanProcessorOne',
       'processor2.name': 'TestSpanProcessorTwo',
       'url.path': '/some-page',
-      'session.id': expect.stringMatching(/\A[a-z0-9]{32}\z/),
+      'session.id': expect.stringMatching(/^[a-z0-9]{32}$/),
     });
   });
 });
