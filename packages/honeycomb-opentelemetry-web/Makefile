@@ -13,7 +13,7 @@ smoke-docker: smoke-tests/collector/data.json
 	@echo ""
 	@echo "+++ Spinning up the smokers."
 	@echo ""
-	docker-compose up --build collector app-custom-with-collector-ts --detach
+	docker compose up --build collector app-custom-with-collector-ts --detach
 
 smoke-cypress: smoke-tests/collector/data.json
 	@echo ""
@@ -33,4 +33,4 @@ unsmoke:
 	@echo ""
 	@echo "+++ Spinning down the smokers."
 	@echo ""
-	cd smoke-tests && docker-compose down --volumes
+	cd smoke-tests && docker compose down --volumes
