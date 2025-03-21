@@ -104,7 +104,7 @@ describe('configureSpanProcessors', () => {
   });
   test('Configures BatchSpanProcessor, BaggageSpanProcessor, & BrowserAttributesSpanProcessor by default', () => {
     const honeycombSpanProcessors = configureSpanProcessors({});
-    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(3);
+    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(4);
     expect(honeycombSpanProcessors.getSpanProcessors()[0]).toBeInstanceOf(
       BatchSpanProcessor,
     );
@@ -113,7 +113,7 @@ describe('configureSpanProcessors', () => {
     });
     const ctx = propagation.setBaggage(ROOT_CONTEXT, bag);
     honeycombSpanProcessors.onStart(span, ctx);
-    expect(span.attributes).toEqual({
+    expect(span.attributes).toMatchObject({
       'app.message': 'heygirl',
       'browser.width': 1024,
       'browser.height': 768,
@@ -124,6 +124,7 @@ describe('configureSpanProcessors', () => {
       'page.url':
         'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
       'url.path': '/some-page',
+      'session.id': expect.stringMatching(/\A[a-z0-9]{32}\z/),
     });
   });
 
@@ -131,13 +132,13 @@ describe('configureSpanProcessors', () => {
     const honeycombSpanProcessors = configureSpanProcessors({
       spanProcessor: new TestSpanProcessorOne(),
     });
-    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(4);
+    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(5);
     expect(honeycombSpanProcessors.getSpanProcessors()[0]).toBeInstanceOf(
       BatchSpanProcessor,
     );
 
     honeycombSpanProcessors.onStart(span, ROOT_CONTEXT);
-    expect(span.attributes).toEqual({
+    expect(span.attributes).toMatchObject({
       'browser.width': 1024,
       'browser.height': 768,
       'page.hash': '#the-hash',
@@ -148,6 +149,7 @@ describe('configureSpanProcessors', () => {
         'http://something-something.com/some-page?search_params=yes&hello=hi#the-hash',
       'processor1.name': 'TestSpanProcessorOne',
       'url.path': '/some-page',
+      'session.id': expect.stringMatching(/\A[a-z0-9]{32}\z/),
     });
   });
 
@@ -156,10 +158,10 @@ describe('configureSpanProcessors', () => {
       spanProcessors: [new TestSpanProcessorOne(), new TestSpanProcessorTwo()],
     });
 
-    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(5);
+    expect(honeycombSpanProcessors.getSpanProcessors()).toHaveLength(6);
 
     honeycombSpanProcessors.onStart(span, ROOT_CONTEXT);
-    expect(span.attributes).toEqual({
+    expect(span.attributes).toMatchObject({
       'browser.width': 1024,
       'browser.height': 768,
       'page.hash': '#the-hash',
@@ -171,6 +173,7 @@ describe('configureSpanProcessors', () => {
       'processor1.name': 'TestSpanProcessorOne',
       'processor2.name': 'TestSpanProcessorTwo',
       'url.path': '/some-page',
+      'session.id': expect.stringMatching(/\A[a-z0-9]{32}\z/),
     });
   });
 });
