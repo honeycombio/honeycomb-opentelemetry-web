@@ -32,6 +32,7 @@ import {
   SpanLimits,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { SessionProvider } from '@opentelemetry/web-common';
 import { WebVitalsInstrumentationConfig } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentationConfig } from './global-errors-autoinstrumentation';
 
@@ -154,6 +155,9 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * Current options include 'NONE', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'VERBOSE', and 'ALL'.
    */
   logLevel?: DiagLogLevel;
+
+  /** Optionally provide a session provider to generate session ids for the session span processor. */
+  sessionProvider?: SessionProvider;
 }
 
 /* Configure which fields to include in the `entry_page` resource attributes. By default,
