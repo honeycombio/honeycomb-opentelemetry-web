@@ -9,7 +9,7 @@ import {
 } from '@opentelemetry/sdk-trace-base';
 import { createSessionSpanProcessor } from '@opentelemetry/web-common';
 import { Context } from '@opentelemetry/api';
-import { defaultSessionProvider } from 'default-session-provider';
+import { defaultSessionProvider } from './default-session-provider';
 import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
 import { configureCompositeExporter } from './composite-exporter';
 import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter';
