@@ -8,6 +8,12 @@ describe('Smoke Tests', () => {
     });
     cy.get('[data-cy="button"]').should('be.visible');
     cy.get('[data-cy="button"]').click();
+    cy.get('[data-cy="dad-joke-button-fetch"]').should('be.visible');
+    cy.get('[data-cy="dad-joke-button-fetch"]').click();
+    cy.get('[data-cy="dad-joke-button-xhr"]').should('be.visible');
+    cy.get('[data-cy="dad-joke-button-xhr"]').click();
+    // we need to wait to let the request complete and allow time for spans to be sent
+    cy.wait(5000);
   });
   it('initializes the OpenTelemetry API and logs honeycomb config with debug enabled', () => {
     cy.get('@consoleDebug')

@@ -6,6 +6,8 @@ CONTAINER_NAME="app-hello-world-web"
 DOCUMENT_LOAD_SCOPE="@opentelemetry/instrumentation-document-load"
 USER_INTERACTION_SCOPE="@opentelemetry/instrumentation-user-interaction"
 WEB_VITALS_SCOPE="@honeycombio/instrumentation-web-vitals"
+FETCH_SCOPE="@opentelemetry/instrumentation-fetch"
+XHR_SCOPE="@opentelemetry/instrumentation-xml-http-request"
 
 CUSTOM_TRACER_NAME="click-tracer"
 
@@ -75,6 +77,16 @@ teardown_file() {
 @test "Auto instrumentation adds session.id attribute" {
   result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"session.id\").value.stringValue")
   assert_not_empty "$result"
+}
+
+@test "Auto instrumentation produces fetch span" {
+  result=$(span_names_for ${FETCH_SCOPE})
+  assert_equal "$result" '"HTTP GET"'
+}
+
+@test "Auto instrumentation produces XHR span" {
+  result=$(span_names_for ${XHR_SCOPE})
+  assert_equal "$result" '"GET"'
 }
 
 ## tests on custom instrumentation ##
