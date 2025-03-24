@@ -1,5 +1,22 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.15.0 [beta] - 2025-03-24
+
+### ✨ Features
+
+- feat: Allow custom session id provider (#489) | @martin308
+
+### 🛠️ Maintenance
+
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#496) | @dependabot
+- maint: Peer dependencies and testing for v2 network instrumentation (#493) | @pkanal
+- maint(deps-dev): bump esbuild from 0.23.0 to 0.25.1 in /packages/honeycomb-opentelemetry-web (#495) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#491) | @dependabot
+- maint(deps): bump the example-deps group across 6 directories with 13 updates (#492) | @dependabot
+- maint: Consolidate all the dependabot for examples (#486) | @martin308
+- maint: npm update all examples (#488) | @martin308
+- maint: Use LTS tag (#487) | @martin308
+
 ## v0.14.0 [beta] - 2025-03-19
 
 ### ✨ Features
