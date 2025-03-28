@@ -20,10 +20,9 @@ import type { ContextManager, DiagLogLevel } from '@opentelemetry/api';
 import { TextMapPropagator } from '@opentelemetry/api';
 import { Instrumentation } from '@opentelemetry/instrumentation';
 import {
-  Detector,
-  DetectorSync,
-  IResource,
-  ResourceAttributes,
+  DetectedResourceAttributes,
+  Resource,
+  ResourceDetector,
 } from '@opentelemetry/resources';
 import {
   IdGenerator,
@@ -41,8 +40,8 @@ export interface WebSDKConfiguration {
   contextManager: ContextManager;
   textMapPropagator: TextMapPropagator;
   instrumentations: (Instrumentation | Instrumentation[])[];
-  resource: IResource;
-  resourceDetectors: Array<Detector | DetectorSync>;
+  resource: Resource;
+  resourceDetectors: Array<ResourceDetector>;
   sampler: Sampler;
   serviceName?: string;
   spanProcessor: SpanProcessor;
@@ -116,7 +115,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   debug?: boolean;
 
   /** Additional attributes, will be included as fields on all data */
-  resourceAttributes?: ResourceAttributes;
+  resourceAttributes?: DetectedResourceAttributes;
 
   /** The local visualizations flag enables logging Honeycomb URLs for completed traces. Do not use in production.
    * Defaults to 'false'.

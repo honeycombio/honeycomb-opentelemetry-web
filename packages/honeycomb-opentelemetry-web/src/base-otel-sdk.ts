@@ -23,12 +23,11 @@ import {
   registerInstrumentations,
 } from '@opentelemetry/instrumentation';
 import {
-  Detector,
-  DetectorSync,
-  detectResourcesSync,
-  IResource,
+  detectResources,
   Resource,
   ResourceDetectionConfig,
+  ResourceDetector,
+  resourceFromAttributes,
 } from '@opentelemetry/resources';
 import {
   BatchSpanProcessor,
@@ -38,7 +37,7 @@ import {
   WebTracerConfig,
   WebTracerProvider,
 } from '@opentelemetry/sdk-trace-web';
-import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { WebSDKConfiguration } from './types';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
 
@@ -53,8 +52,8 @@ export class WebSDK {
   };
   private _instrumentations: (Instrumentation | Instrumentation[])[];
 
-  private _resource: IResource;
-  private _resourceDetectors: Array<Detector | DetectorSync>;
+  private _resource: Resource;
+  private _resourceDetectors: Array<ResourceDetector>;
 
   private _autoDetectResources: boolean;
 
@@ -67,7 +66,7 @@ export class WebSDK {
    * Create a new Web SDK instance
    */
   public constructor(configuration: Partial<WebSDKConfiguration> = {}) {
-    this._resource = configuration.resource ?? new Resource({});
+    this._resource = configuration.resource ?? resourceFromAttributes({});
     this._resourceDetectors = configuration.resourceDetectors ?? [
       browserDetector,
     ];
@@ -124,17 +123,16 @@ export class WebSDK {
       const internalConfig: ResourceDetectionConfig = {
         detectors: this._resourceDetectors,
       };
-      this._resource = this._resource.merge(
-        detectResourcesSync(internalConfig),
-      );
+
+      this._resource = this._resource.merge(detectResources(internalConfig));
     }
 
     this._resource =
       this._serviceName === undefined
         ? this._resource
         : this._resource.merge(
-            new Resource({
-              [SEMRESATTRS_SERVICE_NAME]: this._serviceName,
+            resourceFromAttributes({
+              [ATTR_SERVICE_NAME]: this._serviceName,
             }),
           );
 
