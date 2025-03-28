@@ -1,13 +1,13 @@
-import { BaggageSpanProcessor } from '../src/baggage-span-processor';
 import {
-  propagation,
-  ROOT_CONTEXT,
-  SpanKind,
-  TraceFlags,
-} from '@opentelemetry/api';
-import { BasicTracerProvider, Span } from '@opentelemetry/sdk-trace-base';
+  InMemorySpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
+import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
+import { BaggageSpanProcessor } from '../src/baggage-span-processor';
+import { propagation, ROOT_CONTEXT, SpanKind, trace } from '@opentelemetry/api';
 
 describe('BaggageSpanProcessor', () => {
+  const exporter = new InMemorySpanExporter();
   const baggageProcessor = new BaggageSpanProcessor();
 
   const bag = propagation.createBaggage({
@@ -18,28 +18,34 @@ describe('BaggageSpanProcessor', () => {
     brand: 'samsonite',
   };
 
-  let span: Span;
-
   beforeEach(() => {
-    span = new Span(
-      new BasicTracerProvider().getTracer('baggage-testing'),
-      ROOT_CONTEXT,
-      'Edward W. Span',
-      {
-        traceId: 'e4cda95b652f4a1592b449d5929fda1b',
-        spanId: '7e0c63257de34c92',
-        traceFlags: TraceFlags.SAMPLED,
-      },
-      SpanKind.SERVER,
-    );
+    exporter.reset();
   });
 
   test('onStart adds current Baggage entries to a span as attributes', () => {
-    expect(span.attributes).toEqual({});
+    const tracer = trace.getTracer('baggage-testing');
+    const provider = new WebTracerProvider({
+      spanProcessors: [
+        new BaggageSpanProcessor(),
+        new SimpleSpanProcessor(exporter),
+      ],
+    });
+    provider.register();
     const ctx = propagation.setBaggage(ROOT_CONTEXT, bag);
 
-    baggageProcessor.onStart(span, ctx);
+    const span = tracer.startSpan(
+      'Edward W. Span',
+      {
+        kind: SpanKind.SERVER,
+      },
+      ctx,
+    );
 
-    expect(span.attributes).toEqual(expectedAttrs);
+    baggageProcessor.onStart(span, ctx);
+    span.end();
+
+    const finishedSpans = exporter.getFinishedSpans();
+    expect(finishedSpans).toHaveLength(1);
+    expect(finishedSpans[0].attributes).toEqual(expectedAttrs);
   });
 });
