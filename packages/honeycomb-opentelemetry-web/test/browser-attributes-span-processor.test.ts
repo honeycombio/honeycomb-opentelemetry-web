@@ -3,32 +3,29 @@
  */
 
 import { BrowserAttributesSpanProcessor } from '../src/browser-attributes-span-processor';
-import { ROOT_CONTEXT, SpanKind, TraceFlags } from '@opentelemetry/api';
-import { BasicTracerProvider, Span } from '@opentelemetry/sdk-trace-base';
+import { SpanKind, trace } from '@opentelemetry/api';
+
+import { setupTestExporter } from './test-helpers';
 
 describe('BrowserAttributesSpanProcessor', () => {
-  const browserAttrsSpanProcessor = new BrowserAttributesSpanProcessor();
-
-  let span: Span;
+  const exporter = setupTestExporter([new BrowserAttributesSpanProcessor()]);
 
   beforeEach(() => {
-    span = new Span(
-      new BasicTracerProvider().getTracer('browser-attrs-testing'),
-      ROOT_CONTEXT,
-      'A Very Important Browser Span!',
-      {
-        traceId: '',
-        spanId: '',
-        traceFlags: TraceFlags.SAMPLED,
-      },
-      SpanKind.CLIENT,
-    );
+    exporter.reset();
   });
 
   test('Span processor adds extra browser attributes', () => {
-    browserAttrsSpanProcessor.onStart(span);
+    const tracer = trace.getTracer('browser-attrs-testing');
+    const span = tracer.startSpan('A Very Important Browser Span!', {
+      kind: SpanKind.CLIENT,
+    });
 
-    expect(span.attributes).toEqual({
+    span.end();
+
+    const finishedSpans = exporter.getFinishedSpans();
+    expect(finishedSpans).toHaveLength(1);
+
+    expect(finishedSpans[0].attributes).toEqual({
       'browser.width': 1024,
       'browser.height': 768,
       'page.hash': '#the-hash',

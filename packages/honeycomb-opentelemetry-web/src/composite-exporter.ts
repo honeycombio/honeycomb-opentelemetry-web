@@ -1,6 +1,40 @@
 import { ExportResult, ExportResultCode } from '@opentelemetry/core';
 import { ReadableSpan, SpanExporter } from '@opentelemetry/sdk-trace-base';
 
+import { HoneycombOptions } from './types';
+import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
+import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter';
+
+export const configureTraceExporters = (
+  options?: HoneycombOptions,
+): SpanExporter => {
+  const honeycombTraceExporters = [];
+
+  if (options?.localVisualizations) {
+    honeycombTraceExporters.push(configureConsoleTraceLinkExporter(options));
+  }
+
+  // if there is a user-provided exporter, add to the composite exporter
+  if (options?.traceExporter) {
+    honeycombTraceExporters.push(options?.traceExporter);
+  }
+
+  // if there is an array of user-provided exporters, add them to the composite exporter
+  // This will override the default honeycomb trace exporter.
+  if (options?.traceExporters) {
+    honeycombTraceExporters.push(...options.traceExporters);
+  }
+
+  // Disable this if a configuration option is present
+  if (options?.disableDefaultTraceExporter !== true) {
+    honeycombTraceExporters.unshift(
+      configureHoneycombHttpJsonTraceExporter(options),
+    );
+  }
+
+  return configureCompositeExporter([...honeycombTraceExporters]);
+};
+
 /**
  * Builds and returns a new {@link SpanExporter} that wraps the provided array
  * of {@link SpanExporter}s

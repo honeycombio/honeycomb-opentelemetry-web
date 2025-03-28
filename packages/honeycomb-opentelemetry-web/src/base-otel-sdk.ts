@@ -23,12 +23,11 @@ import {
   registerInstrumentations,
 } from '@opentelemetry/instrumentation';
 import {
-  Detector,
-  DetectorSync,
-  detectResourcesSync,
-  IResource,
+  detectResources,
   Resource,
   ResourceDetectionConfig,
+  ResourceDetector,
+  resourceFromAttributes,
 } from '@opentelemetry/resources';
 import {
   BatchSpanProcessor,
@@ -38,7 +37,7 @@ import {
   WebTracerConfig,
   WebTracerProvider,
 } from '@opentelemetry/sdk-trace-web';
-import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { WebSDKConfiguration } from './types';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
 
@@ -47,14 +46,15 @@ import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
 export class WebSDK {
   private _tracerProviderConfig?: {
     tracerConfig: WebTracerConfig;
-    spanProcessor: SpanProcessor;
+    spanProcessor?: SpanProcessor;
+    spanProcessors?: SpanProcessor[];
     contextManager?: ContextManager;
     textMapPropagator?: TextMapPropagator;
   };
   private _instrumentations: (Instrumentation | Instrumentation[])[];
 
-  private _resource: IResource;
-  private _resourceDetectors: Array<Detector | DetectorSync>;
+  private _resource: Resource;
+  private _resourceDetectors: Array<ResourceDetector>;
 
   private _autoDetectResources: boolean;
 
@@ -67,7 +67,7 @@ export class WebSDK {
    * Create a new Web SDK instance
    */
   public constructor(configuration: Partial<WebSDKConfiguration> = {}) {
-    this._resource = configuration.resource ?? new Resource({});
+    this._resource = configuration.resource ?? resourceFromAttributes({});
     this._resourceDetectors = configuration.resourceDetectors ?? [
       browserDetector,
     ];
@@ -76,7 +76,11 @@ export class WebSDK {
 
     this._autoDetectResources = configuration.autoDetectResources ?? true;
 
-    if (configuration.spanProcessor || configuration.traceExporter) {
+    if (
+      configuration.spanProcessor ||
+      configuration.traceExporter ||
+      configuration.spanProcessors
+    ) {
       const tracerProviderConfig: WebTracerConfig = {};
 
       if (configuration.sampler) {
@@ -89,13 +93,18 @@ export class WebSDK {
         tracerProviderConfig.idGenerator = configuration.idGenerator;
       }
 
-      const spanProcessor =
-        configuration.spanProcessor ??
-        new BatchSpanProcessor(configuration.traceExporter!);
+      const spanProcessors: SpanProcessor[] =
+        configuration.spanProcessors || [];
+      if (configuration.traceExporter) {
+        spanProcessors.push(
+          new BatchSpanProcessor(configuration.traceExporter),
+        );
+      }
 
       this._tracerProviderConfig = {
         tracerConfig: tracerProviderConfig,
-        spanProcessor,
+        spanProcessor: configuration.spanProcessor,
+        spanProcessors: spanProcessors,
         contextManager: configuration.contextManager,
         textMapPropagator: configuration.textMapPropagator,
       };
@@ -124,30 +133,36 @@ export class WebSDK {
       const internalConfig: ResourceDetectionConfig = {
         detectors: this._resourceDetectors,
       };
-      this._resource = this._resource.merge(
-        detectResourcesSync(internalConfig),
-      );
+
+      this._resource = this._resource.merge(detectResources(internalConfig));
     }
 
     this._resource =
       this._serviceName === undefined
         ? this._resource
         : this._resource.merge(
-            new Resource({
-              [SEMRESATTRS_SERVICE_NAME]: this._serviceName,
+            resourceFromAttributes({
+              [ATTR_SERVICE_NAME]: this._serviceName,
             }),
           );
+
+    const spanProcessors: SpanProcessor[] = [];
+
+    if (this._tracerProviderConfig?.spanProcessor) {
+      spanProcessors.push(this._tracerProviderConfig.spanProcessor);
+    }
+
+    if (this._tracerProviderConfig?.spanProcessors) {
+      spanProcessors.push(...this._tracerProviderConfig.spanProcessors);
+    }
 
     const tracerProvider = new WebTracerProvider({
       ...this._tracerProviderConfig?.tracerConfig,
       resource: this._resource,
+      spanProcessors: spanProcessors,
     });
 
     this._tracerProvider = tracerProvider;
-
-    if (this._tracerProviderConfig) {
-      tracerProvider.addSpanProcessor(this._tracerProviderConfig.spanProcessor);
-    }
 
     tracerProvider.register({
       contextManager: this._tracerProviderConfig?.contextManager,

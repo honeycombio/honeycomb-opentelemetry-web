@@ -8,8 +8,13 @@ import {
   TEAM_HEADER_KEY,
 } from '../src/http-json-trace-exporter';
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api';
-import { ExportResultCode, hrTime, hrTimeDuration } from '@opentelemetry/core';
-import { IResource } from '@opentelemetry/resources';
+import {
+  ExportResult,
+  ExportResultCode,
+  hrTime,
+  hrTimeDuration,
+} from '@opentelemetry/core';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 
 import { DEFAULT_API_ENDPOINT } from '../src/util';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
@@ -39,11 +44,8 @@ const fakeSpan: ReadableSpan = {
   startTime: hrTime(0),
   endTime: hrTime(1),
   duration: hrTimeDuration(hrTime(0), hrTime(1)),
-  resource: {
-    attributes: {},
-    merge: (x: IResource) => x,
-  },
-  instrumentationLibrary: {
+  resource: resourceFromAttributes({}),
+  instrumentationScope: {
     name: 'test',
     version: '0.0.0',
   },
@@ -84,7 +86,7 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.export([fakeSpan], (result) => {
+      traceExporter.export([fakeSpan], (result: ExportResult) => {
         if (result.code === ExportResultCode.SUCCESS) {
           console.log('success');
           resolve(null);
@@ -108,7 +110,7 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.export([fakeSpan], (result) => {
+      traceExporter.export([fakeSpan], (result: ExportResult) => {
         if (result.code === ExportResultCode.SUCCESS) {
           console.log('success');
           resolve(null);
@@ -133,7 +135,7 @@ describe('HTTP JSON Trace Exporter Tests', () => {
     });
 
     await new Promise((resolve) => {
-      traceExporter.export([fakeSpan], (result) => {
+      traceExporter.export([fakeSpan], (result: ExportResult) => {
         if (result.code === ExportResultCode.SUCCESS) {
           console.log('success');
           resolve(null);

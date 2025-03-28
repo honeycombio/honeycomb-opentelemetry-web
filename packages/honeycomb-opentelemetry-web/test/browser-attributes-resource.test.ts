@@ -4,12 +4,6 @@ import {
   computeScreenSize,
   configureBrowserAttributesResource,
 } from '../src/browser-attributes-resource';
-import { Resource } from '@opentelemetry/resources';
-
-test('it should return a Resource', () => {
-  const resource = configureBrowserAttributesResource();
-  expect(resource).toBeInstanceOf(Resource);
-});
 
 test('it should have location attributes', () => {
   const resource = configureBrowserAttributesResource();

@@ -2,15 +2,9 @@
  * @jest-environment-options {"url": "http://something-something.com/some-page?search_params=yes&hello=hi#the-hash"}
  */
 import { configureEntryPageResource } from '../src/entry-page-resource';
-import { Resource } from '@opentelemetry/resources';
 
 afterEach(() => {
   jest.resetAllMocks();
-});
-
-test('it should return a Resource', () => {
-  const resource = configureEntryPageResource();
-  expect(resource).toBeInstanceOf(Resource);
 });
 
 test('when called without a custom config, the resource should include default attributes', () => {

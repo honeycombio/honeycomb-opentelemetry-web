@@ -1,14 +1,11 @@
 import {
-  BasicTracerProvider,
-  InMemorySpanExporter,
-  SimpleSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
-import {
   getStructuredStackTrace,
   GlobalErrorsInstrumentation,
 } from '../src/global-errors-autoinstrumentation';
 import timers from 'node:timers/promises';
 import * as tracekit from 'tracekit';
+
+import { setupTestExporter } from './test-helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 jest.mock('tracekit', () => ({
@@ -17,11 +14,7 @@ jest.mock('tracekit', () => ({
 }));
 
 describe('Global Errors Instrumentation Tests', () => {
-  const exporter = new InMemorySpanExporter();
-  const provider = new BasicTracerProvider();
-  const spanProcessor = new SimpleSpanProcessor(exporter);
-  provider.addSpanProcessor(spanProcessor);
-  provider.register();
+  const exporter = setupTestExporter();
   let instr: GlobalErrorsInstrumentation;
 
   describe('when enabled', () => {
