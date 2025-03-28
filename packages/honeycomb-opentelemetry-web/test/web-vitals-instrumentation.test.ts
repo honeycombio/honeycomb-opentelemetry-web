@@ -7,11 +7,8 @@ import {
   TTFBMetricWithAttribution,
 } from 'web-vitals';
 import { WebVitalsInstrumentation } from '../src/web-vitals-autoinstrumentation';
-import {
-  BasicTracerProvider,
-  InMemorySpanExporter,
-  SimpleSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
+
+import { setupTestExporter } from './test-helpers';
 
 const CLS: CLSMetricWithAttribution = {
   name: 'CLS',
@@ -306,11 +303,7 @@ const FIDAttr = {
 };
 
 describe('Web Vitals Instrumentation Tests', () => {
-  const exporter = new InMemorySpanExporter();
-  const provider = new BasicTracerProvider();
-  const spanProcessor = new SimpleSpanProcessor(exporter);
-  provider.addSpanProcessor(spanProcessor);
-  provider.register();
+  const exporter = setupTestExporter();
 
   afterEach(() => {
     exporter.reset();
@@ -330,7 +323,7 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('CLS');
-      expect(span.instrumentationLibrary.name).toBe(
+      expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(CLSAttr);
@@ -367,7 +360,7 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('LCP');
-      expect(span.instrumentationLibrary.name).toBe(
+      expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(LCPAttr);
@@ -460,7 +453,7 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('INP');
-      expect(span.instrumentationLibrary.name).toBe(
+      expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(INPAttr);
@@ -481,7 +474,7 @@ describe('Web Vitals Instrumentation Tests', () => {
       const [scriptTimingSpan, timingSpan, inpSpan] =
         exporter.getFinishedSpans();
       expect(inpSpan.name).toBe('INP');
-      expect(inpSpan.instrumentationLibrary.name).toBe(
+      expect(inpSpan.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(timingSpan.attributes).toEqual({
@@ -535,7 +528,7 @@ describe('Web Vitals Instrumentation Tests', () => {
       });
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('FCP');
-      expect(span.instrumentationLibrary.name).toBe(
+      expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(FCPAttr);
@@ -571,7 +564,7 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('TTFB');
-      expect(span.instrumentationLibrary.name).toBe(
+      expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(TTFBAttr);
@@ -607,7 +600,7 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('FID');
-      expect(span.instrumentationLibrary.name).toBe(
+      expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(FIDAttr);
