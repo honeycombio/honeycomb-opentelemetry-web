@@ -9,11 +9,8 @@ import { validateOptionsWarnings } from './validate-options';
 import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentation } from './global-errors-autoinstrumentation';
 import { resourceFromAttributes } from '@opentelemetry/resources';
-import { BrowserAttributesSpanProcessor } from './browser-attributes-span-processor';
-import { BaggageSpanProcessor } from './baggage-span-processor';
-import { createSessionSpanProcessor } from '@opentelemetry/web-common';
-import { defaultSessionProvider } from './default-session-provider';
-import { configureTraceExporters } from './span-processor-builder';
+import { configureTraceExporters } from './composite-exporter';
+import { configureSpanProcessors } from './configure-span-processors';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
@@ -49,21 +46,12 @@ export class HoneycombWebSDK extends WebSDK {
       );
     }
 
-    const spanProcessors = [
-      new BrowserAttributesSpanProcessor(),
-      new BaggageSpanProcessor(),
-      createSessionSpanProcessor(
-        options?.sessionProvider || defaultSessionProvider,
-      ),
-      ...(options?.spanProcessors || []),
-    ];
-
     super({
       ...options,
       instrumentations,
       resource: resource,
       sampler: configureDeterministicSampler(options),
-      spanProcessors: spanProcessors,
+      spanProcessors: configureSpanProcessors(options),
       traceExporter: configureTraceExporters(options),
     });
 
