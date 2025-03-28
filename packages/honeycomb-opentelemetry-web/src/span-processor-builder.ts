@@ -14,6 +14,8 @@ import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-expor
 import { configureCompositeExporter } from './composite-exporter';
 import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter';
 
+// TODO: we might not need this anymore if the top level tracer provider supports multiple span processors!
+
 /**
  * Builds and returns Span Processor that combines the BatchSpanProcessor, BrowserSpanProcessor,
  * BaggageSpanProcessor, and optionally a user provided Span Processor.

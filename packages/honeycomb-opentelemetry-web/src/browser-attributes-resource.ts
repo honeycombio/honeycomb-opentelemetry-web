@@ -1,4 +1,8 @@
-import { Resource } from '@opentelemetry/resources';
+import {
+  DetectedResourceAttributes,
+  Resource,
+  resourceFromAttributes,
+} from '@opentelemetry/resources';
 import UAParser from 'ua-parser-js';
 
 type ScreenSize = 'small' | 'medium' | 'large' | 'unknown';
@@ -58,7 +62,8 @@ export function configureBrowserAttributesResource(): Resource {
   const { browserName, browserVersion, deviceType } = computeDeviceProperties(
     navigator.userAgent,
   );
-  return new Resource({
+
+  const browserAttributes: DetectedResourceAttributes = {
     'user_agent.original': navigator.userAgent,
     //https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#mobile_tablet_or_desktop
     'browser.mobile': navigator.userAgent.includes('Mobi'),
@@ -73,5 +78,8 @@ export function configureBrowserAttributesResource(): Resource {
     'screen.width': window.screen.width,
     'screen.height': window.screen.height,
     'screen.size': computeScreenSize(window.screen.width),
-  });
+  };
+
+  const browserAttributesResource = resourceFromAttributes(browserAttributes);
+  return browserAttributesResource as Resource;
 }

@@ -1,4 +1,8 @@
-import { Resource } from '@opentelemetry/resources';
+import {
+  DetectedResourceAttributes,
+  Resource,
+  resourceFromAttributes,
+} from '@opentelemetry/resources';
 import { EntryPageConfig } from './types';
 
 export const defaultConfig: EntryPageConfig = {
@@ -14,13 +18,13 @@ export function configureEntryPageResource(
   config?: EntryPageConfig | false,
 ): Resource {
   if (config === false || !window?.location) {
-    return new Resource({});
+    return resourceFromAttributes({}) as Resource;
   }
 
   const options = getOptions(config);
   const { href, pathname, search, hash, hostname } = window.location;
 
-  const attributes = {
+  const attributes: DetectedResourceAttributes = {
     'entry_page.url': optionalAttribute(options.url, href),
     'entry_page.path': optionalAttribute(options.path, pathname),
     'entry_page.search': optionalAttribute(options.search, search),
@@ -32,7 +36,7 @@ export function configureEntryPageResource(
     ),
   };
 
-  return new Resource(attributes);
+  return resourceFromAttributes(attributes) as Resource;
 }
 
 function getOptions(config?: EntryPageConfig) {

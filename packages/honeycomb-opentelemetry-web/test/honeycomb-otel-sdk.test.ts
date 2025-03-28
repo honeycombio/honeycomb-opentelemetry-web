@@ -3,7 +3,7 @@
  */
 
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { WebSDK } from '../src/base-otel-sdk';
 import { VERSION } from '../src/version';
 import { HoneycombOptions } from '../src/types';
@@ -19,7 +19,7 @@ test('it should extend the OTel WebSDK', () => {
 describe('resource config', () => {
   test('it should merge resources from the configuration', () => {
     const config = {
-      resource: new Resource({
+      resource: resourceFromAttributes({
         myTestAttr: 'my-test-attr',
       }),
     };
@@ -34,7 +34,7 @@ describe('resource config', () => {
 
   test('it should include resourceAttributes from the configuration', () => {
     const config = {
-      resource: new Resource({
+      resource: resourceFromAttributes({
         myTestAttr: 'my-test-attr',
       }),
       resourceAttributes: { jumpingJacks: 25, marbles: 52 },

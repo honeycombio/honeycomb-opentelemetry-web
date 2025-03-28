@@ -3,13 +3,13 @@ import { HoneycombOptions } from './types';
 import { configureHoneycombResource } from './honeycomb-resource';
 import { configureEntryPageResource } from './entry-page-resource';
 import { configureBrowserAttributesResource } from './browser-attributes-resource';
-import { mergeResources } from './merge-resources';
 import { configureDebug } from './honeycomb-debug';
 import { configureSpanProcessors } from './span-processor-builder';
 import { configureDeterministicSampler } from './deterministic-sampler';
 import { validateOptionsWarnings } from './validate-options';
 import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentation } from './global-errors-autoinstrumentation';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
@@ -29,16 +29,23 @@ export class HoneycombWebSDK extends WebSDK {
       );
     }
 
+    const resource = resourceFromAttributes({})
+      .merge(configureEntryPageResource(options?.entryPageAttributes))
+      .merge(configureBrowserAttributesResource())
+      .merge(configureHoneycombResource());
+
+    if (options?.resource) {
+      resource.merge(options.resource);
+    }
+
+    if (options?.resourceAttributes) {
+      resource.merge(resourceFromAttributes(options.resourceAttributes));
+    }
+
     super({
       ...options,
       instrumentations,
-      resource: mergeResources([
-        configureBrowserAttributesResource(),
-        configureEntryPageResource(options?.entryPageAttributes),
-        options?.resource,
-        options?.resourceAttributes,
-        configureHoneycombResource(),
-      ]),
+      resource: resource,
       sampler: configureDeterministicSampler(options),
       // Exporter is configured through the span processor because
       // the base SDK does not allow having both a spanProcessor and a

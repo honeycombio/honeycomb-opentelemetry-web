@@ -139,13 +139,12 @@ export class WebSDK {
     const tracerProvider = new WebTracerProvider({
       ...this._tracerProviderConfig?.tracerConfig,
       resource: this._resource,
+      spanProcessors: this._tracerProviderConfig?.spanProcessor
+        ? [this._tracerProviderConfig?.spanProcessor]
+        : [],
     });
 
     this._tracerProvider = tracerProvider;
-
-    if (this._tracerProviderConfig) {
-      tracerProvider.addSpanProcessor(this._tracerProviderConfig.spanProcessor);
-    }
 
     tracerProvider.register({
       contextManager: this._tracerProviderConfig?.contextManager,
