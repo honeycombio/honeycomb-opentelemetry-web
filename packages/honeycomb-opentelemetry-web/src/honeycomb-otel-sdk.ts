@@ -29,17 +29,19 @@ export class HoneycombWebSDK extends WebSDK {
       );
     }
 
-    const resource = resourceFromAttributes({})
+    let resource = resourceFromAttributes({})
       .merge(configureEntryPageResource(options?.entryPageAttributes))
       .merge(configureBrowserAttributesResource())
       .merge(configureHoneycombResource());
 
     if (options?.resource) {
-      resource.merge(options.resource);
+      resource = resource.merge(options.resource);
     }
 
     if (options?.resourceAttributes) {
-      resource.merge(resourceFromAttributes(options.resourceAttributes));
+      resource = resource.merge(
+        resourceFromAttributes(options.resourceAttributes),
+      );
     }
 
     super({
