@@ -5,6 +5,7 @@ import {
   BatchSpanProcessor,
   ReadableSpan,
   Span,
+  SpanExporter,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
 import { createSessionSpanProcessor } from '@opentelemetry/web-common';
@@ -14,8 +15,37 @@ import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-expor
 import { configureCompositeExporter } from './composite-exporter';
 import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter';
 
-// TODO: we might not need this anymore if the top level tracer provider supports multiple span processors!
+export const configureTraceExporters = (
+  options?: HoneycombOptions,
+): SpanExporter => {
+  const honeycombTraceExporters = [];
 
+  if (options?.localVisualizations) {
+    honeycombTraceExporters.push(configureConsoleTraceLinkExporter(options));
+  }
+
+  // if there is a user-provided exporter, add to the composite exporter
+  if (options?.traceExporter) {
+    honeycombTraceExporters.push(options?.traceExporter);
+  }
+
+  // if there is an array of user-provided exporters, add them to the composite exporter
+  // This will override the default honeycomb trace exporter.
+  if (options?.traceExporters) {
+    honeycombTraceExporters.push(...options.traceExporters);
+  }
+
+  // Disable this if a configuration option is present
+  if (options?.disableDefaultTraceExporter !== true) {
+    honeycombTraceExporters.unshift(
+      configureHoneycombHttpJsonTraceExporter(options),
+    );
+  }
+
+  return configureCompositeExporter([...honeycombTraceExporters]);
+};
+
+// TODO: we might not need this anymore if the top level tracer provider supports multiple span processors!
 /**
  * Builds and returns Span Processor that combines the BatchSpanProcessor, BrowserSpanProcessor,
  * BaggageSpanProcessor, and optionally a user provided Span Processor.

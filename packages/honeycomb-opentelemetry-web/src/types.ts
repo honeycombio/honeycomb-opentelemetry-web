@@ -44,7 +44,8 @@ export interface WebSDKConfiguration {
   resourceDetectors: Array<ResourceDetector>;
   sampler: Sampler;
   serviceName?: string;
-  spanProcessor: SpanProcessor;
+  spanProcessor?: SpanProcessor;
+  spanProcessors?: SpanProcessor[];
   traceExporter: SpanExporter;
   spanLimits: SpanLimits;
   idGenerator: IdGenerator;

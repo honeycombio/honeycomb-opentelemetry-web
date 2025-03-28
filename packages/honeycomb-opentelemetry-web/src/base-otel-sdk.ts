@@ -46,7 +46,8 @@ import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
 export class WebSDK {
   private _tracerProviderConfig?: {
     tracerConfig: WebTracerConfig;
-    spanProcessor: SpanProcessor;
+    spanProcessor?: SpanProcessor;
+    spanProcessors?: SpanProcessor[];
     contextManager?: ContextManager;
     textMapPropagator?: TextMapPropagator;
   };
@@ -75,7 +76,11 @@ export class WebSDK {
 
     this._autoDetectResources = configuration.autoDetectResources ?? true;
 
-    if (configuration.spanProcessor || configuration.traceExporter) {
+    if (
+      configuration.spanProcessor ||
+      configuration.traceExporter ||
+      configuration.spanProcessors
+    ) {
       const tracerProviderConfig: WebTracerConfig = {};
 
       if (configuration.sampler) {
@@ -88,13 +93,18 @@ export class WebSDK {
         tracerProviderConfig.idGenerator = configuration.idGenerator;
       }
 
-      const spanProcessor =
-        configuration.spanProcessor ??
-        new BatchSpanProcessor(configuration.traceExporter!);
+      const spanProcessors: SpanProcessor[] =
+        configuration.spanProcessors || [];
+      if (configuration.traceExporter) {
+        spanProcessors.push(
+          new BatchSpanProcessor(configuration.traceExporter),
+        );
+      }
 
       this._tracerProviderConfig = {
         tracerConfig: tracerProviderConfig,
-        spanProcessor,
+        spanProcessor: configuration.spanProcessor,
+        spanProcessors: spanProcessors,
         contextManager: configuration.contextManager,
         textMapPropagator: configuration.textMapPropagator,
       };
@@ -136,12 +146,20 @@ export class WebSDK {
             }),
           );
 
+    const spanProcessors: SpanProcessor[] = [];
+
+    if (this._tracerProviderConfig?.spanProcessor) {
+      spanProcessors.push(this._tracerProviderConfig.spanProcessor);
+    }
+
+    if (this._tracerProviderConfig?.spanProcessors) {
+      spanProcessors.push(...this._tracerProviderConfig.spanProcessors);
+    }
+
     const tracerProvider = new WebTracerProvider({
       ...this._tracerProviderConfig?.tracerConfig,
       resource: this._resource,
-      spanProcessors: this._tracerProviderConfig?.spanProcessor
-        ? [this._tracerProviderConfig?.spanProcessor]
-        : [],
+      spanProcessors: spanProcessors,
     });
 
     this._tracerProvider = tracerProvider;

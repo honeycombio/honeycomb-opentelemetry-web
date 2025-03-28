@@ -4,12 +4,16 @@ import { configureHoneycombResource } from './honeycomb-resource';
 import { configureEntryPageResource } from './entry-page-resource';
 import { configureBrowserAttributesResource } from './browser-attributes-resource';
 import { configureDebug } from './honeycomb-debug';
-import { configureSpanProcessors } from './span-processor-builder';
 import { configureDeterministicSampler } from './deterministic-sampler';
 import { validateOptionsWarnings } from './validate-options';
 import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentation } from './global-errors-autoinstrumentation';
 import { resourceFromAttributes } from '@opentelemetry/resources';
+import { BrowserAttributesSpanProcessor } from './browser-attributes-span-processor';
+import { BaggageSpanProcessor } from './baggage-span-processor';
+import { createSessionSpanProcessor } from '@opentelemetry/web-common';
+import { defaultSessionProvider } from './default-session-provider';
+import { configureTraceExporters } from './span-processor-builder';
 
 export class HoneycombWebSDK extends WebSDK {
   constructor(options?: HoneycombOptions) {
@@ -29,6 +33,7 @@ export class HoneycombWebSDK extends WebSDK {
       );
     }
 
+    //TODO: make a helper function for this?
     let resource = resourceFromAttributes({})
       .merge(configureEntryPageResource(options?.entryPageAttributes))
       .merge(configureBrowserAttributesResource())
@@ -44,15 +49,22 @@ export class HoneycombWebSDK extends WebSDK {
       );
     }
 
+    const spanProcessors = [
+      new BrowserAttributesSpanProcessor(),
+      new BaggageSpanProcessor(),
+      createSessionSpanProcessor(
+        options?.sessionProvider || defaultSessionProvider,
+      ),
+      ...(options?.spanProcessors || []),
+    ];
+
     super({
       ...options,
       instrumentations,
       resource: resource,
       sampler: configureDeterministicSampler(options),
-      // Exporter is configured through the span processor because
-      // the base SDK does not allow having both a spanProcessor and a
-      // traceExporter configured at the same time.
-      spanProcessor: configureSpanProcessors(options),
+      spanProcessors: spanProcessors,
+      traceExporter: configureTraceExporters(options),
     });
 
     validateOptionsWarnings(options);
