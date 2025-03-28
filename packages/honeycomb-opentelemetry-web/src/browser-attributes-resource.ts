@@ -80,6 +80,5 @@ export function configureBrowserAttributesResource(): Resource {
     'screen.size': computeScreenSize(window.screen.width),
   };
 
-  const browserAttributesResource = resourceFromAttributes(browserAttributes);
-  return browserAttributesResource as Resource;
+  return resourceFromAttributes(browserAttributes);
 }

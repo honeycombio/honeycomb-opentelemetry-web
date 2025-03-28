@@ -18,7 +18,7 @@ export function configureEntryPageResource(
   config?: EntryPageConfig | false,
 ): Resource {
   if (config === false || !window?.location) {
-    return resourceFromAttributes({}) as Resource;
+    return resourceFromAttributes({});
   }
 
   const options = getOptions(config);
@@ -36,7 +36,7 @@ export function configureEntryPageResource(
     ),
   };
 
-  return resourceFromAttributes(attributes) as Resource;
+  return resourceFromAttributes(attributes);
 }
 
 function getOptions(config?: EntryPageConfig) {

@@ -13,7 +13,6 @@ import {
 
 import { setupTestExporter } from './test-helpers';
 
-// TODO: we might not need this anymore
 class TestSpanProcessorOne implements SpanProcessor {
   onStart(span: Span): void {
     span.setAttributes({

@@ -5,5 +5,5 @@ export function configureHoneycombResource(): Resource {
   return resourceFromAttributes({
     'honeycomb.distro.version': VERSION,
     'honeycomb.distro.runtime_version': 'browser',
-  }) as Resource;
+  });
 }
