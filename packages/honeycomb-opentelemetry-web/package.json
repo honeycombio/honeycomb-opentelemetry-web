@@ -3,6 +3,7 @@
   "version": "0.15.0",
   "description": "Honeycomb OpenTelemetry Wrapper for Browser Applications",
   "main": "./dist/cjs/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
@@ -13,6 +14,7 @@
     },
     "./experimental": {
       "types": "./dist/types/experimental/index.d.ts",
+      "node": "./dist/cjs/experimental/index.js",
       "require": "./dist/cjs/experimental/index.js",
       "import": "./dist/esm/experimental/index.js",
       "default": "./dist/esm/experimental/index.js"
