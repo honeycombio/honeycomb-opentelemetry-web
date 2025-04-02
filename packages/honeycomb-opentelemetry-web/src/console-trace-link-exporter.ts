@@ -140,7 +140,10 @@ class ConsoleTraceLinkExporter implements SpanExporter {
     if (this._traceUrl) {
       spans.forEach((span) => {
         // only log root spans (ones without a parent span)
-        if (!span.parentSpanId && this._logLevel >= DiagLogLevel.INFO) {
+        if (
+          !span.parentSpanContext?.spanId &&
+          this._logLevel >= DiagLogLevel.INFO
+        ) {
           console.log(
             createHoneycombSDKLogMessage(
               `Honeycomb link: ${this._traceUrl}=${span.spanContext().traceId}`,
