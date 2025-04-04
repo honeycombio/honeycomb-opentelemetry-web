@@ -1,6 +1,6 @@
 # honeycomb-opentelemetry-web changelog
 
-## v0.16.0 [beta] - 2025-04-02
+## v0.16.0 [beta] - 2025-04-04
 
 ### ✨ Features
 
