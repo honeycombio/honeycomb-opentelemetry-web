@@ -9,6 +9,7 @@
 ### 🛠️ Maintenance
 
 - maint: Upgrade to v2.0.0/v0.200.0 upstream OTel packages (#503) | @pkanal
+- maint: Upgrade @opentelemetry/core to v2 (#507) | @pkanal
 - maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#504) | @dependabot
 - maint(deps): bump the example-deps group across 6 directories with 6 updates (#506) | @dependabot
 - maint(deps): bump @babel/runtime from 7.26.10 to 7.27.0 in /packages/honeycomb-opentelemetry-web (#505) | @dependabot
