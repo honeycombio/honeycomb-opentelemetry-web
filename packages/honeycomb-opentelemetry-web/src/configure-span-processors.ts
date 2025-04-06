@@ -15,12 +15,19 @@ import { defaultSessionProvider } from './default-session-provider';
 export const configureSpanProcessors = (
   options?: HoneycombOptions,
 ): SpanProcessor[] => {
-  return [
-    new BrowserAttributesSpanProcessor(),
+  const processors: SpanProcessor[] = [];
+
+  if (!options?.disableBrowserAttributes) {
+    processors.push(new BrowserAttributesSpanProcessor());
+  }
+
+  processors.push(
     new BaggageSpanProcessor(),
     createSessionSpanProcessor(
       options?.sessionProvider || defaultSessionProvider,
     ),
     ...(options?.spanProcessors || []),
-  ];
+  );
+
+  return processors;
 };

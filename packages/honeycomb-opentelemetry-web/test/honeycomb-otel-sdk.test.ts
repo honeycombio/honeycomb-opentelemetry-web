@@ -164,6 +164,7 @@ describe('span processor config', () => {
 
   afterAll(async () => {
     await honeycomb.shutdown();
+    trace.disable();
   });
 
   test('it should use the BrowserAttributesSpanProcessor', () => {
@@ -224,5 +225,56 @@ describe('span processor config', () => {
     expect(finishedSpans[0].attributes).toMatchObject({
       'processor2.name': 'TestSpanProcessorTwo',
     });
+  });
+});
+
+describe('disabling browser attributes', () => {
+  test('includes browser attributes by default', () => {
+    const honeycomb = new HoneycombWebSDK();
+    const attributes = honeycomb.getResourceAttributes();
+    expect(attributes['browser.name']).toEqual('WebKit');
+  });
+
+  test('does not include browser attributes when `config.disableBrowserAttributes` is false', () => {
+    const config: HoneycombOptions = {
+      disableBrowserAttributes: true,
+    };
+
+    const honeycomb = new HoneycombWebSDK(config);
+
+    const attributes = honeycomb.getResourceAttributes();
+    expect(attributes['browser.name']).toBeUndefined();
+  });
+
+  test('does not include browser span processor when `config.disableBrowserAttributes` is false', async () => {
+    const exporter = new InMemorySpanExporter();
+
+    const config: HoneycombOptions = {
+      disableBrowserAttributes: true,
+      spanProcessor: new SimpleSpanProcessor(exporter),
+      // Disable JSON exporter for testing
+      disableDefaultTraceExporter: true,
+    };
+
+    const honeycomb = new HoneycombWebSDK(config);
+    honeycomb.start();
+    exporter.reset();
+
+    try {
+      const span = trace
+        .getTracer('browser-span-processor-testing')
+        .startSpan('A Very Important Browser Span!');
+      span.end();
+    } catch (e) {
+      // Ignore the error
+    }
+
+    const finishedSpans = exporter.getFinishedSpans();
+    expect(finishedSpans).toHaveLength(1);
+    expect(finishedSpans[0].attributes["browser.width"]).toBeUndefined();
+    expect(finishedSpans[0].attributes["browser.height"]).toBeUndefined();
+
+    await honeycomb.shutdown();
+    trace.disable();
   });
 });

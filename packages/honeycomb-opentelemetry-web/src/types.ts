@@ -118,6 +118,9 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   /** Additional attributes, will be included as fields on all data */
   resourceAttributes?: DetectedResourceAttributes;
 
+  /** Prevents attaching automatically-derived browser-derived attributes to signals. */
+  disableBrowserAttributes?: boolean;
+
   /** The local visualizations flag enables logging Honeycomb URLs for completed traces. Do not use in production.
    * Defaults to 'false'.
    */
