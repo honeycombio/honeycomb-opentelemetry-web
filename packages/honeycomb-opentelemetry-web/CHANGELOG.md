@@ -1,5 +1,15 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.17.0 [beta] - 2025-04-07
+
+### ✨ Features
+
+- feat: add an option to disable automatic browser attributes (#510) | @beekhc
+
+### 🛠️ Maintenance
+
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#509) | @dependabot
+
 ## v0.16.0 [beta] - 2025-04-04
 
 ### ✨ Features
