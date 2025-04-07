@@ -244,6 +244,7 @@ describe('disabling browser attributes', () => {
 
     const attributes = honeycomb.getResourceAttributes();
     expect(attributes['browser.name']).toBeUndefined();
+    expect(attributes['entry_page.path']).toBeUndefined();
   });
 
   test('does not include browser span processor when `config.disableBrowserAttributes` is false', async () => {

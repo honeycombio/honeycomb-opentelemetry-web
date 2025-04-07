@@ -14,12 +14,12 @@ import { configureBrowserAttributesResource } from './browser-attributes-resourc
 export const configureResourceAttributes = (
   options?: HoneycombOptions,
 ): Resource => {
-  let resource = resourceFromAttributes({}).merge(
-    configureEntryPageResource(options?.entryPageAttributes),
-  );
+  let resource = resourceFromAttributes({});
 
   if (!options?.disableBrowserAttributes) {
-    resource = resource.merge(configureBrowserAttributesResource());
+    resource = resource
+      .merge(configureEntryPageResource(options?.entryPageAttributes))
+      .merge(configureBrowserAttributesResource());
   }
 
   resource = resource.merge(configureHoneycombResource());
