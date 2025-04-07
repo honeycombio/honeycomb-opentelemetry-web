@@ -271,8 +271,8 @@ describe('disabling browser attributes', () => {
 
     const finishedSpans = exporter.getFinishedSpans();
     expect(finishedSpans).toHaveLength(1);
-    expect(finishedSpans[0].attributes["browser.width"]).toBeUndefined();
-    expect(finishedSpans[0].attributes["browser.height"]).toBeUndefined();
+    expect(finishedSpans[0].attributes['browser.width']).toBeUndefined();
+    expect(finishedSpans[0].attributes['browser.height']).toBeUndefined();
 
     await honeycomb.shutdown();
     trace.disable();
