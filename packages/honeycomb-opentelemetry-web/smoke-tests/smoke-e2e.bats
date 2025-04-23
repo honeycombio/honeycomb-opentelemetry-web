@@ -25,6 +25,19 @@ teardown_file() {
   assert_equal "$result" '"hny-web-distro-example:custom-with-collector-ts"'
 }
 
+@test "SDK telemetry includes default resource attributes" {
+  name=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.name\").value.stringValue")
+  assert_equal "$name" '"opentelemetry"'
+
+  language=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.language\").value.stringValue")
+  assert_equal "$language" '"webjs"'
+
+  # We want to check that the version attribute exists but not specifically what it is to avoid smoke tests breaking everytime we upgrade OTel packages
+  version=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.version\").value.stringValue")
+  assert_not_empty "$version"
+}
+
+
 @test "SDK telemetry includes Honeycomb distro version" {
   version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.version\").value.stringValue")
   assert_not_empty "$version"
