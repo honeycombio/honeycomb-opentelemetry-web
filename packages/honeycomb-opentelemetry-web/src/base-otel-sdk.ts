@@ -22,9 +22,10 @@ import {
   Instrumentation,
   registerInstrumentations,
 } from '@opentelemetry/instrumentation';
+import type { Resource } from '@opentelemetry/resources';
 import {
+  defaultResource,
   detectResources,
-  Resource,
   ResourceDetectionConfig,
   ResourceDetector,
   resourceFromAttributes,
@@ -67,7 +68,11 @@ export class WebSDK {
    * Create a new Web SDK instance
    */
   public constructor(configuration: Partial<WebSDKConfiguration> = {}) {
-    this._resource = configuration.resource ?? resourceFromAttributes({});
+    // As of v2 of the JS packages, we need to explicitly start with the default resource that contains
+    // telemetry.sdk.language etc.
+    this._resource = defaultResource().merge(
+      configuration.resource ?? resourceFromAttributes({}),
+    );
     this._resourceDetectors = configuration.resourceDetectors ?? [
       browserDetector,
     ];

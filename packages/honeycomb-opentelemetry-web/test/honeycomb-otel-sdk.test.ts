@@ -19,6 +19,11 @@ import {
   SimpleSpanProcessor,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import {
+  ATTR_TELEMETRY_SDK_LANGUAGE,
+  ATTR_TELEMETRY_SDK_NAME,
+  ATTR_TELEMETRY_SDK_VERSION,
+} from '@opentelemetry/semantic-conventions';
 
 test('it should extend the OTel WebSDK', () => {
   const honeycomb = new HoneycombWebSDK();
@@ -60,6 +65,17 @@ describe('resource config', () => {
     expect(attributes.myTestAttr).toEqual('my-test-attr');
     expect(attributes.jumpingJacks).toEqual(25);
     expect(attributes.marbles).toEqual(52);
+  });
+
+  test('it should include attributes from the default resource', () => {
+    const honeycomb = new HoneycombWebSDK({});
+
+    const resourceAttributes = honeycomb.getResourceAttributes();
+    expect(resourceAttributes[ATTR_TELEMETRY_SDK_LANGUAGE]).toBeDefined();
+    expect(resourceAttributes[ATTR_TELEMETRY_SDK_NAME]).toEqual(
+      'opentelemetry',
+    );
+    expect(resourceAttributes[ATTR_TELEMETRY_SDK_VERSION]).toBeDefined();
   });
 });
 
