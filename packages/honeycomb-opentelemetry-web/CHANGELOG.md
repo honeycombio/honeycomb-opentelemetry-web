@@ -1,5 +1,18 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.17.1 [beta] - 2025-04-24
+
+### 🐛 Fixes
+
+- fix: Add repository to package.json (#518) | @pkanal
+- fix: explicitly add default resource attributes (#517) | @pkanal
+
+### 🛠️ Maintenance
+
+- maint(deps): bump @opentelemetry/semantic-conventions from 1.30.0 to 1.32.0 in /packages/honeycomb-opentelemetry-web in the otel group (#512) | @dependabot
+- Add top-level types element to package.json (#499) | @sodabrew
+ (tag: honeycomb-opentelemetry-web-v0.17.0)- rel: v0.17.0 (#511) | @pkanal
+
 ## v0.17.0 [beta] - 2025-04-07
 
 ### ✨ Features
