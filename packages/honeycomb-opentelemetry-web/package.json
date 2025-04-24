@@ -2,6 +2,11 @@
   "name": "@honeycombio/opentelemetry-web",
   "version": "0.17.0",
   "description": "Honeycomb OpenTelemetry Wrapper for Browser Applications",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honeycombio/honeycomb-opentelemetry-web.git",
+    "directory": "packages/honeycomb-opentelemetry-web"
+  },
   "main": "./dist/cjs/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
