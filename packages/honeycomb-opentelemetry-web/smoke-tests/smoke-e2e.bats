@@ -41,8 +41,15 @@ teardown_file() {
 @test "SDK telemetry includes Honeycomb distro version" {
   version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.version\").value.stringValue")
   assert_not_empty "$version"
+
   runtime_version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.runtime_version\").value.stringValue")
   assert_equal "$runtime_version" '"browser"'
+
+  version=$(resource_attributes_received | jq "select(.key == \"telemetry.distro.version\").value.stringValue")
+  assert_not_empty "$version"
+
+  name=$(resource_attributes_received | jq "select(.key == \"telemetry.distro.name\").value.stringValue")
+  assert_equal
 }
 
 @test "SDK telemetry includes browser attributes" {
