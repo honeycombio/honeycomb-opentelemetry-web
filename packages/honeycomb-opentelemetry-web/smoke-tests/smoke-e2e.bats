@@ -49,7 +49,7 @@ teardown_file() {
   assert_not_empty "$version"
 
   name=$(resource_attributes_received | jq "select(.key == \"telemetry.distro.name\").value.stringValue")
-  assert_equal
+  assert_equal "$name" '"@honeycombio/opentelemetry-web"'
 }
 
 @test "SDK telemetry includes browser attributes" {
