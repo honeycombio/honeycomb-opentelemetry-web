@@ -586,42 +586,6 @@ describe('Web Vitals Instrumentation Tests', () => {
     });
   });
 
-  describe('FID', () => {
-    it('should create a span when enabled', () => {
-      const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportFID(FID, {
-        applyCustomAttributes: (fid, span) => {
-          span.setAttributes({
-            'fid.entries': fid.entries.toString(),
-            'fid.my_custom_attr': 'custom_attr',
-          });
-        },
-      });
-
-      const span = exporter.getFinishedSpans()[0];
-      expect(span.name).toBe('FID');
-      expect(span.instrumentationScope.name).toBe(
-        '@honeycombio/instrumentation-web-vitals',
-      );
-      expect(span.attributes).toEqual(FIDAttr);
-    });
-
-    it('should not create a span when disabled', () => {
-      const instr = new WebVitalsInstrumentation({
-        vitalsToTrack: ['FID'],
-      });
-      instr.disable();
-      instr.onReportFID(FID, { applyCustomAttributes: () => {} });
-
-      expect(exporter.getFinishedSpans().length).toEqual(0);
-      instr.enable();
-      instr.onReportFID(FID, { applyCustomAttributes: () => {} });
-
-      expect(exporter.getFinishedSpans().length).toEqual(1);
-      expect(exporter.getFinishedSpans()[0].name).toEqual('FID');
-    });
-  });
-
   describe('config.vitalsToTrack', () => {
     it(`should default to ['CLS', 'LCP', 'INP', 'TTFB', 'FCP'] when an empty config`, () => {
       const instr = new WebVitalsInstrumentation();
