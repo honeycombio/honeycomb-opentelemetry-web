@@ -1,4 +1,3 @@
-
 import { afterEach, beforeEach, jest } from '@jest/globals';
 
 const getEntriesByTypeSpy = jest.fn(() => {
