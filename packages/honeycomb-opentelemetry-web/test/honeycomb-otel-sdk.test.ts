@@ -152,17 +152,22 @@ describe('span processor config', () => {
     }
   }
 
-  const exporter = new InMemorySpanExporter();
-  const config: HoneycombOptions = {
-    spanProcessor: new TestSpanProcessorTwo(),
-    spanProcessors: [
-      new TestSpanProcessorOne(),
-      new SimpleSpanProcessor(exporter),
-    ],
-    // Disable JSON exporter for testing
-    disableDefaultTraceExporter: true,
-  };
-  const honeycomb = new HoneycombWebSDK(config);
+  let honeycomb: HoneycombWebSDK;
+  let exporter: InMemorySpanExporter;
+
+  beforeAll(() => {
+    exporter = new InMemorySpanExporter();
+    const config: HoneycombOptions = {
+      spanProcessor: new TestSpanProcessorTwo(),
+      spanProcessors: [
+        new TestSpanProcessorOne(),
+        new SimpleSpanProcessor(exporter),
+      ],
+      // Disable JSON exporter for testing
+      disableDefaultTraceExporter: true,
+    };
+    honeycomb = new HoneycombWebSDK(config);
+  });
 
   beforeEach(() => {
     honeycomb.start();
