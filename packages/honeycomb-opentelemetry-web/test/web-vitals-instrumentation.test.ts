@@ -1,7 +1,6 @@
 import {
   CLSMetricWithAttribution,
   FCPMetricWithAttribution,
-  FIDMetricWithAttribution,
   INPMetricWithAttribution,
   LCPMetricWithAttribution,
   TTFBMetricWithAttribution,
@@ -66,7 +65,7 @@ const LCP: LCPMetricWithAttribution = {
   navigationType: 'back-forward',
   entries: [],
   attribution: {
-    element: 'div#lcp-element',
+    target: 'div#lcp-element',
     url: 'https://my-cool-image.stuff',
     timeToFirstByte: 30,
     resourceLoadDuration: 20,
@@ -117,7 +116,6 @@ const INP: INPMetricWithAttribution = {
     interactionTarget: 'div#inp-element',
     interactionType: 'pointer',
     loadState: 'complete',
-    interactionTargetElement: undefined,
     interactionTime: 10,
     nextPaintTime: 400,
     processedEventEntries: [],
@@ -127,7 +125,7 @@ const INP: INPMetricWithAttribution = {
     presentationDelay: 500,
   },
 };
-const scriptTiming = {
+const scriptTiming: PerformanceScriptTiming = {
   name: 'script',
   entryType: 'script',
   startTime: 2338.2999999523163,
@@ -141,15 +139,24 @@ const scriptTiming = {
   sourceURL: 'http://someapp.com/bundle.js',
   sourceFunctionName: 'myFn',
   sourceCharPosition: 424242,
+  toJSON() {
+    return '';
+  },
 };
 
-const frameTiming = {
+const frameTiming: PerformanceLongAnimationFrameTiming = {
   duration: 1000,
   entryType: 'long-animation-frame',
   name: 'long-animation-frame',
   renderStart: 90,
   startTime: 10,
   scripts: [scriptTiming],
+  styleAndLayoutStart: 0,
+  blockingDuration: 0,
+  firstUIEventTimestamp: 0,
+  toJSON() {
+    return '';
+  },
 };
 const INPWithTimings: INPMetricWithAttribution = {
   name: 'INP',
@@ -163,11 +170,10 @@ const INPWithTimings: INPMetricWithAttribution = {
     interactionTarget: 'div#inp-element',
     interactionType: 'pointer',
     loadState: 'complete',
-    interactionTargetElement: undefined,
     interactionTime: 10,
     nextPaintTime: 400,
     processedEventEntries: [],
-    longAnimationFrameEntries: [{ ...frameTiming, toJSON: () => frameTiming }],
+    longAnimationFrameEntries: [{ ...frameTiming }],
     inputDelay: 42,
     processingDuration: 600,
     presentationDelay: 500,
@@ -257,49 +263,6 @@ const TTFBAttr = {
   'ttfb.connection_time': 200,
   'ttfb.dns_time': 1000,
   'ttfb.request_time': 300,
-};
-
-const FID: FIDMetricWithAttribution = {
-  name: 'FID',
-  value: 2500,
-  id: 'fid-id',
-  delta: 2500,
-  rating: 'good',
-  navigationType: 'back-forward',
-  entries: [],
-  attribution: {
-    eventTarget: 'div#fid-element',
-    eventType: 'input-delay',
-    loadState: 'complete',
-    eventTime: 0,
-    eventEntry: {
-      duration: 0.3,
-      entryType: 'layout-shift',
-      name: 'layout-shift',
-      startTime: 0.1,
-      cancelable: false,
-      processingStart: 0,
-      target: document.body,
-      toJSON() {
-        return '';
-      },
-      processingEnd: 600,
-      interactionId: 42,
-    },
-  },
-};
-
-const FIDAttr = {
-  'fid.value': 2500,
-  'fid.id': 'fid-id',
-  'fid.delta': 2500,
-  'fid.rating': 'good',
-  'fid.navigation_type': 'back-forward',
-  'fid.element': 'div#fid-element',
-  'fid.event_type': 'input-delay',
-  'fid.load_state': 'complete',
-  'fid.entries': '',
-  'fid.my_custom_attr': 'custom_attr',
 };
 
 describe('Web Vitals Instrumentation Tests', () => {
@@ -583,42 +546,6 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('TTFB');
-    });
-  });
-
-  describe('FID', () => {
-    it('should create a span when enabled', () => {
-      const webVitalsInstr = new WebVitalsInstrumentation();
-      webVitalsInstr.onReportFID(FID, {
-        applyCustomAttributes: (fid, span) => {
-          span.setAttributes({
-            'fid.entries': fid.entries.toString(),
-            'fid.my_custom_attr': 'custom_attr',
-          });
-        },
-      });
-
-      const span = exporter.getFinishedSpans()[0];
-      expect(span.name).toBe('FID');
-      expect(span.instrumentationScope.name).toBe(
-        '@honeycombio/instrumentation-web-vitals',
-      );
-      expect(span.attributes).toEqual(FIDAttr);
-    });
-
-    it('should not create a span when disabled', () => {
-      const instr = new WebVitalsInstrumentation({
-        vitalsToTrack: ['FID'],
-      });
-      instr.disable();
-      instr.onReportFID(FID, { applyCustomAttributes: () => {} });
-
-      expect(exporter.getFinishedSpans().length).toEqual(0);
-      instr.enable();
-      instr.onReportFID(FID, { applyCustomAttributes: () => {} });
-
-      expect(exporter.getFinishedSpans().length).toEqual(1);
-      expect(exporter.getFinishedSpans()[0].name).toEqual('FID');
     });
   });
 

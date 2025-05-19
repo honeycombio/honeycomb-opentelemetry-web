@@ -9,5 +9,6 @@ module.exports = {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   modulePathIgnorePatterns: ['<rootDir>/examples/'],
 };

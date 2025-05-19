@@ -3,8 +3,6 @@ import {
   CLSMetricWithAttribution,
   FCPAttribution,
   FCPMetricWithAttribution,
-  FIDAttribution,
-  FIDMetricWithAttribution,
   INPAttribution,
   INPMetricWithAttribution,
   LCPAttribution,
@@ -12,7 +10,6 @@ import {
   Metric,
   onCLS,
   onFCP,
-  onFID,
   onINP,
   onLCP,
   onTTFB,
@@ -37,38 +34,6 @@ import {
   TracerProvider,
 } from '@opentelemetry/api';
 import * as shimmer from 'shimmer';
-
-// PerformanceScriptTiming is not yet exposed via web-vitals
-// See https://github.com/w3c/long-animation-frames
-type PerformanceScriptTiming = {
-  name: string;
-  entryType: string;
-  invokerType:
-    | 'user-callback'
-    | 'event-listener'
-    | 'resolve-promise'
-    | 'reject-promise'
-    | 'classic-script'
-    | 'module-script';
-  invoker:
-    | 'IMG#id.onload'
-    | 'Window.requestAnimationFrame'
-    | 'Response.json.then';
-  startTime: number;
-  executionStart: number;
-  duration: number;
-  forcedStyleAndLayoutDuration: number;
-  pauseDuration: number;
-  sourceURL: 'https://example.com/big.js';
-  sourceFunctionName: 'do_something_long';
-  sourceCharPosition: number;
-  windowAttribution: 'self' | 'descendant' | 'ancestor' | 'same-page' | 'other';
-};
-
-interface PerformanceEntryWithPerformanceScriptTiming
-  extends PerformanceLongAnimationFrameTiming {
-  scripts: PerformanceScriptTiming[];
-}
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
@@ -226,9 +191,6 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   /** Config specific to INP (Interaction to Next Paint) */
   inp?: InpVitalOpts;
 
-  /** Config specific to FID (First Input Delay) */
-  fid?: VitalOpts;
-
   /** Config specific to FCP (First Contentful Paint) */
   fcp?: VitalOpts;
 
@@ -246,7 +208,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   readonly lcpOpts?: LcpVitalOpts;
   readonly clsOpts?: VitalOpts;
   readonly inpOpts?: InpVitalOpts;
-  readonly fidOpts?: VitalOpts;
   readonly fcpOpts?: VitalOpts;
   readonly ttfbOpts?: VitalOpts;
   private _isEnabled: boolean;
@@ -257,7 +218,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     lcp,
     cls,
     inp,
-    fid,
     fcp,
     ttfb,
   }: WebVitalsInstrumentationConfig = {}) {
@@ -267,7 +227,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       lcp,
       cls,
       inp,
-      fid,
       fcp,
       ttfb,
     };
@@ -276,7 +235,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     this.lcpOpts = lcp;
     this.clsOpts = cls;
     this.inpOpts = inp;
-    this.fidOpts = fid;
     this.fcpOpts = fcp;
     this.ttfbOpts = ttfb;
     this._isEnabled = enabled;
@@ -302,12 +260,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       onINP((vital) => {
         this.onReportINP(vital, this.inpOpts);
       }, this.inpOpts);
-    }
-
-    if (this.vitalsToTrack.includes('FID')) {
-      onFID((vital) => {
-        this.onReportFID(vital, this.fidOpts);
-      }, this.fidOpts);
     }
 
     if (this.vitalsToTrack.includes('TTFB')) {
@@ -376,7 +328,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
   private processPerformanceLongAnimationFrameTimingSpans(
     parentPrefix: string,
-    perfEntry?: PerformanceEntryWithPerformanceScriptTiming,
+    perfEntry?: PerformanceLongAnimationFrameTiming,
   ) {
     if (!perfEntry) return;
 
@@ -459,7 +411,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
     const { name, attribution } = lcp;
     const {
-      element,
+      target,
       url,
       timeToFirstByte,
       resourceLoadDelay,
@@ -472,7 +424,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     const span = this.tracer.startSpan(name);
     span.setAttributes({
       ...this.getSharedAttributes(lcp),
-      [`${attrPrefix}.element`]: element,
+      [`${attrPrefix}.element`]: target,
       [`${attrPrefix}.url`]: url,
       [`${attrPrefix}.time_to_first_byte`]: timeToFirstByte,
       [`${attrPrefix}.resource_load_delay`]: resourceLoadDelay,
@@ -526,10 +478,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       nextPaintTime,
       presentationDelay,
       processingDuration,
-      longAnimationFrameEntries: _loafEntries,
+      longAnimationFrameEntries,
     }: INPAttribution = attribution;
-    const longAnimationFrameEntries =
-      _loafEntries as PerformanceEntryWithPerformanceScriptTiming[];
+
     const attrPrefix = this.getAttrPrefix(name);
     const inpDuration = inputDelay + processingDuration + presentationDelay;
     this.tracer.startActiveSpan(
@@ -591,33 +542,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
     if (applyCustomAttributes) {
       applyCustomAttributes(fcp, span);
-    }
-
-    span.end();
-  };
-
-  /**
-   *  @deprecated this will be removed in the next major version, use INP instead.
-   */
-  onReportFID = (fid: FIDMetricWithAttribution, fidOpts: VitalOpts = {}) => {
-    const { applyCustomAttributes } = fidOpts;
-    if (!this.isEnabled()) return;
-
-    const { name, attribution } = fid;
-    const { eventTarget, eventType, loadState }: FIDAttribution = attribution;
-    const attrPrefix = this.getAttrPrefix(name);
-
-    const span = this.tracer.startSpan(name);
-
-    span.setAttributes({
-      ...this.getSharedAttributes(fid),
-      [`${attrPrefix}.element`]: eventTarget,
-      [`${attrPrefix}.event_type`]: eventType,
-      [`${attrPrefix}.load_state`]: loadState,
-    });
-
-    if (applyCustomAttributes) {
-      applyCustomAttributes(fid, span);
     }
 
     span.end();
