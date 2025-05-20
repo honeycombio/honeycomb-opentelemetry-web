@@ -2,6 +2,9 @@
 
 ## v0.18.0 [beta] - 2025-05-20
 
+### 💥 Breaking Changes
+- Upgrade to web-vitals 5.0.0 (chore: Upgrade to web-vitals 5.0.0 #534) removes support for FID since it has been removed from the web-vitals@5.0.0 for the full set of upstream changes see changelog here
+
 ### ✨ Features
 - feat: telemetry distro attrs (#530) | @martin308
 
