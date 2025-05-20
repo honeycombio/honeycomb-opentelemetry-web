@@ -1,5 +1,29 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.18.0 [beta] - 2025-05-20
+
+### ✨ Features
+- feat: telemetry distro attrs (#530) | @martin308
+
+### 🐛 Fixes
+- fix: upgrade orb version to test bugfix (#524) | @arriIsHere
+
+### 🛠️ Maintenance
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 9 updates (#535) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#536) | @dependabot
+- chore: Upgrade to web-vitals 5.0.0 (#534) | @wolfgangcodes
+- maint(deps): bump @opentelemetry/semantic-conventions from 1.32.0 to 1.33.0 in /packages/honeycomb-opentelemetry-web in the otel group (#532) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#533) | @dependabot
+- maint(deps): bump @babel/runtime from 7.27.0 to 7.27.1 in /packages/honeycomb-opentelemetry-web (#529) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#528) | @dependabot
+- maint(deps-dev): bump http-proxy-middleware from 2.0.7 to 2.0.9 in /packages/honeycomb-opentelemetry-web/examples/custom-with-collector-ts (#527) | @dependabot
+- maint(deps): bump the example-deps group across 6 directories with 9 updates (#525) | @dependabot
+- maint: remove .github/workflows/gh-issue-to-asana.yml (#526) | @martin308
+- maint(deps-dev): bump rollup from 4.40.0 to 4.40.1 in /packages/honeycomb-opentelemetry-web in the dev-dependencies group (#521) | @dependabot
+- maint(deps): bump http-proxy-middleware from 2.0.7 to 2.0.9 in /packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app (#522) | @dependabot
+- maint(deps): bump react-router and react-router-dom in /packages/honeycomb-opentelemetry-web/examples/experimental/user-interaction-instrumentation (#523) | @dependabot
+- maint(deps): bump react-router and react-router-dom in /packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app (#520) | @dependabot
+
 ## v0.17.1 [beta] - 2025-04-24
 
 ### 🐛 Fixes
