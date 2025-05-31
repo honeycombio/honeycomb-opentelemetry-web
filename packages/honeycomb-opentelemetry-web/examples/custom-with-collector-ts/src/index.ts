@@ -1,8 +1,9 @@
-import { context, propagation, trace } from '@opentelemetry/api';
+import { context, metrics, propagation, trace } from '@opentelemetry/api';
+import { logs } from '@opentelemetry/api-logs';
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
-const tracing = () => {
+const tracing = (): HoneycombWebSDK => {
   const configDefaults = {
     ignoreNetworkEvents: true,
   };
@@ -25,11 +26,12 @@ const tracing = () => {
     ],
   });
   sdk.start();
+  return sdk;
 };
 
 const trackButton = (onClick: { (): void; (): void }) => {
   const button = document.getElementById(
-    'button-important',
+    'button-trace',
   ) as HTMLButtonElement;
 
   button.onclick = () => {
@@ -61,6 +63,37 @@ const onClick = () => {
     });
   });
 };
+
+const metricButton = () => {
+  const button = document.getElementById(
+    'button-metric',
+  ) as HTMLButtonElement;
+
+  button.onclick = () => {
+    metrics.getMeter('meter').createCounter('clicks').add(1);
+  };
+};
+
+const logButton = () => {
+  const button = document.getElementById(
+    'button-log',
+  ) as HTMLButtonElement;
+
+  button.onclick = () => {
+    logs.getLogger('logger').emit({
+      body: "This is a log.",
+      attributes: {},
+    });
+  };
+};
+
+const flushButton = (flush: () => void) => {
+  const button = document.getElementById(
+    'button-flush',
+  ) as HTMLButtonElement;
+
+  button.onclick = flush;
+}
 
 const setupFetchCall = () => {
   document.getElementById('loadDadJokeFetch')!.onclick = () => {
@@ -107,8 +140,11 @@ const setupXHRCall = () => {
 };
 
 const main = () => {
-  tracing();
+  const sdk = tracing();
   trackButton(onClick);
+  metricButton();
+  logButton();
+  flushButton(() => sdk.forceFlush());
   setupFetchCall();
   setupXHRCall();
 };

@@ -31,6 +31,8 @@ import {
   SpanLimits,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { PushMetricExporter } from "@opentelemetry/sdk-metrics";
+import { LogRecordExporter } from "@opentelemetry/sdk-logs";
 import { SessionProvider } from '@opentelemetry/web-common';
 import { WebVitalsInstrumentationConfig } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentationConfig } from './global-errors-autoinstrumentation';
@@ -49,6 +51,8 @@ export interface WebSDKConfiguration {
   traceExporter: SpanExporter;
   spanLimits: SpanLimits;
   idGenerator: IdGenerator;
+  metricExporters: PushMetricExporter[],
+  logExporters: LogRecordExporter[],
 }
 
 /**
@@ -61,21 +65,47 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   /** Honeycomb API key for sending traces telemetry to Honeycomb. Defaults to apiKey if not set. */
   tracesApiKey?: string;
 
+  /** Honeycomb API key for sending metrics telemetry to Honeycomb. Defaults to apiKey if not set. */
+  metricsApiKey?: string;
+
+  /** Honeycomb API key for sending logs telemetry to Honeycomb. Defaults to apiKey if not set. */
+  logsApiKey?: string;
+
   /** The API endpoint where telemetry is sent. Defaults to 'https://api.honeycomb.io/v1/traces'.
    * Appends `/v1/traces` to the endpoint provided.
    */
   endpoint?: string;
 
+  /** The API endpoint where traces telemetry is sent. Defaults to endpoint if not set. */
+  tracesEndpoint?: string;
+
+  /** The API endpoint where metrics telemetry is sent. Defaults to endpoint if not set. */
+  metricsEndpoint?: string;
+
+  /** The API endpoint where logs telemetry is sent. Defaults to endpoint if not set. */
+  logsEndpoint?: string;
+
   /** Optionally pass extra headers to the exporter. Commonly used if sending to a collector that requires authentication */
   headers?: { [key: string]: string };
 
-  /** The API endpoint where traces telemetry is sent. Defaults to endpoint if not set. */
-  tracesEndpoint?: string;
+  /** Optionally pass extra headers to the exporter. Commonly used if sending to a collector that requires authentication */
+  tracesHeaders?: { [key: string]: string };
+
+  /** Optionally pass extra headers to the exporter. Commonly used if sending to a collector that requires authentication */
+  metricsHeaders?: { [key: string]: string };
+
+  /** Optionally pass extra headers to the exporter. Commonly used if sending to a collector that requires authentication */
+  logsHeaders?: { [key: string]: string };
 
   /** The dataset where traces telemetry is stored in Honeycomb. Only required when using a classic API key.
    * https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic
    */
   dataset?: string;
+
+  /** The dataset where metrics telemetry is stored in Honeycomb. Only required when using a classic API key.
+   * https://docs.honeycomb.io/honeycomb-classic/#am-i-using-honeycomb-classic
+   */
+  metricsDataset?: string;
 
   /** The service name of the application and where traces telemetry is stored in Honeycomb.
    * Defaults to `unknown_service`

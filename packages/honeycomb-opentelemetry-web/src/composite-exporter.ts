@@ -2,12 +2,22 @@ import { ExportResult, ExportResultCode } from '@opentelemetry/core';
 import { ReadableSpan, SpanExporter } from '@opentelemetry/sdk-trace-base';
 
 import { HoneycombOptions } from './types';
-import { configureHoneycombHttpJsonTraceExporter } from './http-json-trace-exporter';
+import {
+  configureHoneycombHttpJsonTraceExporter,
+  configureHoneycombHttpJsonMetricExporter,
+  configureHoneycombHttpJsonLogExporter,
+} from './http-json-exporter';
 import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter';
+import {
+  ConsoleMetricExporter,
+  PushMetricExporter,
+} from "@opentelemetry/sdk-metrics";
+import {
+  ConsoleLogRecordExporter,
+  LogRecordExporter,
+} from "@opentelemetry/sdk-logs";
 
-export const configureTraceExporters = (
-  options?: HoneycombOptions,
-): SpanExporter => {
+export function configureTraceExporters(options?: HoneycombOptions): SpanExporter {
   const honeycombTraceExporters = [];
 
   if (options?.localVisualizations) {
@@ -34,6 +44,27 @@ export const configureTraceExporters = (
 
   return configureCompositeExporter([...honeycombTraceExporters]);
 };
+
+export function configureMetricExporters(options?: HoneycombOptions): PushMetricExporter[] {
+  const exporters: PushMetricExporter[] = [];
+  exporters.push(configureHoneycombHttpJsonMetricExporter(options))
+  if (options?.localVisualizations) {
+    // TODO: Add a link?
+    exporters.push(new ConsoleMetricExporter());
+  }
+  return exporters;
+}
+
+export function configureLogExporters(options?: HoneycombOptions): LogRecordExporter[] {
+  const exporters: LogRecordExporter[] = [];
+  exporters.push(configureHoneycombHttpJsonLogExporter(options))
+  if (options?.localVisualizations) {
+    // TODO: Add a link?
+    exporters.push(new ConsoleLogRecordExporter());
+  }
+  return exporters;
+}
+
 
 /**
  * Builds and returns a new {@link SpanExporter} that wraps the provided array
