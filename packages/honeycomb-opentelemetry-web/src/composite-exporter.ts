@@ -49,7 +49,7 @@ export function configureMetricExporters(options?: HoneycombOptions): PushMetric
   const exporters: PushMetricExporter[] = [];
   exporters.push(configureHoneycombHttpJsonMetricExporter(options))
   if (options?.localVisualizations) {
-    // TODO: Add a link?
+    // TODO: Create a console link exporter for metrics.
     exporters.push(new ConsoleMetricExporter());
   }
   return exporters;
@@ -59,7 +59,7 @@ export function configureLogExporters(options?: HoneycombOptions): LogRecordExpo
   const exporters: LogRecordExporter[] = [];
   exporters.push(configureHoneycombHttpJsonLogExporter(options))
   if (options?.localVisualizations) {
-    // TODO: Add a link?
+    // TODO: Create a console link exporter for logs.
     exporters.push(new ConsoleLogRecordExporter());
   }
   return exporters;

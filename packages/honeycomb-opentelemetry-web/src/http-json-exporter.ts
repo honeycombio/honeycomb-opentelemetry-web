@@ -37,7 +37,7 @@ export function configureHoneycombHttpJsonMetricExporter(
   const apiKey = getMetricsApiKey(options);
   return new OTLPMetricExporter({
     url: getMetricsEndpoint(options),
-    headers: configureHeaders(options, apiKey, options?.metricsHeaders),
+    headers: configureHeaders(options, apiKey, options?.metricsHeaders, true),
   });
 }
 
@@ -60,17 +60,18 @@ function configureHeaders(
   options?: HoneycombOptions,
   apiKey?: string,
   signalHeaders?: { [key: string]: string },
+  isMetrics: boolean = false,
 ) {
   const headers = { ...options?.headers, ...signalHeaders };
   if (apiKey && !headers[TEAM_HEADER_KEY]) {
     headers[TEAM_HEADER_KEY] = apiKey;
   }
-  if (isClassic(apiKey) && options?.dataset) {
-    headers[DATASET_HEADER_KEY] = options?.dataset;
+  if (isClassic(apiKey)) {
+    if (isMetrics && options?.metricsDataset) {
+      headers[DATASET_HEADER_KEY] = options?.metricsDataset;
+    } else if (options?.dataset) {
+      headers[DATASET_HEADER_KEY] = options?.dataset;
+    }
   }
-
-  // TODO: Use the metrics dataset instead, for metrics.
-  // "x-honeycomb-dataset"
-
   return headers;
 }
