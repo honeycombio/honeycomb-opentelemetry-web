@@ -239,7 +239,6 @@ export class WebSDK {
     return this._resource.attributes;
   }
 
-  // TODO: Document this.
   public forceFlush(): Promise<void> {
     const promises: Promise<unknown>[] = [];
     if (this._tracerProvider) {
