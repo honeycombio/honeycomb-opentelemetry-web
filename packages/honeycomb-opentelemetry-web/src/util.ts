@@ -101,7 +101,7 @@ export const getLogsEndpoint = (options?: HoneycombOptions) => {
     return options.logsEndpoint;
   }
 
-  // use `endpoint` option if provided and append '/v1/traces' if not already appended
+  // use `endpoint` option if provided and append '/v1/logs' if not already appended
   if (options?.endpoint) {
     return maybeAppendPath(options.endpoint, LOGS_PATH);
   }
