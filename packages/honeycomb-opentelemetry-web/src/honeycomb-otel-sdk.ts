@@ -5,7 +5,7 @@ import { configureDeterministicSampler } from './deterministic-sampler';
 import { validateOptionsWarnings } from './validate-options';
 import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentation } from './global-errors-autoinstrumentation';
-import { configureTraceExporters, configureMetricExporters, configureLogExporters } from './composite-exporter';
+import { configureLogExporters, configureMetricExporters, configureTraceExporters } from './composite-exporter';
 import { configureSpanProcessors } from './configure-span-processors';
 import { configureResourceAttributes } from './configure-resource-attributes';
 

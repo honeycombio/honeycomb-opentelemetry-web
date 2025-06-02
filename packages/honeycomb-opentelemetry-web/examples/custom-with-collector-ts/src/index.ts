@@ -144,7 +144,7 @@ const main = () => {
   trackButton(onClick);
   metricButton();
   logButton();
-  flushButton(() => sdk.forceFlush());
+  flushButton(() => { sdk.forceFlush().catch(e => console.error(e)) });
   setupFetchCall();
   setupXHRCall();
 };

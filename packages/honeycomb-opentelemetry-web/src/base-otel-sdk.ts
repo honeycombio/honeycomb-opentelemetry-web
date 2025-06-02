@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-import { ContextManager, TextMapPropagator } from '@opentelemetry/api';
+import { ContextManager, metrics , TextMapPropagator } from '@opentelemetry/api';
 import {
   Instrumentation,
   registerInstrumentations,
@@ -51,7 +51,6 @@ import {
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { WebSDKConfiguration } from './types';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
-import { metrics } from '@opentelemetry/api';
 import { logs } from '@opentelemetry/api-logs';
 
 /** This class represents everything needed to register a fully configured OpenTelemetry Web SDK */

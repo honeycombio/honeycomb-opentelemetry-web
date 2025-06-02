@@ -3,9 +3,9 @@ import { ReadableSpan, SpanExporter } from '@opentelemetry/sdk-trace-base';
 
 import { HoneycombOptions } from './types';
 import {
-  configureHoneycombHttpJsonTraceExporter,
-  configureHoneycombHttpJsonMetricExporter,
   configureHoneycombHttpJsonLogExporter,
+  configureHoneycombHttpJsonMetricExporter,
+  configureHoneycombHttpJsonTraceExporter,
 } from './http-json-exporter';
 import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter';
 import {
