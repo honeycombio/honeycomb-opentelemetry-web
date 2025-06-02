@@ -30,9 +30,7 @@ const tracing = (): HoneycombWebSDK => {
 };
 
 const trackButton = (onClick: { (): void; (): void }) => {
-  const button = document.getElementById(
-    'button-trace',
-  ) as HTMLButtonElement;
+  const button = document.getElementById('button-trace') as HTMLButtonElement;
 
   button.onclick = () => {
     const tracer = trace.getTracer('click-tracer');
@@ -65,9 +63,7 @@ const onClick = () => {
 };
 
 const metricButton = () => {
-  const button = document.getElementById(
-    'button-metric',
-  ) as HTMLButtonElement;
+  const button = document.getElementById('button-metric') as HTMLButtonElement;
 
   button.onclick = () => {
     metrics.getMeter('meter').createCounter('clicks').add(1);
@@ -75,25 +71,21 @@ const metricButton = () => {
 };
 
 const logButton = () => {
-  const button = document.getElementById(
-    'button-log',
-  ) as HTMLButtonElement;
+  const button = document.getElementById('button-log') as HTMLButtonElement;
 
   button.onclick = () => {
     logs.getLogger('logger').emit({
-      body: "This is a log.",
+      body: 'This is a log.',
       attributes: {},
     });
   };
 };
 
 const flushButton = (flush: () => void) => {
-  const button = document.getElementById(
-    'button-flush',
-  ) as HTMLButtonElement;
+  const button = document.getElementById('button-flush') as HTMLButtonElement;
 
   button.onclick = flush;
-}
+};
 
 const setupFetchCall = () => {
   document.getElementById('loadDadJokeFetch')!.onclick = () => {
@@ -144,7 +136,9 @@ const main = () => {
   trackButton(onClick);
   metricButton();
   logButton();
-  flushButton(() => { sdk.forceFlush().catch(e => console.error(e)) });
+  flushButton(() => {
+    sdk.forceFlush().catch((e) => console.error(e));
+  });
   setupFetchCall();
   setupXHRCall();
 };

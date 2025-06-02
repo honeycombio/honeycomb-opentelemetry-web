@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-import { ContextManager, metrics , TextMapPropagator } from '@opentelemetry/api';
+import { ContextManager, metrics, TextMapPropagator } from '@opentelemetry/api';
 import {
   Instrumentation,
   registerInstrumentations,
@@ -42,12 +42,12 @@ import {
   MeterProvider,
   PeriodicExportingMetricReader,
   PushMetricExporter,
-} from "@opentelemetry/sdk-metrics";
+} from '@opentelemetry/sdk-metrics';
 import {
   LoggerProvider,
   LogRecordExporter,
   SimpleLogRecordProcessor,
-} from "@opentelemetry/sdk-logs";
+} from '@opentelemetry/sdk-logs';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { WebSDKConfiguration } from './types';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
@@ -65,11 +65,11 @@ export class WebSDK {
   };
 
   private _meterProviderConfig?: {
-    metricExporters: PushMetricExporter[],
+    metricExporters: PushMetricExporter[];
   };
 
   private _loggerProviderConfig?: {
-    logExporters: LogRecordExporter[],
+    logExporters: LogRecordExporter[];
   };
 
   private _instrumentations: (Instrumentation | Instrumentation[])[];
@@ -209,27 +209,30 @@ export class WebSDK {
     });
 
     if (this._meterProviderConfig) {
-      const readers = this._meterProviderConfig.metricExporters.map(exporter => {
-        return new PeriodicExportingMetricReader({ exporter });
-      });
+      const readers = this._meterProviderConfig.metricExporters.map(
+        (exporter) => {
+          return new PeriodicExportingMetricReader({ exporter });
+        },
+      );
       this._meterProvider = new MeterProvider({
-          resource: this._resource,
-          readers,
+        resource: this._resource,
+        readers,
       });
       metrics.setGlobalMeterProvider(this._meterProvider);
     }
 
     if (this._loggerProviderConfig) {
-      const processors = this._loggerProviderConfig.logExporters.map(exporter => {
-        return new SimpleLogRecordProcessor(exporter);
-      });
+      const processors = this._loggerProviderConfig.logExporters.map(
+        (exporter) => {
+          return new SimpleLogRecordProcessor(exporter);
+        },
+      );
       this._loggerProvider = new LoggerProvider({
         resource: this._resource,
-        processors
+        processors,
       });
       logs.setGlobalLoggerProvider(this._loggerProvider);
     }
-
   }
 
   /* Experimental getter method: not currently part of the upstream

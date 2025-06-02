@@ -11,13 +11,15 @@ import { configureConsoleTraceLinkExporter } from './console-trace-link-exporter
 import {
   ConsoleMetricExporter,
   PushMetricExporter,
-} from "@opentelemetry/sdk-metrics";
+} from '@opentelemetry/sdk-metrics';
 import {
   ConsoleLogRecordExporter,
   LogRecordExporter,
-} from "@opentelemetry/sdk-logs";
+} from '@opentelemetry/sdk-logs';
 
-export function configureTraceExporters(options?: HoneycombOptions): SpanExporter {
+export function configureTraceExporters(
+  options?: HoneycombOptions,
+): SpanExporter {
   const honeycombTraceExporters = [];
 
   if (options?.localVisualizations) {
@@ -43,11 +45,13 @@ export function configureTraceExporters(options?: HoneycombOptions): SpanExporte
   }
 
   return configureCompositeExporter([...honeycombTraceExporters]);
-};
+}
 
-export function configureMetricExporters(options?: HoneycombOptions): PushMetricExporter[] {
+export function configureMetricExporters(
+  options?: HoneycombOptions,
+): PushMetricExporter[] {
   const exporters: PushMetricExporter[] = [];
-  exporters.push(configureHoneycombHttpJsonMetricExporter(options))
+  exporters.push(configureHoneycombHttpJsonMetricExporter(options));
   if (options?.localVisualizations) {
     // TODO: Create a console link exporter for metrics.
     exporters.push(new ConsoleMetricExporter());
@@ -55,16 +59,17 @@ export function configureMetricExporters(options?: HoneycombOptions): PushMetric
   return exporters;
 }
 
-export function configureLogExporters(options?: HoneycombOptions): LogRecordExporter[] {
+export function configureLogExporters(
+  options?: HoneycombOptions,
+): LogRecordExporter[] {
   const exporters: LogRecordExporter[] = [];
-  exporters.push(configureHoneycombHttpJsonLogExporter(options))
+  exporters.push(configureHoneycombHttpJsonLogExporter(options));
   if (options?.localVisualizations) {
     // TODO: Create a console link exporter for logs.
     exporters.push(new ConsoleLogRecordExporter());
   }
   return exporters;
 }
-
 
 /**
  * Builds and returns a new {@link SpanExporter} that wraps the provided array

@@ -31,8 +31,8 @@ import {
   SpanLimits,
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
-import { PushMetricExporter } from "@opentelemetry/sdk-metrics";
-import { LogRecordExporter } from "@opentelemetry/sdk-logs";
+import { PushMetricExporter } from '@opentelemetry/sdk-metrics';
+import { LogRecordExporter } from '@opentelemetry/sdk-logs';
 import { SessionProvider } from '@opentelemetry/web-common';
 import { WebVitalsInstrumentationConfig } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentationConfig } from './global-errors-autoinstrumentation';
@@ -51,8 +51,8 @@ export interface WebSDKConfiguration {
   traceExporter: SpanExporter;
   spanLimits: SpanLimits;
   idGenerator: IdGenerator;
-  metricExporters: PushMetricExporter[],
-  logExporters: LogRecordExporter[],
+  metricExporters: PushMetricExporter[];
+  logExporters: LogRecordExporter[];
 }
 
 /**

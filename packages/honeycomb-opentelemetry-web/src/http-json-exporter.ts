@@ -1,11 +1,15 @@
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-http";
-import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
+import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
 import {
-  getLogsApiKey, getLogsEndpoint,
-  getMetricsApiKey, getMetricsEndpoint,
-  getTracesApiKey, getTracesEndpoint,
-  isClassic } from './util';
+  getLogsApiKey,
+  getLogsEndpoint,
+  getMetricsApiKey,
+  getMetricsEndpoint,
+  getTracesApiKey,
+  getTracesEndpoint,
+  isClassic,
+} from './util';
 import { HoneycombOptions } from './types';
 
 export const TEAM_HEADER_KEY = 'x-honeycomb-team';
