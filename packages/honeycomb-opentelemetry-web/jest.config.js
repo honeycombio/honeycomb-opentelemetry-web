@@ -11,4 +11,5 @@ module.exports = {
   },
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   modulePathIgnorePatterns: ['<rootDir>/examples/'],
+  resolver: '<rootDir>/resolver.js',
 };

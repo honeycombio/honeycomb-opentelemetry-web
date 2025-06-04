@@ -3,7 +3,8 @@ import {
   getTracesApiKey,
   getTracesEndpoint,
   isClassic,
-  maybeAppendTracesPath,
+  maybeAppendPath,
+  TRACES_PATH,
 } from '../src/util';
 
 describe('isClassic', () => {
@@ -54,6 +55,8 @@ describe('isClassic', () => {
 });
 
 describe('maybeAppendTracesPath', () => {
+  const maybeAppendTracesPath = (path: string) => maybeAppendPath(path, TRACES_PATH);
+
   it('appends the path if the url does not end with /v1/traces', () => {
     const endpoint = maybeAppendTracesPath('https://api.honeycomb.io');
     expect(endpoint).toBe('https://api.honeycomb.io/v1/traces');

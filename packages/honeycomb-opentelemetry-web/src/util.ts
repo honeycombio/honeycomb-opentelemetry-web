@@ -59,7 +59,7 @@ export function isClassic(apikey?: string): boolean {
  * @param url the base URL to append traces path to if missing
  * @returns the endpoint with traces path appended if missing
  */
-function maybeAppendPath(url: string, path: string) {
+export function maybeAppendPath(url: string, path: string) {
   if (url.endsWith(path) || url.endsWith(`${path}/`)) {
     return url;
   }
