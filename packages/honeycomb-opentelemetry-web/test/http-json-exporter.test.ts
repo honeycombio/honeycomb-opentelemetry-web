@@ -6,7 +6,7 @@ import {
   configureHoneycombHttpJsonTraceExporter,
   DATASET_HEADER_KEY,
   TEAM_HEADER_KEY,
-} from '../src/http-json-trace-exporter';
+} from '../src/http-json-exporter';
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import {
   ExportResult,

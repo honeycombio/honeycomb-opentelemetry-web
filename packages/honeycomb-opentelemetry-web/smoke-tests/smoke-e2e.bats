@@ -37,7 +37,6 @@ teardown_file() {
   assert_not_empty "$version"
 }
 
-
 @test "SDK telemetry includes Honeycomb distro version" {
   version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.version\").value.stringValue")
   assert_not_empty "$version"
@@ -137,4 +136,18 @@ teardown_file() {
 @test "Auto instrumentation produces web vitals spans" {
   result=$(span_names_for ${WEB_VITALS_SCOPE})
   assert_not_empty "$result"
+}
+
+## tests for metrics ##
+
+@test "Custom metrics" {
+  result=$(metric_names_for "meter" | uniq)
+  assert_equal "$result" '"clicks"'
+}
+
+## tests for logs ##
+
+@test "Custom logs" {
+  result=$(log_bodies_for "logger")
+  assert_equal "$result" '"This is a log."'
 }

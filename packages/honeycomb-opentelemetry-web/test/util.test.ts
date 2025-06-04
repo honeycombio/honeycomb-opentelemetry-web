@@ -1,9 +1,16 @@
 import {
+  getLogsApiKey,
+  getLogsEndpoint,
+  getMetricsApiKey,
+  getMetricsEndpoint,
   getSampleRate,
   getTracesApiKey,
   getTracesEndpoint,
   isClassic,
-  maybeAppendTracesPath,
+  LOGS_PATH,
+  maybeAppendPath,
+  METRICS_PATH,
+  TRACES_PATH,
 } from '../src/util';
 
 describe('isClassic', () => {
@@ -53,7 +60,12 @@ describe('isClassic', () => {
   );
 });
 
+// Traces
+
 describe('maybeAppendTracesPath', () => {
+  const maybeAppendTracesPath = (path: string) =>
+    maybeAppendPath(path, TRACES_PATH);
+
   it('appends the path if the url does not end with /v1/traces', () => {
     const endpoint = maybeAppendTracesPath('https://api.honeycomb.io');
     expect(endpoint).toBe('https://api.honeycomb.io/v1/traces');
@@ -127,6 +139,166 @@ describe('traces api key', () => {
     };
 
     expect(getTracesApiKey(options)).toBe('traces-api-key');
+  });
+});
+
+// Metrics
+
+describe('maybeAppendMetricsPath', () => {
+  const maybeAppendMetricsPath = (path: string) =>
+    maybeAppendPath(path, METRICS_PATH);
+
+  it('appends the path if the url does not end with /v1/traces', () => {
+    const endpoint = maybeAppendMetricsPath('https://api.honeycomb.io');
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/metrics');
+  });
+
+  it('does not double up forward slash if endpoint ends with one', () => {
+    const endpoint = maybeAppendMetricsPath('https://api.honeycomb.io/');
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/metrics');
+  });
+
+  it('does not append the traces path if the url ends with /v1/traces', () => {
+    const endpoint = maybeAppendMetricsPath(
+      'https://api.honeycomb.io/v1/metrics',
+    );
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/metrics');
+  });
+
+  it('does not append the traces path if the url ends with /v1/metrics/', () => {
+    const endpoint = maybeAppendMetricsPath(
+      'https://api.honeycomb.io/v1/metrics/',
+    );
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/metrics/');
+  });
+});
+
+describe('metrics endpoint', () => {
+  it('defaults to endpoint with v1/metrics path', () => {
+    const options = {
+      endpoint: 'my-custom-endpoint',
+    };
+    expect(getMetricsEndpoint(options)).toBe('my-custom-endpoint/v1/metrics');
+  });
+
+  it('uses provided as is (without /v1/metrics) option if set', () => {
+    const options = {
+      metricsEndpoint: 'my-custom-endpoint',
+    };
+    expect(getMetricsEndpoint(options)).toBe('my-custom-endpoint');
+  });
+
+  it('prefers metricsEndpoint over endpoint', () => {
+    const options = {
+      metricsEndpoint: 'my-custom-metrics-endpoint',
+      endpoint: 'my-metrics-endpoint',
+    };
+    expect(getMetricsEndpoint(options)).toBe('my-custom-metrics-endpoint');
+  });
+});
+
+describe('metrics api key', () => {
+  test('uses apiKey if no metricsApiKey is provided', () => {
+    const options = {
+      apiKey: 'basic-api-key',
+    };
+
+    expect(getMetricsApiKey(options)).toBe('basic-api-key');
+  });
+
+  test('uses metricsApiKey over apiKey', () => {
+    const options = {
+      apiKey: 'basic-api-key',
+      metricsApiKey: 'metrics-api-key',
+    };
+
+    expect(getMetricsApiKey(options)).toBe('metrics-api-key');
+  });
+
+  test('uses metricsApiKey if no apiKey is provided', () => {
+    const options = {
+      metricsApiKey: 'metrics-api-key',
+    };
+
+    expect(getMetricsApiKey(options)).toBe('metrics-api-key');
+  });
+});
+
+// Logs
+
+describe('maybeAppendLogsPath', () => {
+  const maybeAppendLogsPath = (path: string) =>
+    maybeAppendPath(path, LOGS_PATH);
+
+  it('appends the path if the url does not end with /v1/logs', () => {
+    const endpoint = maybeAppendLogsPath('https://api.honeycomb.io');
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/logs');
+  });
+
+  it('does not double up forward slash if endpoint ends with one', () => {
+    const endpoint = maybeAppendLogsPath('https://api.honeycomb.io/');
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/logs');
+  });
+
+  it('does not append the traces path if the url ends with /v1/traces', () => {
+    const endpoint = maybeAppendLogsPath('https://api.honeycomb.io/v1/logs');
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/logs');
+  });
+
+  it('does not append the traces path if the url ends with /v1/traces/', () => {
+    const endpoint = maybeAppendLogsPath('https://api.honeycomb.io/v1/logs/');
+    expect(endpoint).toBe('https://api.honeycomb.io/v1/logs/');
+  });
+});
+
+describe('logs endpoint', () => {
+  it('defaults to endpoint with v1/logs path', () => {
+    const options = {
+      endpoint: 'my-custom-endpoint',
+    };
+    expect(getLogsEndpoint(options)).toBe('my-custom-endpoint/v1/logs');
+  });
+
+  it('uses provided as is (without /v1/logs) option if set', () => {
+    const options = {
+      logsEndpoint: 'my-custom-endpoint',
+    };
+    expect(getLogsEndpoint(options)).toBe('my-custom-endpoint');
+  });
+
+  it('prefers tracesEndpoint over endpoint', () => {
+    const options = {
+      logsEndpoint: 'my-custom-logs-endpoint',
+      endpoint: 'my-custom-endpoint',
+    };
+    expect(getLogsEndpoint(options)).toBe('my-custom-logs-endpoint');
+  });
+});
+
+describe('logs api key', () => {
+  test('uses apiKey if no logsApiKey is provided', () => {
+    const options = {
+      apiKey: 'basic-api-key',
+    };
+
+    expect(getLogsApiKey(options)).toBe('basic-api-key');
+  });
+
+  test('uses logsApiKey over apiKey', () => {
+    const options = {
+      apiKey: 'basic-api-key',
+      logsApiKey: 'logs-api-key',
+    };
+
+    expect(getLogsApiKey(options)).toBe('logs-api-key');
+  });
+
+  test('uses logsApiKey if no apiKey is provided', () => {
+    const options = {
+      logsApiKey: 'logs-api-key',
+    };
+
+    expect(getLogsApiKey(options)).toBe('logs-api-key');
   });
 });
 

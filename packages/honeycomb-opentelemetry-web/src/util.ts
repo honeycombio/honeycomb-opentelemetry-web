@@ -4,6 +4,10 @@ import { HoneycombOptions } from './types';
 export const DEFAULT_API_ENDPOINT = 'https://api.honeycomb.io';
 export const TRACES_PATH = 'v1/traces';
 export const DEFAULT_TRACES_ENDPOINT = `${DEFAULT_API_ENDPOINT}/${TRACES_PATH}`;
+export const METRICS_PATH = 'v1/metrics';
+export const DEFAULT_METRICS_ENDPOINT = `${DEFAULT_API_ENDPOINT}/${METRICS_PATH}`;
+export const LOGS_PATH = 'v1/logs';
+export const DEFAULT_LOGS_ENDPOINT = `${DEFAULT_API_ENDPOINT}/${LOGS_PATH}`;
 export const DEFAULT_SERVICE_NAME = 'unknown_service';
 export const DEFAULT_SAMPLE_RATE = 1;
 
@@ -49,18 +53,18 @@ export function isClassic(apikey?: string): boolean {
 }
 
 /**
- * Checks for and appends v1/traces to provided URL if missing when using an HTTP
- * based exporter protocol.
+ * Checks for and appends v1/{traces, metrics, logs} to provided URL if missing
+ * when using an HTTP based exporter protocol.
  *
  * @param url the base URL to append traces path to if missing
  * @returns the endpoint with traces path appended if missing
  */
-export function maybeAppendTracesPath(url: string) {
-  if (url.endsWith(TRACES_PATH) || url.endsWith(`${TRACES_PATH}/`)) {
+export function maybeAppendPath(url: string, path: string) {
+  if (url.endsWith(path) || url.endsWith(`${path}/`)) {
     return url;
   }
 
-  return url.endsWith('/') ? url + TRACES_PATH : url + '/' + TRACES_PATH;
+  return url.endsWith('/') ? url + path : url + '/' + path;
 }
 
 export const getTracesEndpoint = (options?: HoneycombOptions) => {
@@ -71,14 +75,50 @@ export const getTracesEndpoint = (options?: HoneycombOptions) => {
 
   // use `endpoint` option if provided and append '/v1/traces' if not already appended
   if (options?.endpoint) {
-    return maybeAppendTracesPath(options.endpoint);
+    return maybeAppendPath(options.endpoint, TRACES_PATH);
   }
 
   return DEFAULT_TRACES_ENDPOINT;
 };
 
+export const getMetricsEndpoint = (options?: HoneycombOptions) => {
+  // use `metricsEndpoint` option unchanged if provided
+  if (options?.metricsEndpoint) {
+    return options.metricsEndpoint;
+  }
+
+  // use `endpoint` option if provided and append '/v1/metrics' if not already appended
+  if (options?.endpoint) {
+    return maybeAppendPath(options.endpoint, METRICS_PATH);
+  }
+
+  return DEFAULT_METRICS_ENDPOINT;
+};
+
+export const getLogsEndpoint = (options?: HoneycombOptions) => {
+  // use `logsEndpoint` option unchanged if provided
+  if (options?.logsEndpoint) {
+    return options.logsEndpoint;
+  }
+
+  // use `endpoint` option if provided and append '/v1/logs' if not already appended
+  if (options?.endpoint) {
+    return maybeAppendPath(options.endpoint, LOGS_PATH);
+  }
+
+  return DEFAULT_LOGS_ENDPOINT;
+};
+
 export const getTracesApiKey = (options?: HoneycombOptions) => {
   return options?.tracesApiKey || options?.apiKey;
+};
+
+export const getMetricsApiKey = (options?: HoneycombOptions) => {
+  return options?.metricsApiKey || options?.apiKey;
+};
+
+export const getLogsApiKey = (options?: HoneycombOptions) => {
+  return options?.logsApiKey || options?.apiKey;
 };
 
 export const getSampleRate = (options?: HoneycombOptions) => {

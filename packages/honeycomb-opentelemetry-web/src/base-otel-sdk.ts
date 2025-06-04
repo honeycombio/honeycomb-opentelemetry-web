@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-import { ContextManager, TextMapPropagator } from '@opentelemetry/api';
+import { ContextManager, metrics, TextMapPropagator } from '@opentelemetry/api';
 import {
   Instrumentation,
   registerInstrumentations,
@@ -38,9 +38,20 @@ import {
   WebTracerConfig,
   WebTracerProvider,
 } from '@opentelemetry/sdk-trace-web';
+import {
+  MeterProvider,
+  PeriodicExportingMetricReader,
+  PushMetricExporter,
+} from '@opentelemetry/sdk-metrics';
+import {
+  LoggerProvider,
+  LogRecordExporter,
+  SimpleLogRecordProcessor,
+} from '@opentelemetry/sdk-logs';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { WebSDKConfiguration } from './types';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
+import { logs } from '@opentelemetry/api-logs';
 
 /** This class represents everything needed to register a fully configured OpenTelemetry Web SDK */
 
@@ -52,6 +63,15 @@ export class WebSDK {
     contextManager?: ContextManager;
     textMapPropagator?: TextMapPropagator;
   };
+
+  private _meterProviderConfig?: {
+    metricExporters: PushMetricExporter[];
+  };
+
+  private _loggerProviderConfig?: {
+    logExporters: LogRecordExporter[];
+  };
+
   private _instrumentations: (Instrumentation | Instrumentation[])[];
 
   private _resource: Resource;
@@ -60,6 +80,8 @@ export class WebSDK {
   private _autoDetectResources: boolean;
 
   private _tracerProvider?: WebTracerProvider;
+  private _meterProvider?: MeterProvider;
+  private _loggerProvider?: LoggerProvider;
   private _serviceName?: string;
 
   private _disabled?: boolean;
@@ -112,6 +134,18 @@ export class WebSDK {
         spanProcessors: spanProcessors,
         contextManager: configuration.contextManager,
         textMapPropagator: configuration.textMapPropagator,
+      };
+    }
+
+    if (configuration.metricExporters) {
+      this._meterProviderConfig = {
+        metricExporters: configuration.metricExporters,
+      };
+    }
+
+    if (configuration.logExporters) {
+      this._loggerProviderConfig = {
+        logExporters: configuration.logExporters,
       };
     }
 
@@ -173,6 +207,32 @@ export class WebSDK {
       contextManager: this._tracerProviderConfig?.contextManager,
       propagator: this._tracerProviderConfig?.textMapPropagator,
     });
+
+    if (this._meterProviderConfig) {
+      const readers = this._meterProviderConfig.metricExporters.map(
+        (exporter) => {
+          return new PeriodicExportingMetricReader({ exporter });
+        },
+      );
+      this._meterProvider = new MeterProvider({
+        resource: this._resource,
+        readers,
+      });
+      metrics.setGlobalMeterProvider(this._meterProvider);
+    }
+
+    if (this._loggerProviderConfig) {
+      const processors = this._loggerProviderConfig.logExporters.map(
+        (exporter) => {
+          return new SimpleLogRecordProcessor(exporter);
+        },
+      );
+      this._loggerProvider = new LoggerProvider({
+        resource: this._resource,
+        processors,
+      });
+      logs.setGlobalLoggerProvider(this._loggerProvider);
+    }
   }
 
   /* Experimental getter method: not currently part of the upstream
@@ -181,10 +241,35 @@ export class WebSDK {
     return this._resource.attributes;
   }
 
+  public forceFlush(): Promise<void> {
+    const promises: Promise<unknown>[] = [];
+    if (this._tracerProvider) {
+      promises.push(this._tracerProvider.forceFlush());
+    }
+    if (this._meterProvider) {
+      promises.push(this._meterProvider.forceFlush());
+    }
+    if (this._loggerProvider) {
+      promises.push(this._loggerProvider.forceFlush());
+    }
+
+    return (
+      Promise.all(promises)
+        // return void instead of the array from Promise.all
+        .then(() => {})
+    );
+  }
+
   public shutdown(): Promise<void> {
     const promises: Promise<unknown>[] = [];
     if (this._tracerProvider) {
       promises.push(this._tracerProvider.shutdown());
+    }
+    if (this._meterProvider) {
+      promises.push(this._meterProvider.shutdown());
+    }
+    if (this._loggerProvider) {
+      promises.push(this._loggerProvider.shutdown());
     }
 
     return (
