@@ -1,5 +1,16 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.19.0 [beta] - 2025-06-04
+
+### ✨ Features
+- feat: add metrics and logs configuration (#545) | @(beeklimt@honeycomb.io)
+
+### 🛠️ Maintenance
+- maint(deps): bump web-vitals from 5.0.1 to 5.0.2 in /packages/honeycomb-opentelemetry-web (#543) | @(49699333+dependabot[bot]@users.noreply.github.com)
+- maint(deps): bump @babel/runtime from 7.27.1 to 7.27.4 in /packages/honeycomb-opentelemetry-web (#544) | @(49699333+dependabot[bot]@users.noreply.github.com)
+- maint(deps): bump web-vitals from 5.0.0 to 5.0.1 in /packages/honeycomb-opentelemetry-web (#540) | @(49699333+dependabot[bot]@users.noreply.github.com)
+- maint(deps): bump @opentelemetry/semantic-conventions from 1.33.0 to 1.34.0 in /packages/honeycomb-opentelemetry-web in the otel group (#538) | @(49699333+dependabot[bot]@users.noreply.github.com)
+
 ## v0.18.0 [beta] - 2025-05-20
 
 ### 💥 Breaking Changes
