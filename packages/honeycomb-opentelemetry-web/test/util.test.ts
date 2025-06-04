@@ -63,7 +63,8 @@ describe('isClassic', () => {
 // Traces
 
 describe('maybeAppendTracesPath', () => {
-  const maybeAppendTracesPath = (path: string) => maybeAppendPath(path, TRACES_PATH);
+  const maybeAppendTracesPath = (path: string) =>
+    maybeAppendPath(path, TRACES_PATH);
 
   it('appends the path if the url does not end with /v1/traces', () => {
     const endpoint = maybeAppendTracesPath('https://api.honeycomb.io');
@@ -144,7 +145,8 @@ describe('traces api key', () => {
 // Metrics
 
 describe('maybeAppendMetricsPath', () => {
-  const maybeAppendMetricsPath = (path: string) => maybeAppendPath(path, METRICS_PATH);
+  const maybeAppendMetricsPath = (path: string) =>
+    maybeAppendPath(path, METRICS_PATH);
 
   it('appends the path if the url does not end with /v1/traces', () => {
     const endpoint = maybeAppendMetricsPath('https://api.honeycomb.io');
@@ -225,7 +227,8 @@ describe('metrics api key', () => {
 // Logs
 
 describe('maybeAppendLogsPath', () => {
-  const maybeAppendLogsPath = (path: string) => maybeAppendPath(path, LOGS_PATH);
+  const maybeAppendLogsPath = (path: string) =>
+    maybeAppendPath(path, LOGS_PATH);
 
   it('appends the path if the url does not end with /v1/logs', () => {
     const endpoint = maybeAppendLogsPath('https://api.honeycomb.io');
@@ -238,16 +241,12 @@ describe('maybeAppendLogsPath', () => {
   });
 
   it('does not append the traces path if the url ends with /v1/traces', () => {
-    const endpoint = maybeAppendLogsPath(
-      'https://api.honeycomb.io/v1/logs',
-    );
+    const endpoint = maybeAppendLogsPath('https://api.honeycomb.io/v1/logs');
     expect(endpoint).toBe('https://api.honeycomb.io/v1/logs');
   });
 
   it('does not append the traces path if the url ends with /v1/traces/', () => {
-    const endpoint = maybeAppendLogsPath(
-      'https://api.honeycomb.io/v1/logs/',
-    );
+    const endpoint = maybeAppendLogsPath('https://api.honeycomb.io/v1/logs/');
     expect(endpoint).toBe('https://api.honeycomb.io/v1/logs/');
   });
 });

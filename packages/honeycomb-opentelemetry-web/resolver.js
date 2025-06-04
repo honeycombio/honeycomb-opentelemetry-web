@@ -5,16 +5,17 @@ module.exports = (path, options) => {
   return options.defaultResolver(path, {
     ...options,
     pathFilter: (pkg, path, relativePath) => {
-        // e.g. build/src/platform/index -> ./src/platform/index.ts
-        if (pkg.browser) {
-            let adjustedPath = relativePath.replace(/^build\//, "./") + ".ts";
-            if (pkg.browser[adjustedPath]) {
-                // the reverse of the previous transformation
-                let newPath = "build/" + pkg.browser[adjustedPath].replace(/\.ts$/, ".js");
-                return newPath;
-            }
+      // e.g. build/src/platform/index -> ./src/platform/index.ts
+      if (pkg.browser) {
+        let adjustedPath = relativePath.replace(/^build\//, './') + '.ts';
+        if (pkg.browser[adjustedPath]) {
+          // the reverse of the previous transformation
+          let newPath =
+            'build/' + pkg.browser[adjustedPath].replace(/\.ts$/, '.js');
+          return newPath;
         }
-        return relativePath;
-    }
+      }
+      return relativePath;
+    },
   });
 };
