@@ -26,7 +26,7 @@ const main = () => {
     ],
     contextManager: new ZoneContextManager(),
     webVitalsInstrumentationConfig: {
-      vitalsToTrack: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
+      vitalsToTrack: ['CLS', 'FCP', 'INP', 'LCP', 'TTFB'],
     },
     traceExporters: [new ConsoleSpanExporter()],
   });

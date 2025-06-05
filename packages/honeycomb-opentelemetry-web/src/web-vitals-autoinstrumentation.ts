@@ -199,7 +199,7 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
 }
 
 /**
- * Web vitals auto-instrumentation, sends spans automatically for CLS, LCP, INP, FCP, FID, TTFB.
+ * Web vitals auto-instrumentation, sends spans automatically for CLS, LCP, INP, FCP, TTFB.
  * Defaults to sending spans for CLS, LCP, INP, FCP and TTFB.
  * @param config The {@link WebVitalsInstrumentationConfig }
  */
