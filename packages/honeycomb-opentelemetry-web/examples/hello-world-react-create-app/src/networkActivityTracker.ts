@@ -1,4 +1,5 @@
-// networkActivityTracker.ts
+import { diag } from '@opentelemetry/api';
+
 let inflightCount = 0;
 let lastResponseEndTime = 0;
 const idleListeners: (() => void)[] = [];
@@ -6,14 +7,14 @@ const idleListeners: (() => void)[] = [];
 function maybeEmitIdle() {
   if (inflightCount === 0) {
     const idleStart = performance.now();
-    console.log(
+    diag.debug(
       `[Net] idle candidate at ${idleStart.toFixed(2)}ms, scheduling confirm...`,
     );
 
     setTimeout(() => {
       if (inflightCount === 0) {
         const now = performance.now();
-        console.log(`[Net] confirmed network idle at ${now.toFixed(2)}ms`);
+        diag.debug(`[Net] confirmed network idle at ${now.toFixed(2)}ms`);
         idleListeners.forEach((cb) => cb());
         idleListeners.length = 0;
       }
@@ -24,7 +25,7 @@ function maybeEmitIdle() {
 export function notifyRequestStarted(url?: string) {
   inflightCount++;
   const now = performance.now();
-  console.log(
+  diag.debug(
     `[Net] ➕ Request started (${inflightCount} in flight) - ${url ?? ''} @ ${now.toFixed(2)}ms`,
   );
 }
@@ -33,7 +34,7 @@ export function notifyRequestCompleted(url?: string) {
   inflightCount = Math.max(0, inflightCount - 1);
   const now = performance.now();
   lastResponseEndTime = now;
-  console.log(
+  diag.debug(
     `[Net] ✔️ Request completed (${inflightCount} remaining) - ${url ?? ''} @ ${now.toFixed(2)}ms`,
   );
 

@@ -17,7 +17,7 @@ import {
   notifyRequestCompleted,
   notifyRequestStarted,
 } from './networkActivityTracker';
-import { RootSpanProvider } from './RootSpanProvider';
+import { PageViewSpanProvider } from './PageViewSpanProvider';
 
 const configDefaults = {
   ignoreNetworkEvents: true,
@@ -46,33 +46,33 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <RootSpanProvider>
+      <PageViewSpanProvider>
         <App />
-      </RootSpanProvider>
+      </PageViewSpanProvider>
     ),
   },
   {
     path: 'name/:name',
     element: (
-      <RootSpanProvider>
+      <PageViewSpanProvider>
         <Name />
-      </RootSpanProvider>
+      </PageViewSpanProvider>
     ),
   },
   {
     path: 'name/:name/pet/:pet',
     element: (
-      <RootSpanProvider>
+      <PageViewSpanProvider>
         <Pet />
-      </RootSpanProvider>
+      </PageViewSpanProvider>
     ),
   },
   {
     path: '/dashboard',
     element: (
-      <RootSpanProvider>
+      <PageViewSpanProvider>
         <Dashboard />
-      </RootSpanProvider>
+      </PageViewSpanProvider>
     ),
   },
 ]);

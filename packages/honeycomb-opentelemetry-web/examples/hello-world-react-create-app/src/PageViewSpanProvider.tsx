@@ -6,15 +6,19 @@ import { waitForNetworkIdle } from './networkActivityTracker';
 import { createContext, useContext } from 'react';
 import type { Span } from '@opentelemetry/api';
 
-export const RootSpanContext = createContext<Span | undefined>(undefined);
+export const PageViewSpanContext = createContext<Span | undefined>(undefined);
 
-export function useRootSpan(): Span | undefined {
-  return useContext(RootSpanContext);
+export function usePageViewSpan(): Span | undefined {
+  return useContext(PageViewSpanContext);
 }
 
-export function RootSpanProvider({ children }: { children: React.ReactNode }) {
+export function PageViewSpanProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const location = useLocation();
-  const [rootSpan, setRootSpan] = useState<Span | undefined>(undefined);
+  const [pageViewSpan, setPageViewSpan] = useState<Span | undefined>(undefined);
   const currentSpanRef = useRef<Span | undefined>(undefined);
 
   useEffect(() => {
@@ -29,7 +33,7 @@ export function RootSpanProvider({ children }: { children: React.ReactNode }) {
       },
     });
     span.addEvent('navigation_start', now);
-    setRootSpan(span);
+    setPageViewSpan(span);
     currentSpanRef.current = span;
 
     // Optionally end span after network_idle
@@ -42,8 +46,8 @@ export function RootSpanProvider({ children }: { children: React.ReactNode }) {
   }, [location.pathname]);
 
   return (
-    <RootSpanContext.Provider value={rootSpan}>
+    <PageViewSpanContext.Provider value={pageViewSpan}>
       {children}
-    </RootSpanContext.Provider>
+    </PageViewSpanContext.Provider>
   );
 }

@@ -1,7 +1,7 @@
 // Dashboard.tsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useRootSpan } from './RootSpanProvider';
+import { usePageViewSpan } from './PageViewSpanProvider';
 import { context, trace } from '@opentelemetry/api';
 
 export function Dashboard() {
@@ -9,21 +9,18 @@ export function Dashboard() {
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
 
-  const rootSpan = useRootSpan();
-
-  console.log(rootSpan);
+  const pageViewSpan = usePageViewSpan();
 
   useEffect(() => {
-    if (!rootSpan) return;
+    if (!pageViewSpan) return;
 
-    const spanCtx = trace.setSpan(context.active(), rootSpan);
+    const spanCtx = trace.setSpan(context.active(), pageViewSpan);
 
     async function fetchWithTelemetry(
       input: string | URL | globalThis.Request,
       init?: RequestInit,
     ): Promise<Response> {
       const boundFetch = context.bind(spanCtx, async () => {
-        console.log(spanCtx);
         return await fetch(input, init);
       });
 
@@ -41,7 +38,7 @@ export function Dashboard() {
     fetchWithTelemetry('https://jsonplaceholder.typicode.com/comments')
       .then((res) => res.json())
       .then(setComments);
-  }, [rootSpan]);
+  }, [pageViewSpan]);
 
   return (
     <main>
