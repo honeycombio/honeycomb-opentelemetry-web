@@ -12,6 +12,12 @@ import {
 import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { ReactRouterSpanProcessor } from './reactRouterSpanProcessor';
+import { Dashboard } from './Dashboard';
+import {
+  notifyRequestCompleted,
+  notifyRequestStarted,
+} from './networkActivityTracker';
+import { RootSpanProvider } from './RootSpanProvider';
 
 const configDefaults = {
   ignoreNetworkEvents: true,
@@ -39,15 +45,35 @@ const Pet = () => {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: (
+      <RootSpanProvider>
+        <App />
+      </RootSpanProvider>
+    ),
   },
   {
     path: 'name/:name',
-    element: <Name />,
+    element: (
+      <RootSpanProvider>
+        <Name />
+      </RootSpanProvider>
+    ),
   },
   {
     path: 'name/:name/pet/:pet',
-    element: <Pet />,
+    element: (
+      <RootSpanProvider>
+        <Pet />
+      </RootSpanProvider>
+    ),
+  },
+  {
+    path: '/dashboard',
+    element: (
+      <RootSpanProvider>
+        <Dashboard />
+      </RootSpanProvider>
+    ),
   },
 ]);
 
@@ -79,8 +105,15 @@ try {
     },
     instrumentations: [
       getWebAutoInstrumentations({
-        '@opentelemetry/instrumentation-xml-http-request': configDefaults,
-        '@opentelemetry/instrumentation-fetch': configDefaults,
+        '@opentelemetry/instrumentation-fetch': {
+          requestHook: (span, request) => {
+            notifyRequestStarted();
+          },
+          applyCustomAttributesOnSpan: (span, request, response) => {
+            // using this to represent that a request has a response
+            notifyRequestCompleted();
+          },
+        },
         '@opentelemetry/instrumentation-document-load': configDefaults,
       }),
     ], // add automatic instrumentation

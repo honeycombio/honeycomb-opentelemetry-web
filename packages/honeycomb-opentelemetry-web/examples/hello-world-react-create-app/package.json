@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@honeycombio/opentelemetry-web": "file:../..",
-    "@opentelemetry/auto-instrumentations-web": "^0.40.0",
+    "@opentelemetry/auto-instrumentations-web": "^0.48.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^22.15.3",
     "@types/react": "^19.1.2",
