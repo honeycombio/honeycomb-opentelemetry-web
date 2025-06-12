@@ -48,7 +48,10 @@ import {
   LogRecordExporter,
   SimpleLogRecordProcessor,
 } from '@opentelemetry/sdk-logs';
-import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import {
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+} from '@opentelemetry/semantic-conventions';
 import { WebSDKConfiguration } from './types';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
 import { logs } from '@opentelemetry/api-logs';
@@ -83,6 +86,7 @@ export class WebSDK {
   private _meterProvider?: MeterProvider;
   private _loggerProvider?: LoggerProvider;
   private _serviceName?: string;
+  private _serviceVersion?: string;
 
   private _disabled?: boolean;
 
@@ -100,6 +104,7 @@ export class WebSDK {
     ];
 
     this._serviceName = configuration.serviceName;
+    this._serviceVersion = configuration.serviceVersion;
 
     this._autoDetectResources = configuration.autoDetectResources ?? true;
 
@@ -184,6 +189,14 @@ export class WebSDK {
               [ATTR_SERVICE_NAME]: this._serviceName,
             }),
           );
+
+    if (this._serviceVersion !== undefined) {
+      this._resource = this._resource.merge(
+        resourceFromAttributes({
+          [ATTR_SERVICE_VERSION]: this._serviceVersion,
+        }),
+      );
+    }
 
     const spanProcessors: SpanProcessor[] = [];
 
