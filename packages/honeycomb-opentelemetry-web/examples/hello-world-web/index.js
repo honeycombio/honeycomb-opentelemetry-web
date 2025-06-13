@@ -2,10 +2,39 @@ import { HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
 import { trace } from '@opentelemetry/api';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
+import { RandomIdGenerator } from '@opentelemetry/sdk-trace-base';
 
 const configDefaults = {
   ignoreNetworkEvents: true,
 };
+
+const getSessionProvider = () => {
+  const generator = new RandomIdGenerator();
+
+  let sessionId = null;
+
+  let count = 0;
+  return {
+    // Your session logic is probably based on cookies or local storage.
+    // But for this example, we will use a random ID generator and call 5 jokes a session.
+    countJokes: () => {
+      if (count > 5) {
+        const newSessionId = generator.generateTraceId();
+        sessionId = newSessionId;
+        count = 0;
+        return;
+      }
+      count++;
+    },
+    getSessionId: () => {
+      if (sessionId === null) {
+        sessionId = generator.generateTraceId();
+      }
+      return sessionId;
+    },
+  };
+};
+const sessionProvider = getSessionProvider();
 
 const main = () => {
   // Initialize Honeycomb SDK
@@ -31,8 +60,10 @@ const main = () => {
       },
     },
     localVisualizations: true,
+    sessionProvider: sessionProvider,
   });
   sdk.start();
+  sessionProvider.getSessionId(); // Initialize session ID
   const tracer = trace.getTracer('click-tracer');
 
   const buttonElement = document.getElementById('loadDadJoke');
@@ -56,6 +87,7 @@ const main = () => {
           document.getElementById('dadJokeText').innerText = data.joke;
           htmlSpan.setAttribute('text', data.joke);
           htmlSpan.end();
+          sessionProvider.countJokes();
         });
       })
       .catch((e) => {
