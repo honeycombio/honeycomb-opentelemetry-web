@@ -25,6 +25,11 @@ teardown_file() {
   assert_equal "$result" '"hny-web-distro-example:custom-with-collector-ts"'
 }
 
+@test "SDK telemetry includes service.version in resource attributes" {
+  result=$(resource_attributes_received | jq "select(.key == \"service.version\").value.stringValue")
+  assert_equal "$result" '"1.0.0"'
+}
+
 @test "SDK telemetry includes default resource attributes" {
   name=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.name\").value.stringValue")
   assert_equal "$name" '"opentelemetry"'

@@ -46,6 +46,7 @@ export interface WebSDKConfiguration {
   resourceDetectors: Array<ResourceDetector>;
   sampler: Sampler;
   serviceName?: string;
+  serviceVersion?: string;
   spanProcessor?: SpanProcessor;
   spanProcessors?: SpanProcessor[];
   traceExporter: SpanExporter;
@@ -111,6 +112,9 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * Defaults to `unknown_service`
    */
   serviceName?: string;
+
+  /** Optionally pass the service version of the application. */
+  serviceVersion?: string;
 
   /** Provide an array of span processors that should be applied to all spans.
    * Use this to specify synchronous hooks that can add to a span once the span is started or ended.

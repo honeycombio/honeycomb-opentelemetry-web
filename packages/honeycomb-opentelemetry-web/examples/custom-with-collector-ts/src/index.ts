@@ -13,6 +13,7 @@ const tracing = (): HoneycombWebSDK => {
     // apiKey: 'api-key',
     endpoint: 'http://localhost:4318', // send to local collector
     serviceName: 'hny-web-distro-example:custom-with-collector-ts',
+    serviceVersion: '1.0.0',
     debug: true,
     skipOptionsValidation: true,
     resourceAttributes: { 'app.environment': 'development' },
