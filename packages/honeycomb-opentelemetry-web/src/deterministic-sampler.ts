@@ -11,11 +11,14 @@ import { HoneycombOptions } from './types';
 
 /**
  * Builds and returns a Deterministic Sampler that uses the provided sample rate to
- * configure the inner sampler.
+ * configure the inner sampler, if custom sampler has not provided.
  * @param options The {@link HoneycombOptions}
  * @returns a {@link DeterministicSampler}
  */
-export const configureDeterministicSampler = (options?: HoneycombOptions) => {
+export const configureSampler = (options?: HoneycombOptions) => {
+  if (options?.sampler) {
+    return options.sampler;
+  }
   const sampleRate = getSampleRate(options);
   return new DeterministicSampler(sampleRate);
 };

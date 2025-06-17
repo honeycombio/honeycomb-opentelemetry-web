@@ -1,9 +1,11 @@
 import {
-  configureDeterministicSampler,
+  configureSampler,
   DeterministicSampler,
 } from '../src/deterministic-sampler';
 import { ROOT_CONTEXT, SpanKind, trace, TraceFlags } from '@opentelemetry/api';
 import {
+  AlwaysOnSampler,
+  Sampler,
   SamplingDecision,
   SamplingResult,
 } from '@opentelemetry/sdk-trace-base';
@@ -12,7 +14,7 @@ const traceId = 'd4cda95b652f4a1592b449d5929fda1b';
 const spanId = '6e0c63257de34c92';
 const spanName = 'doStuff';
 
-const getSamplingResult = (sampler: DeterministicSampler): SamplingResult => {
+const getSamplingResult = (sampler: Sampler): SamplingResult => {
   return sampler.shouldSample(
     trace.setSpanContext(ROOT_CONTEXT, {
       traceId,
@@ -51,12 +53,20 @@ describe('deterministic sampler', () => {
   });
 });
 
-describe('configureDeterministicSampler', () => {
+describe('configureSampler', () => {
+  test('when a sampler is provided, it is returned', () => {
+    const options = {
+      sampler: new AlwaysOnSampler(),
+    };
+    const sampler = configureSampler(options);
+    expect(sampler).toBeInstanceOf(AlwaysOnSampler);
+  });
+
   test('sample rate of 1 configures inner AlwaysOnSampler', () => {
     const options = {
       sampleRate: 1,
     };
-    const sampler = configureDeterministicSampler(options);
+    const sampler = configureSampler(options);
     expect(sampler).toBeInstanceOf(DeterministicSampler);
     expect(sampler.toString()).toBe('DeterministicSampler(AlwaysOnSampler)');
 
@@ -69,7 +79,7 @@ describe('configureDeterministicSampler', () => {
     const options = {
       sampleRate: 0,
     };
-    const sampler = configureDeterministicSampler(options);
+    const sampler = configureSampler(options);
     expect(sampler).toBeInstanceOf(DeterministicSampler);
     expect(sampler.toString()).toBe('DeterministicSampler(AlwaysOffSampler)');
 
@@ -82,7 +92,7 @@ describe('configureDeterministicSampler', () => {
     const options = {
       sampleRate: -42,
     };
-    const sampler = configureDeterministicSampler(options);
+    const sampler = configureSampler(options);
     expect(sampler).toBeInstanceOf(DeterministicSampler);
     expect(sampler.toString()).toBe('DeterministicSampler(AlwaysOnSampler)');
 
@@ -95,7 +105,7 @@ describe('configureDeterministicSampler', () => {
     const options = {
       sampleRate: 10,
     };
-    const sampler = configureDeterministicSampler(options);
+    const sampler = configureSampler(options);
     expect(sampler).toBeInstanceOf(DeterministicSampler);
     expect(sampler.toString()).toBe(
       'DeterministicSampler(TraceIdRatioBased{0.1})',

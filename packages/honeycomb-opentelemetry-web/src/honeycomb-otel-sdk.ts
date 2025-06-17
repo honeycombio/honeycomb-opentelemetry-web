@@ -1,7 +1,7 @@
 import { WebSDK } from './base-otel-sdk';
 import { HoneycombOptions } from './types';
 import { configureDebug } from './honeycomb-debug';
-import { configureDeterministicSampler } from './deterministic-sampler';
+import { configureSampler } from './deterministic-sampler';
 import { validateOptionsWarnings } from './validate-options';
 import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentation } from './global-errors-autoinstrumentation';
@@ -35,7 +35,7 @@ export class HoneycombWebSDK extends WebSDK {
       ...options,
       instrumentations,
       resource: configureResourceAttributes(options),
-      sampler: configureDeterministicSampler(options),
+      sampler: configureSampler(options),
       spanProcessors: configureSpanProcessors(options),
       traceExporter: configureTraceExporters(options),
       metricExporters: configureMetricExporters(options),
