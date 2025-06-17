@@ -4,6 +4,7 @@ import {
 } from '../src/deterministic-sampler';
 import { ROOT_CONTEXT, SpanKind, trace, TraceFlags } from '@opentelemetry/api';
 import {
+  AlwaysOnSampler,
   SamplingDecision,
   SamplingResult,
 } from '@opentelemetry/sdk-trace-base';
@@ -52,15 +53,12 @@ describe('deterministic sampler', () => {
 });
 
 describe('configureSampler', () => {
-  test('when custom sampler is provided, it is returned', () => {
+  test('when a sampler is provided, it is returned', () => {
     const options = {
-      sampler: new DeterministicSampler(1),
+      sampler: new AlwaysOnSampler(),
     };
     const sampler = configureSampler(options);
-    expect(sampler).toBeInstanceOf(DeterministicSampler);
-    const result = getSamplingResult(sampler);
-    expect(result.decision).toBe(SamplingDecision.RECORD_AND_SAMPLED);
-    expect(result.attributes).toEqual({ SampleRate: 1 });
+    expect(sampler).toBeInstanceOf(AlwaysOnSampler);
   });
 
   test('sample rate of 1 configures inner AlwaysOnSampler', () => {
