@@ -58,7 +58,7 @@ describe('configureSampler', () => {
     };
     const sampler = configureSampler(options);
     expect(sampler).toBeInstanceOf(DeterministicSampler);
-    consst result = getSamplingResult(sampler);
+    const result = getSamplingResult(sampler);
     expect(result.decision).toBe(SamplingDecision.RECORD_AND_SAMPLED);
     expect(result.attributes).toEqual({ SampleRate: 1 });
   });
