@@ -28,9 +28,6 @@ const getSamplingResult = (sampler: DeterministicSampler): SamplingResult => {
 };
 
 class CustomSampler {
-  shouldSample(context, traceId, spanName, spanKind, attributes, links) {
-    return SamplingDecision.NOT_RECORD;
-  }
   toString() {
     return 'CustomSampler';
   }
