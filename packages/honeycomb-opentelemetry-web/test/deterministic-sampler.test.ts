@@ -5,6 +5,7 @@ import {
 import { ROOT_CONTEXT, SpanKind, trace, TraceFlags } from '@opentelemetry/api';
 import {
   AlwaysOnSampler,
+  Sampler,
   SamplingDecision,
   SamplingResult,
 } from '@opentelemetry/sdk-trace-base';
@@ -13,7 +14,7 @@ const traceId = 'd4cda95b652f4a1592b449d5929fda1b';
 const spanId = '6e0c63257de34c92';
 const spanName = 'doStuff';
 
-const getSamplingResult = (sampler: DeterministicSampler): SamplingResult => {
+const getSamplingResult = (sampler: Sampler): SamplingResult => {
   return sampler.shouldSample(
     trace.setSpanContext(ROOT_CONTEXT, {
       traceId,
