@@ -15,7 +15,7 @@ import { HoneycombOptions } from './types';
  * @param options The {@link HoneycombOptions}
  * @returns a {@link DeterministicSampler}
  */
-export const configureDeterministicSampler = (options?: HoneycombOptions) => {
+export const configureSampler = (options?: HoneycombOptions) => {
   if(options.sampler) {
     return options.sampler;
   }
