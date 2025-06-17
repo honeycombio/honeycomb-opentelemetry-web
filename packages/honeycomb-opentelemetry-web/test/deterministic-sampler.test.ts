@@ -27,12 +27,6 @@ const getSamplingResult = (sampler: DeterministicSampler): SamplingResult => {
   );
 };
 
-class CustomSampler {
-  toString() {
-    return 'CustomSampler';
-  }
-}
-
 describe('deterministic sampler', () => {
   test('sampler with rate of 1 configures inner AlwaysOnSampler', () => {
     const sampler = new DeterministicSampler(1);
@@ -60,10 +54,13 @@ describe('deterministic sampler', () => {
 describe('configureSampler', () => {
   test('when custom sampler is provided, it is returned', () => {
     const options = {
-      sampler: new CustomSampler(),
+      sampler: new DeterministicSampler(1),
     };
     const sampler = configureSampler(options);
-    expect(sampler).toBeInstanceOf(CustomSampler);
+    expect(sampler).toBeInstanceOf(DeterministicSampler);
+    consst result = getSamplingResult(sampler);
+    expect(result.decision).toBe(SamplingDecision.RECORD_AND_SAMPLED);
+    expect(result.attributes).toEqual({ SampleRate: 1 });
   });
 
   test('sample rate of 1 configures inner AlwaysOnSampler', () => {
