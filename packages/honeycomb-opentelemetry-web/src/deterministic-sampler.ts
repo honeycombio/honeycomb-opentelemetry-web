@@ -16,7 +16,7 @@ import { HoneycombOptions } from './types';
  * @returns a {@link DeterministicSampler}
  */
 export const configureSampler = (options?: HoneycombOptions) => {
-  if(options?.sampler) {
+  if (options?.sampler) {
     return options.sampler;
   }
   const sampleRate = getSampleRate(options);

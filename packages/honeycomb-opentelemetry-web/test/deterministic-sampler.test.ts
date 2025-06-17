@@ -65,7 +65,7 @@ describe('configureSampler', () => {
     const sampler = configureSampler(options);
     expect(sampler).toBeInstanceOf(CustomSampler);
   });
-  
+
   test('sample rate of 1 configures inner AlwaysOnSampler', () => {
     const options = {
       sampleRate: 1,
