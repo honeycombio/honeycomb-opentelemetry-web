@@ -66,6 +66,11 @@ interface InpVitalOpts extends VitalOpts {
    * if this is true it will create spans from the PerformanceLongAnimationFrameTiming frames
    */
   includeTimingsAsSpans?: boolean;
+  /**
+   * Will filter the values of these data attributes if provided, otherwise will send all data-* attributes an INP entry
+   * An empty allow list, such as { dataAttributes: [] } will disable sending data-* attributes
+   */
+  dataAttributes?: string[];
 }
 
 // To avoid importing InstrumentationAbstract from:
@@ -373,6 +378,41 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     });
   }
 
+  private getElementFromNode(node: Node | null): Element | undefined {
+    if (node?.nodeType === Node.ELEMENT_NODE) {
+      return node as Element;
+    }
+    return undefined;
+  }
+
+  private addDataAttributes(
+    element: Element | null | undefined,
+    span: Span,
+    dataAttributes: string[] | undefined,
+    attrPrefix: string,
+  ) {
+    const el = element as HTMLElement;
+
+    if (el?.dataset) {
+      for (const attrName in el.dataset) {
+        const attrValue = el.dataset[attrName];
+        if (
+          // Value exists (including the empty string AND either
+          attrValue !== undefined &&
+          // dataAttributes is undefined (i.e. send all values as span attributes) OR
+          (dataAttributes === undefined ||
+            // dataAttributes is specified AND attrName is in dataAttributes (i.e attribute name is in the supplied allowList)
+            dataAttributes.includes(attrName))
+        ) {
+          span.setAttribute(
+            `${attrPrefix}.element.data.${attrName}`,
+            attrValue,
+          );
+        }
+      }
+    }
+  }
+
   onReportCLS = (cls: CLSMetricWithAttribution, clsOpts: VitalOpts = {}) => {
     const { applyCustomAttributes } = clsOpts;
     if (!this.isEnabled()) return;
@@ -434,25 +474,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
     });
 
-    const el: HTMLElement = lcpEntry?.element as HTMLElement;
-    if (el?.dataset) {
-      for (const attrName in el.dataset) {
-        const attrValue = el.dataset[attrName];
-        if (
-          // Value exists (including the empty string AND either
-          attrValue !== undefined &&
-          // dataAttributes is undefined (i.e. send all values as span attributes) OR
-          (dataAttributes === undefined ||
-            // dataAttributes is specified AND attrName is in dataAttributes (i.e attribute name is in the supplied allowList)
-            dataAttributes.includes(attrName))
-        ) {
-          span.setAttribute(
-            `${attrPrefix}.element.data.${attrName}`,
-            attrValue,
-          );
-        }
-      }
-    }
+    this.addDataAttributes(lcpEntry?.element, span, dataAttributes, attrPrefix);
 
     if (applyCustomAttributes) {
       applyCustomAttributes(lcp, span);
@@ -465,7 +487,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     inp: INPMetricWithAttribution,
     inpOpts: InpVitalOpts = { includeTimingsAsSpans: false },
   ) => {
-    const { applyCustomAttributes, includeTimingsAsSpans } = inpOpts;
+    const { applyCustomAttributes, includeTimingsAsSpans, dataAttributes } =
+      inpOpts;
     if (!this.isEnabled()) return;
 
     const { name, attribution } = inp;
@@ -504,7 +527,14 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
         };
 
         inpSpan.setAttributes(inpAttributes);
-
+        inp.entries.forEach((inpEntry) => {
+          this.addDataAttributes(
+            this.getElementFromNode(inpEntry.target),
+            inpSpan,
+            dataAttributes,
+            attrPrefix,
+          );
+        });
         if (applyCustomAttributes) {
           applyCustomAttributes(inp, inpSpan);
         }
