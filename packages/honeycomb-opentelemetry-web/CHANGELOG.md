@@ -1,5 +1,22 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.20.0 [beta] - 2025-06-19
+
+### ✨ Features
+- feat: add service version attribute (#553) | @jairo-mendoza
+
+### 🐛 Fixes
+- fix: honoring custom sampler when provided by user. (#559) | @howardyoo
+
+### 🛠️ Maintenance
+- chore: Update examples to remove FID. (#548) | wolfgangcodes
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 7 updates (#551) | @dependabot
+- maint(deps): bump web-vitals from 5.0.2 to 5.0.3 in /packages/honeycomb-opentelemetry-web (#555) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#556) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#550) | @dependabot
+- maint(deps): bump @babel/runtime from 7.27.4 to 7.27.6 in /packages/honeycomb-opentelemetry-web (#549) | @dependabot
+- maint(deps): bump the example-deps group across 6 directories with 10 updates (#546) | @dependabot
+
 ## v0.19.0 [beta] - 2025-06-04
 
 ### ✨ Features
