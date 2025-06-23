@@ -12,8 +12,6 @@ updates:
       interval: 'weekly' # Check for updates every week
     labels:
       - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/frontend-observability'
     commit-message:
       prefix: 'maint' # Add PR title prefix
       include: 'scope'
@@ -41,8 +39,6 @@ updates:
       interval: 'monthly' # Check for updates every month
     labels:
       - 'type: dependencies' # Add label
-    reviewers:
-      - 'honeycombio/frontend-observability'
     commit-message:
       prefix: 'maint' # Add PR title prefix
       include: 'scope'
