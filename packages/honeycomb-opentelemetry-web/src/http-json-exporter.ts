@@ -27,6 +27,7 @@ export function configureHoneycombHttpJsonTraceExporter(
   return new OTLPTraceExporter({
     url: getTracesEndpoint(options),
     headers: configureHeaders(options, apiKey, options?.tracesHeaders),
+    timeoutMillis: options?.tracesTimeout || options?.timeout || 10000,
   });
 }
 
@@ -42,6 +43,7 @@ export function configureHoneycombHttpJsonMetricExporter(
   return new OTLPMetricExporter({
     url: getMetricsEndpoint(options),
     headers: configureHeaders(options, apiKey, options?.metricsHeaders, true),
+    timeoutMillis: options?.metricsTimeout || options?.timeout || 10000,
   });
 }
 
@@ -57,6 +59,7 @@ export function configureHoneycombHttpJsonLogExporter(
   return new OTLPLogExporter({
     url: getLogsEndpoint(options),
     headers: configureHeaders(options, apiKey, options?.logsHeaders),
+    timeoutMillis: options?.logsTimeout || options?.timeout || 10000,
   });
 }
 
