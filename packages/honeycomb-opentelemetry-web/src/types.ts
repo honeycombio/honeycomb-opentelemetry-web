@@ -127,12 +127,16 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    */
   spanProcessors?: SpanProcessor[];
 
-  /** Timeout used by exporter when sending data.
-   * Defaults to 10000ms (10 seconds).
-   */
+  /** Timeout used by exporters when sending data. Defaults to 10000ms (10 seconds). */
   timeout?: number;
+
+  /** Timeout used by the traces exporter when sending data. Overrides timeout for trace data. */
   tracesTimeout?: number;
+
+  /** Timeout used by the metrics exporter when sending data. Overrides timeout for metric data. */
   metricsTimeout?: number;
+
+  /** Timeout used by the logs exporter when sending data. Overrides timeout for log data. */
   logsTimeout?: number;
 
   /** Provide an array of exporters
