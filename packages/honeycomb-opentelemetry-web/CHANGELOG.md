@@ -1,5 +1,19 @@
 # honeycomb-opentelemetry-web changelog
 
+## v0.21.0 [beta] - 2025-07-01
+
+### ✨ Features
+
+- feat: Send data-* attributes for INP. (#554) | @wolfgangcodes
+
+### 🛠️ Maintenance
+
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#565) | @dependabot
+- maint(deps): bump the example-deps group across 3 directories with 2 updates (#566) | @dependabot
+- maint(deps): bump the example-deps group across 3 directories with 3 updates (#563) | @dependabot
+- maint: Remove deprecated dependabot config (#562) | @martin308
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#561) | @dependabot
+
 ## v0.20.0 [beta] - 2025-06-19
 
 ### ✨ Features
