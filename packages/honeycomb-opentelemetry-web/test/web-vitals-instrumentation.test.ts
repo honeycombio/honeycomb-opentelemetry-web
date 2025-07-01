@@ -104,6 +104,21 @@ const LCPAttr = {
   'lcp.resource_load_time': 20,
 };
 
+const performanceEventTiming: PerformanceEventTiming = {
+  name: 'click',
+  target: dataElement,
+  cancelable: false,
+  processingEnd: 0,
+  processingStart: 0,
+  toJSON() {
+    return '';
+  },
+  duration: 0,
+  interactionId: 0,
+  entryType: '',
+  startTime: 0,
+};
+
 const INP: INPMetricWithAttribution = {
   name: 'INP',
   value: 200,
@@ -158,6 +173,7 @@ const frameTiming: PerformanceLongAnimationFrameTiming = {
     return '';
   },
 };
+
 const INPWithTimings: INPMetricWithAttribution = {
   name: 'INP',
   value: 200,
@@ -477,13 +493,18 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('INP');
     });
+
     describe('dataAttributes', () => {
+      const INPWithDataAttributes: INPMetricWithAttribution = {
+        ...INP,
+        entries: [performanceEventTiming],
+      };
       it('should include add data-* attributes as span attributes when dataAttributes is undefined', () => {
         const instr = new WebVitalsInstrumentation({
           vitalsToTrack: ['INP'],
         });
         instr.enable();
-        instr.onReportINP(INP, {
+        instr.onReportINP(INPWithDataAttributes, {
           applyCustomAttributes: () => {},
           dataAttributes: undefined,
         });
@@ -495,12 +516,13 @@ describe('Web Vitals Instrumentation Tests', () => {
           'inp.element.data.hasCats': '',
         });
       });
+
       it('should not include any data-* attributes when dataAttributes is []', () => {
         const instr = new WebVitalsInstrumentation({
           vitalsToTrack: ['INP'],
         });
         instr.enable();
-        instr.onReportINP(INP, {
+        instr.onReportINP(INPWithDataAttributes, {
           applyCustomAttributes: () => {},
           dataAttributes: [],
         });
@@ -512,12 +534,13 @@ describe('Web Vitals Instrumentation Tests', () => {
           'inp.element.data.hasCats': '',
         });
       });
+
       it('should only include any data-* attributes that match dataAttributes array', () => {
         const instr = new WebVitalsInstrumentation({
           vitalsToTrack: ['INP'],
         });
         instr.enable();
-        instr.onReportINP(INP, {
+        instr.onReportINP(INPWithDataAttributes, {
           applyCustomAttributes: () => {},
           dataAttributes: ['answer'],
         });
