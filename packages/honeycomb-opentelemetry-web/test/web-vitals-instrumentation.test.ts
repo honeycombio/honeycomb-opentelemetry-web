@@ -53,8 +53,8 @@ const CLSAttr = {
   'cls.my_custom_attr': 'custom_attr',
 };
 const div = document.createElement('div');
-div.innerHTML = `<div id="lcp-element" data-answer="42" data-famous-cats="Mr. Mistoffelees" data-has-cats>👋 Hello World</div>`;
-const lcpElement = div.firstElementChild;
+div.innerHTML = `<div id="data-element" data-answer="42" data-famous-cats="Mr. Mistoffelees" data-has-cats>👋 Hello World</div>`;
+const dataElement = div.firstElementChild;
 
 const LCP: LCPMetricWithAttribution = {
   name: 'LCP',
@@ -73,7 +73,7 @@ const LCP: LCPMetricWithAttribution = {
     resourceLoadDelay: 100,
     lcpEntry: {
       duration: 0,
-      element: lcpElement,
+      element: dataElement,
       entryType: 'largest-contentful-paint',
       id: '',
       loadTime: 0,
@@ -102,6 +102,21 @@ const LCPAttr = {
   'lcp.entries': '',
   'lcp.my_custom_attr': 'custom_attr',
   'lcp.resource_load_time': 20,
+};
+
+const performanceEventTiming: PerformanceEventTiming = {
+  name: 'click',
+  target: dataElement,
+  cancelable: false,
+  processingEnd: 0,
+  processingStart: 0,
+  toJSON() {
+    return '';
+  },
+  duration: 0,
+  interactionId: 0,
+  entryType: '',
+  startTime: 0,
 };
 
 const INP: INPMetricWithAttribution = {
@@ -158,6 +173,7 @@ const frameTiming: PerformanceLongAnimationFrameTiming = {
     return '';
   },
 };
+
 const INPWithTimings: INPMetricWithAttribution = {
   name: 'INP',
   value: 200,
@@ -343,61 +359,62 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('LCP');
     });
-
-    it('should include add data-* attributes as span attributes when dataAttributes is undefined', () => {
-      const instr = new WebVitalsInstrumentation({
-        vitalsToTrack: ['LCP'],
+    describe('dataAttributes', () => {
+      it('should include add data-* attributes as span attributes when dataAttributes is undefined', () => {
+        const instr = new WebVitalsInstrumentation({
+          vitalsToTrack: ['LCP'],
+        });
+        instr.enable();
+        instr.onReportLCP(LCP, {
+          applyCustomAttributes: () => {},
+          dataAttributes: undefined,
+        });
+        expect(exporter.getFinishedSpans().length).toEqual(1);
+        const span = exporter.getFinishedSpans()[0];
+        expect(span.attributes).toMatchObject({
+          'lcp.element.data.answer': '42',
+          'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+          'lcp.element.data.hasCats': '',
+        });
       });
-      instr.enable();
-      instr.onReportLCP(LCP, {
-        applyCustomAttributes: () => {},
-        dataAttributes: undefined,
+      it('should not include any data-* attributes when dataAttributes is []', () => {
+        const instr = new WebVitalsInstrumentation({
+          vitalsToTrack: ['LCP'],
+        });
+        instr.enable();
+        instr.onReportLCP(LCP, {
+          applyCustomAttributes: () => {},
+          dataAttributes: [],
+        });
+        expect(exporter.getFinishedSpans().length).toEqual(1);
+        const span = exporter.getFinishedSpans()[0];
+        expect(span.attributes).not.toMatchObject({
+          'lcp.element.data.answer': '42',
+          'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+          'lcp.element.data.hasCats': '',
+        });
       });
-      expect(exporter.getFinishedSpans().length).toEqual(1);
-      const span = exporter.getFinishedSpans()[0];
-      expect(span.attributes).toMatchObject({
-        'lcp.element.data.answer': '42',
-        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
-        'lcp.element.data.hasCats': '',
-      });
-    });
-    it('should not include any data-* attributes when dataAttributes is []', () => {
-      const instr = new WebVitalsInstrumentation({
-        vitalsToTrack: ['LCP'],
-      });
-      instr.enable();
-      instr.onReportLCP(LCP, {
-        applyCustomAttributes: () => {},
-        dataAttributes: [],
-      });
-      expect(exporter.getFinishedSpans().length).toEqual(1);
-      const span = exporter.getFinishedSpans()[0];
-      expect(span.attributes).not.toMatchObject({
-        'lcp.element.data.answer': '42',
-        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
-        'lcp.element.data.hasCats': '',
-      });
-    });
-    it('should only include any data-* attributes that match dataAttributes array', () => {
-      const instr = new WebVitalsInstrumentation({
-        vitalsToTrack: ['LCP'],
-      });
-      instr.enable();
-      instr.onReportLCP(LCP, {
-        applyCustomAttributes: () => {},
-        dataAttributes: ['answer'],
-      });
-      expect(exporter.getFinishedSpans().length).toEqual(1);
-      const span = exporter.getFinishedSpans()[0];
-      expect(span.attributes['lcp.element.data.answer']).toEqual('42');
-      expect(span.attributes['lcp.element.data.famousCats']).toBeUndefined();
-      expect(span.attributes['lcp.element.data.hasCats']).toBeUndefined();
-      expect(span.attributes).toMatchObject({
-        'lcp.element.data.answer': '42',
-      });
-      expect(span.attributes).not.toMatchObject({
-        'lcp.element.data.famousCats': 'Mr. Mistoffelees',
-        'lcp.element.data.hasCats': '',
+      it('should only include any data-* attributes that match dataAttributes array', () => {
+        const instr = new WebVitalsInstrumentation({
+          vitalsToTrack: ['LCP'],
+        });
+        instr.enable();
+        instr.onReportLCP(LCP, {
+          applyCustomAttributes: () => {},
+          dataAttributes: ['answer'],
+        });
+        expect(exporter.getFinishedSpans().length).toEqual(1);
+        const span = exporter.getFinishedSpans()[0];
+        expect(span.attributes['lcp.element.data.answer']).toEqual('42');
+        expect(span.attributes['lcp.element.data.famousCats']).toBeUndefined();
+        expect(span.attributes['lcp.element.data.hasCats']).toBeUndefined();
+        expect(span.attributes).toMatchObject({
+          'lcp.element.data.answer': '42',
+        });
+        expect(span.attributes).not.toMatchObject({
+          'lcp.element.data.famousCats': 'Mr. Mistoffelees',
+          'lcp.element.data.hasCats': '',
+        });
       });
     });
   });
@@ -475,6 +492,71 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('INP');
+    });
+
+    describe('dataAttributes', () => {
+      const INPWithDataAttributes: INPMetricWithAttribution = {
+        ...INP,
+        entries: [performanceEventTiming],
+      };
+      it('should include add data-* attributes as span attributes when dataAttributes is undefined', () => {
+        const instr = new WebVitalsInstrumentation({
+          vitalsToTrack: ['INP'],
+        });
+        instr.enable();
+        instr.onReportINP(INPWithDataAttributes, {
+          applyCustomAttributes: () => {},
+          dataAttributes: undefined,
+        });
+        expect(exporter.getFinishedSpans().length).toEqual(1);
+        const span = exporter.getFinishedSpans()[0];
+        expect(span.attributes).toMatchObject({
+          'inp.element.data.answer': '42',
+          'inp.element.data.famousCats': 'Mr. Mistoffelees',
+          'inp.element.data.hasCats': '',
+        });
+      });
+
+      it('should not include any data-* attributes when dataAttributes is []', () => {
+        const instr = new WebVitalsInstrumentation({
+          vitalsToTrack: ['INP'],
+        });
+        instr.enable();
+        instr.onReportINP(INPWithDataAttributes, {
+          applyCustomAttributes: () => {},
+          dataAttributes: [],
+        });
+        expect(exporter.getFinishedSpans().length).toEqual(1);
+        const span = exporter.getFinishedSpans()[0];
+        expect(span.attributes).not.toMatchObject({
+          'inp.element.data.answer': '42',
+          'inp.element.data.famousCats': 'Mr. Mistoffelees',
+          'inp.element.data.hasCats': '',
+        });
+      });
+
+      it('should only include any data-* attributes that match dataAttributes array', () => {
+        const instr = new WebVitalsInstrumentation({
+          vitalsToTrack: ['INP'],
+        });
+        instr.enable();
+        instr.onReportINP(INPWithDataAttributes, {
+          applyCustomAttributes: () => {},
+          dataAttributes: ['answer'],
+        });
+        expect(exporter.getFinishedSpans().length).toEqual(1);
+        const span = exporter.getFinishedSpans()[0];
+        expect(span.attributes['inp.element.data.answer']).toEqual('42');
+        expect(span.attributes['inp.element.data.famousCats']).toBeUndefined();
+        expect(span.attributes['inp.element.data.hasCats']).toBeUndefined();
+        expect(span.attributes).toMatchObject({
+          'inp.element.data.answer': '42',
+        });
+        expect(span.attributes).not.toMatchObject({
+          'inp.element.data.famousCats': 'Mr. Mistoffelees',
+          'inp.element.data.hasCats': '',
+        });
+      });
     });
   });
 
