@@ -34,6 +34,85 @@ import {
   TracerProvider,
 } from '@opentelemetry/api';
 import * as shimmer from 'shimmer';
+import {
+  ATTR_CLS_DELTA,
+  ATTR_CLS_ELEMENT,
+  ATTR_CLS_HAD_RECENT_INPUT,
+  ATTR_CLS_ID,
+  ATTR_CLS_LARGEST_SHIFT_TARGET,
+  ATTR_CLS_LARGEST_SHIFT_TIME,
+  ATTR_CLS_LARGEST_SHIFT_VALUE,
+  ATTR_CLS_LOAD_STATE,
+  ATTR_CLS_NAVIGATION_TYPE,
+  ATTR_CLS_RATING,
+  ATTR_CLS_VALUE,
+  ATTR_FCP_DELTA,
+  ATTR_FCP_ID,
+  ATTR_FCP_LOAD_STATE,
+  ATTR_FCP_NAVIGATION_TYPE,
+  ATTR_FCP_RATING,
+  ATTR_FCP_TIME_SINCE_FIRST_BYTE,
+  ATTR_FCP_TIME_TO_FIRST_BYTE,
+  ATTR_FCP_VALUE,
+  ATTR_INP_DELTA,
+  ATTR_INP_DURATION,
+  ATTR_INP_ELEMENT,
+  ATTR_INP_EVENT_TYPE,
+  ATTR_INP_ID,
+  ATTR_INP_INPUT_DELAY,
+  ATTR_INP_INTERACTION_TARGET,
+  ATTR_INP_INTERACTION_TIME,
+  ATTR_INP_INTERACTION_TYPE,
+  ATTR_INP_LOAD_STATE,
+  ATTR_INP_NAVIGATION_TYPE,
+  ATTR_INP_NEXT_PAINT_TIME,
+  ATTR_INP_PRESENTATION_DELAY,
+  ATTR_INP_PROCESSING_DURATION,
+  ATTR_INP_RATING,
+  ATTR_INP_SCRIPT_DURATION,
+  ATTR_INP_SCRIPT_ENTRY_TYPE,
+  ATTR_INP_SCRIPT_EXECUTION_START,
+  ATTR_INP_SCRIPT_FORCED_STYLE_AND_LAYOUT_DURATION,
+  ATTR_INP_SCRIPT_INVOKER,
+  ATTR_INP_SCRIPT_PAUSE_DURATION,
+  ATTR_INP_SCRIPT_SOURCE_CHAR_POSITION,
+  ATTR_INP_SCRIPT_SOURCE_FUNCTION_NAME,
+  ATTR_INP_SCRIPT_SOURCE_URL,
+  ATTR_INP_SCRIPT_START_TIME,
+  ATTR_INP_SCRIPT_WINDOW_ATTRIBUTION,
+  ATTR_INP_TIMING_DURATION,
+  ATTR_INP_TIMING_ENTRY_TYPE,
+  ATTR_INP_TIMING_NAME,
+  ATTR_INP_TIMING_RENDER_START,
+  ATTR_INP_TIMING_START_TIME,
+  ATTR_INP_VALUE,
+  ATTR_LCP_DELTA,
+  ATTR_LCP_ELEMENT,
+  ATTR_LCP_ELEMENT_RENDER_DELAY,
+  ATTR_LCP_ID,
+  ATTR_LCP_NAVIGATION_TYPE,
+  ATTR_LCP_RATING,
+  ATTR_LCP_RESOURCE_LOAD_DELAY,
+  ATTR_LCP_RESOURCE_LOAD_DURATION,
+  ATTR_LCP_RESOURCE_LOAD_TIME,
+  ATTR_LCP_TIME_TO_FIRST_BYTE,
+  ATTR_LCP_URL,
+  ATTR_LCP_VALUE,
+  ATTR_TTFB_CACHE_DURATION,
+  ATTR_TTFB_CONNECTION_DURATION,
+  ATTR_TTFB_CONNECTION_TIME,
+  ATTR_TTFB_DELTA,
+  ATTR_TTFB_DNS_DURATION,
+  ATTR_TTFB_DNS_TIME,
+  ATTR_TTFB_ID,
+  ATTR_TTFB_NAVIGATION_TYPE,
+  ATTR_TTFB_RATING,
+  ATTR_TTFB_REQUEST_DURATION,
+  ATTR_TTFB_REQUEST_TIME,
+  ATTR_TTFB_VALUE,
+  ATTR_TTFB_WAITING_DURATION,
+  ATTR_TTFB_WAITING_TIME,
+} from './semantic-attributes';
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
@@ -284,49 +363,37 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     return name.toLowerCase();
   }
 
-  private getSharedAttributes(vital: Metric) {
-    const { name, id, delta, rating, value, navigationType } = vital;
-    const attrPrefix = this.getAttrPrefix(name);
-    return {
-      [`${attrPrefix}.id`]: id,
-      [`${attrPrefix}.delta`]: delta,
-      [`${attrPrefix}.value`]: value,
-      [`${attrPrefix}.rating`]: rating,
-      [`${attrPrefix}.navigation_type`]: navigationType,
-    };
-  }
-
   private getAttributesForPerformanceLongAnimationFrameTiming(
-    prefix: string,
     perfEntry: PerformanceLongAnimationFrameTiming,
   ) {
     const loafAttributes = {
-      [`${prefix}.duration`]: perfEntry.duration,
-      [`${prefix}.entryType`]: perfEntry.entryType,
-      [`${prefix}.name`]: perfEntry.name,
-      [`${prefix}.renderStart`]: perfEntry.renderStart,
-      [`${prefix}.startTime`]: perfEntry.startTime,
+      [ATTR_INP_TIMING_DURATION]: perfEntry.duration,
+      [ATTR_INP_TIMING_ENTRY_TYPE]: perfEntry.entryType,
+      [ATTR_INP_TIMING_NAME]: perfEntry.name,
+      [ATTR_INP_TIMING_RENDER_START]: perfEntry.renderStart,
+      [ATTR_INP_TIMING_START_TIME]: perfEntry.startTime,
     };
     return loafAttributes;
   }
 
   private getAttributesForPerformanceScriptTiming(
-    prefix: string,
     scriptPerfEntry: PerformanceScriptTiming,
   ) {
     const scriptAttributes = {
-      [`${prefix}.entry_type`]: scriptPerfEntry.entryType,
-      [`${prefix}.start_time`]: scriptPerfEntry.startTime,
-      [`${prefix}.execution_start`]: scriptPerfEntry.executionStart,
-      [`${prefix}.duration`]: scriptPerfEntry.duration,
-      [`${prefix}.forced_style_and_layout_duration`]:
+      [ATTR_INP_SCRIPT_ENTRY_TYPE]: scriptPerfEntry.entryType,
+      [ATTR_INP_SCRIPT_START_TIME]: scriptPerfEntry.startTime,
+      [ATTR_INP_SCRIPT_EXECUTION_START]: scriptPerfEntry.executionStart,
+      [ATTR_INP_SCRIPT_DURATION]: scriptPerfEntry.duration,
+      [ATTR_INP_SCRIPT_FORCED_STYLE_AND_LAYOUT_DURATION]:
         scriptPerfEntry.forcedStyleAndLayoutDuration,
-      [`${prefix}.invoker`]: scriptPerfEntry.invoker,
-      [`${prefix}.pause_duration`]: scriptPerfEntry.pauseDuration,
-      [`${prefix}.source_url`]: scriptPerfEntry.sourceURL,
-      [`${prefix}.source_function_name`]: scriptPerfEntry.sourceFunctionName,
-      [`${prefix}.source_char_position`]: scriptPerfEntry.sourceCharPosition,
-      [`${prefix}.window_attribution`]: scriptPerfEntry.windowAttribution,
+      [ATTR_INP_SCRIPT_INVOKER]: scriptPerfEntry.invoker,
+      [ATTR_INP_SCRIPT_PAUSE_DURATION]: scriptPerfEntry.pauseDuration,
+      [ATTR_INP_SCRIPT_SOURCE_URL]: scriptPerfEntry.sourceURL,
+      [ATTR_INP_SCRIPT_SOURCE_FUNCTION_NAME]:
+        scriptPerfEntry.sourceFunctionName,
+      [ATTR_INP_SCRIPT_SOURCE_CHAR_POSITION]:
+        scriptPerfEntry.sourceCharPosition,
+      [ATTR_INP_SCRIPT_WINDOW_ATTRIBUTION]: scriptPerfEntry.windowAttribution,
     };
     return scriptAttributes;
   }
@@ -337,18 +404,17 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   ) {
     if (!perfEntry) return;
 
-    const prefix = `${parentPrefix}.timing`;
     const loafAttributes =
-      this.getAttributesForPerformanceLongAnimationFrameTiming(
-        prefix,
-        perfEntry,
-      );
+      this.getAttributesForPerformanceLongAnimationFrameTiming(perfEntry);
     this.tracer.startActiveSpan(
       perfEntry.name,
       { startTime: perfEntry.startTime },
       (span) => {
         span.setAttributes(loafAttributes);
-        this.processPerformanceScriptTimingSpans(prefix, perfEntry.scripts);
+        this.processPerformanceScriptTimingSpans(
+          parentPrefix,
+          perfEntry.scripts,
+        );
         span.end(perfEntry.startTime + perfEntry.duration);
       },
     );
@@ -360,17 +426,14 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   ) {
     if (!perfScriptEntries) return;
     if (!perfScriptEntries?.length) return;
-    const prefix = `${parentPrefix}.script`;
 
     perfScriptEntries.map((scriptPerfEntry) => {
       this.tracer.startActiveSpan(
         scriptPerfEntry.name,
         { startTime: scriptPerfEntry.startTime },
         (span) => {
-          const scriptAttributes = this.getAttributesForPerformanceScriptTiming(
-            prefix,
-            scriptPerfEntry,
-          );
+          const scriptAttributes =
+            this.getAttributesForPerformanceScriptTiming(scriptPerfEntry);
           span.setAttributes(scriptAttributes);
           span.end(scriptPerfEntry.startTime + scriptPerfEntry.duration);
         },
@@ -425,17 +488,20 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       loadState,
       largestShiftEntry,
     }: CLSAttribution = attribution;
-    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
     span.setAttributes({
-      ...this.getSharedAttributes(cls),
-      [`${attrPrefix}.largest_shift_target`]: largestShiftTarget,
-      [`${attrPrefix}.element`]: largestShiftTarget,
-      [`${attrPrefix}.largest_shift_time`]: largestShiftTime,
-      [`${attrPrefix}.largest_shift_value`]: largestShiftValue,
-      [`${attrPrefix}.load_state`]: loadState,
-      [`${attrPrefix}.had_recent_input`]: largestShiftEntry?.hadRecentInput,
+      [ATTR_CLS_ID]: cls.id,
+      [ATTR_CLS_DELTA]: cls.delta,
+      [ATTR_CLS_VALUE]: cls.value,
+      [ATTR_CLS_RATING]: cls.rating,
+      [ATTR_CLS_NAVIGATION_TYPE]: cls.navigationType,
+      [ATTR_CLS_LARGEST_SHIFT_TARGET]: largestShiftTarget,
+      [ATTR_CLS_ELEMENT]: largestShiftTarget,
+      [ATTR_CLS_LARGEST_SHIFT_TIME]: largestShiftTime,
+      [ATTR_CLS_LARGEST_SHIFT_VALUE]: largestShiftValue,
+      [ATTR_CLS_LOAD_STATE]: loadState,
+      [ATTR_CLS_HAD_RECENT_INPUT]: largestShiftEntry?.hadRecentInput,
     });
 
     if (applyCustomAttributes) {
@@ -459,22 +525,25 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       elementRenderDelay,
       lcpEntry,
     }: LCPAttribution = attribution;
-    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
     span.setAttributes({
-      ...this.getSharedAttributes(lcp),
-      [`${attrPrefix}.element`]: target,
-      [`${attrPrefix}.url`]: url,
-      [`${attrPrefix}.time_to_first_byte`]: timeToFirstByte,
-      [`${attrPrefix}.resource_load_delay`]: resourceLoadDelay,
-      [`${attrPrefix}.resource_load_duration`]: resourceLoadDuration,
-      [`${attrPrefix}.element_render_delay`]: elementRenderDelay,
+      [ATTR_LCP_ID]: lcp.id,
+      [ATTR_LCP_DELTA]: lcp.delta,
+      [ATTR_LCP_VALUE]: lcp.value,
+      [ATTR_LCP_RATING]: lcp.rating,
+      [ATTR_LCP_NAVIGATION_TYPE]: lcp.navigationType,
+      [ATTR_LCP_ELEMENT]: target,
+      [ATTR_LCP_URL]: url,
+      [ATTR_LCP_TIME_TO_FIRST_BYTE]: timeToFirstByte,
+      [ATTR_LCP_RESOURCE_LOAD_DELAY]: resourceLoadDelay,
+      [ATTR_LCP_RESOURCE_LOAD_DURATION]: resourceLoadDuration,
+      [ATTR_LCP_ELEMENT_RENDER_DELAY]: elementRenderDelay,
       // This will be deprecated in a future version
-      [`${attrPrefix}.resource_load_time`]: resourceLoadDuration,
+      [ATTR_LCP_RESOURCE_LOAD_TIME]: resourceLoadDuration,
     });
 
-    this.addDataAttributes(lcpEntry?.element, span, dataAttributes, attrPrefix);
+    this.addDataAttributes(lcpEntry?.element, span, dataAttributes, 'lcp');
 
     if (applyCustomAttributes) {
       applyCustomAttributes(lcp, span);
@@ -504,26 +573,29 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       longAnimationFrameEntries,
     }: INPAttribution = attribution;
 
-    const attrPrefix = this.getAttrPrefix(name);
     const inpDuration = inputDelay + processingDuration + presentationDelay;
     this.tracer.startActiveSpan(
       name,
       { startTime: interactionTime },
       (inpSpan) => {
         const inpAttributes = {
-          ...this.getSharedAttributes(inp),
-          [`${attrPrefix}.input_delay`]: inputDelay,
-          [`${attrPrefix}.interaction_target`]: interactionTarget,
-          [`${attrPrefix}.interaction_time`]: interactionTime,
-          [`${attrPrefix}.interaction_type`]: interactionType,
-          [`${attrPrefix}.load_state`]: loadState,
-          [`${attrPrefix}.next_paint_time`]: nextPaintTime,
-          [`${attrPrefix}.presentation_delay`]: presentationDelay,
-          [`${attrPrefix}.processing_duration`]: processingDuration,
-          [`${attrPrefix}.duration`]: inpDuration,
+          [ATTR_INP_ID]: inp.id,
+          [ATTR_INP_DELTA]: inp.delta,
+          [ATTR_INP_VALUE]: inp.value,
+          [ATTR_INP_RATING]: inp.rating,
+          [ATTR_INP_NAVIGATION_TYPE]: inp.navigationType,
+          [ATTR_INP_INPUT_DELAY]: inputDelay,
+          [ATTR_INP_INTERACTION_TARGET]: interactionTarget,
+          [ATTR_INP_INTERACTION_TIME]: interactionTime,
+          [ATTR_INP_INTERACTION_TYPE]: interactionType,
+          [ATTR_INP_LOAD_STATE]: loadState,
+          [ATTR_INP_NEXT_PAINT_TIME]: nextPaintTime,
+          [ATTR_INP_PRESENTATION_DELAY]: presentationDelay,
+          [ATTR_INP_PROCESSING_DURATION]: processingDuration,
+          [ATTR_INP_DURATION]: inpDuration,
           // These will be deprecated in a future version
-          [`${attrPrefix}.element`]: interactionTarget,
-          [`${attrPrefix}.event_type`]: interactionType,
+          [ATTR_INP_ELEMENT]: interactionTarget,
+          [ATTR_INP_EVENT_TYPE]: interactionType,
         };
 
         inpSpan.setAttributes(inpAttributes);
@@ -532,7 +604,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
             this.getElementFromNode(inpEntry.target),
             inpSpan,
             dataAttributes,
-            attrPrefix,
+            'inp',
           );
         });
         if (applyCustomAttributes) {
@@ -542,7 +614,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
         if (includeTimingsAsSpans) {
           longAnimationFrameEntries.forEach((perfEntry) => {
             this.processPerformanceLongAnimationFrameTimingSpans(
-              attrPrefix,
+              'inp',
               perfEntry,
             );
           });
@@ -559,15 +631,18 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     const { name, attribution } = fcp;
     const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
       attribution;
-    const attrPrefix = this.getAttrPrefix(name);
 
     const span = this.tracer.startSpan(name);
 
     span.setAttributes({
-      ...this.getSharedAttributes(fcp),
-      [`${attrPrefix}.time_to_first_byte`]: timeToFirstByte,
-      [`${attrPrefix}.time_since_first_byte`]: firstByteToFCP,
-      [`${attrPrefix}.load_state`]: loadState,
+      [ATTR_FCP_ID]: fcp.id,
+      [ATTR_FCP_DELTA]: fcp.delta,
+      [ATTR_FCP_VALUE]: fcp.value,
+      [ATTR_FCP_RATING]: fcp.rating,
+      [ATTR_FCP_NAVIGATION_TYPE]: fcp.navigationType,
+      [ATTR_FCP_TIME_TO_FIRST_BYTE]: timeToFirstByte,
+      [ATTR_FCP_TIME_SINCE_FIRST_BYTE]: firstByteToFCP,
+      [ATTR_FCP_LOAD_STATE]: loadState,
     });
 
     if (applyCustomAttributes) {
@@ -592,19 +667,22 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       requestDuration,
       waitingDuration,
     }: TTFBAttribution = attribution;
-    const attrPrefix = this.getAttrPrefix(name);
     const attributes = {
-      ...this.getSharedAttributes(ttfb),
-      [`${attrPrefix}.waiting_duration`]: waitingDuration,
-      [`${attrPrefix}.dns_duration`]: dnsDuration,
-      [`${attrPrefix}.connection_duration`]: connectionDuration,
-      [`${attrPrefix}.request_duration`]: requestDuration,
-      [`${attrPrefix}.cache_duration`]: cacheDuration,
+      [ATTR_TTFB_ID]: ttfb.id,
+      [ATTR_TTFB_DELTA]: ttfb.delta,
+      [ATTR_TTFB_VALUE]: ttfb.value,
+      [ATTR_TTFB_RATING]: ttfb.rating,
+      [ATTR_TTFB_NAVIGATION_TYPE]: ttfb.navigationType,
+      [ATTR_TTFB_WAITING_DURATION]: waitingDuration,
+      [ATTR_TTFB_DNS_DURATION]: dnsDuration,
+      [ATTR_TTFB_CONNECTION_DURATION]: connectionDuration,
+      [ATTR_TTFB_REQUEST_DURATION]: requestDuration,
+      [ATTR_TTFB_CACHE_DURATION]: cacheDuration,
       // These will be deprecated ina future version
-      [`${attrPrefix}.waiting_time`]: waitingDuration,
-      [`${attrPrefix}.dns_time`]: dnsDuration,
-      [`${attrPrefix}.connection_time`]: connectionDuration,
-      [`${attrPrefix}.request_time`]: requestDuration,
+      [ATTR_TTFB_WAITING_TIME]: waitingDuration,
+      [ATTR_TTFB_DNS_TIME]: dnsDuration,
+      [ATTR_TTFB_CONNECTION_TIME]: connectionDuration,
+      [ATTR_TTFB_REQUEST_TIME]: requestDuration,
     };
 
     const span = this.tracer.startSpan(name);

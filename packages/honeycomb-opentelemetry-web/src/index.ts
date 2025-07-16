@@ -5,3 +5,4 @@ export * from './global-errors-autoinstrumentation';
 export * from './experimental';
 export * from './baggage-span-processor';
 export * from './types';
+export * from './semantic-attributes';

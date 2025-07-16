@@ -3,7 +3,22 @@ import {
   Resource,
   resourceFromAttributes,
 } from '@opentelemetry/resources';
+import { ATTR_USER_AGENT_ORIGINAL } from '@opentelemetry/semantic-conventions';
+import {
+  ATTR_BROWSER_LANGUAGE,
+  ATTR_BROWSER_MOBILE,
+} from '@opentelemetry/semantic-conventions/incubating';
 import UAParser from 'ua-parser-js';
+import {
+  ATTR_BROWSER_NAME,
+  ATTR_BROWSER_TOUCH_SCREEN_ENABLED,
+  ATTR_BROWSER_VERSION,
+  ATTR_DEVICE_TYPE,
+  ATTR_NETWORK_EFFECTIVE_TYPE,
+  ATTR_SCREEN_HEIGHT,
+  ATTR_SCREEN_SIZE,
+  ATTR_SCREEN_WIDTH,
+} from './semantic-attributes';
 
 type ScreenSize = 'small' | 'medium' | 'large' | 'unknown';
 
@@ -64,20 +79,20 @@ export function configureBrowserAttributesResource(): Resource {
   );
 
   const browserAttributes: DetectedResourceAttributes = {
-    'user_agent.original': navigator.userAgent,
+    [ATTR_USER_AGENT_ORIGINAL]: navigator.userAgent,
     //https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#mobile_tablet_or_desktop
-    'browser.mobile': navigator.userAgent.includes('Mobi'),
-    'browser.touch_screen_enabled': navigator.maxTouchPoints > 0,
-    'browser.language': navigator.language,
-    'browser.name': browserName,
-    'browser.version': browserVersion,
-    'device.type': deviceType,
-    'network.effectiveType': computeNetworkType(
+    [ATTR_BROWSER_MOBILE]: navigator.userAgent.includes('Mobi'),
+    [ATTR_BROWSER_TOUCH_SCREEN_ENABLED]: navigator.maxTouchPoints > 0,
+    [ATTR_BROWSER_LANGUAGE]: navigator.language,
+    [ATTR_BROWSER_NAME]: browserName,
+    [ATTR_BROWSER_VERSION]: browserVersion,
+    [ATTR_DEVICE_TYPE]: deviceType,
+    [ATTR_NETWORK_EFFECTIVE_TYPE]: computeNetworkType(
       (navigator as ExtendedNavigator).connection,
     ),
-    'screen.width': window.screen.width,
-    'screen.height': window.screen.height,
-    'screen.size': computeScreenSize(window.screen.width),
+    [ATTR_SCREEN_WIDTH]: window.screen.width,
+    [ATTR_SCREEN_HEIGHT]: window.screen.height,
+    [ATTR_SCREEN_SIZE]: computeScreenSize(window.screen.width),
   };
 
   return resourceFromAttributes(browserAttributes);

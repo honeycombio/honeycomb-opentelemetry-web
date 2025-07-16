@@ -1,5 +1,15 @@
 import { Span } from '@opentelemetry/api';
 import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
+import {
+  ATTR_BROWSER_HEIGHT,
+  ATTR_BROWSER_WIDTH,
+  ATTR_PAGE_HASH,
+  ATTR_PAGE_HOSTNAME,
+  ATTR_PAGE_ROUTE,
+  ATTR_PAGE_SEARCH,
+  ATTR_PAGE_URL,
+  ATTR_URL_PATH,
+} from './semantic-attributes';
 
 /**
  * A {@link SpanProcessor} that adds browser specific attributes to each span
@@ -13,15 +23,15 @@ export class BrowserAttributesSpanProcessor implements SpanProcessor {
     const { href, pathname, search, hash, hostname } = window.location;
 
     span.setAttributes({
-      'browser.width': window.innerWidth,
-      'browser.height': window.innerHeight,
-      'page.hash': hash,
-      'page.url': href,
-      'page.route': pathname,
-      'page.hostname': hostname,
-      'page.search': search,
+      [ATTR_BROWSER_WIDTH]: window.innerWidth,
+      [ATTR_BROWSER_HEIGHT]: window.innerHeight,
+      [ATTR_PAGE_HASH]: hash,
+      [ATTR_PAGE_URL]: href,
+      [ATTR_PAGE_ROUTE]: pathname,
+      [ATTR_PAGE_HOSTNAME]: hostname,
+      [ATTR_PAGE_SEARCH]: search,
 
-      'url.path': pathname,
+      [ATTR_URL_PATH]: pathname,
     });
   }
 
