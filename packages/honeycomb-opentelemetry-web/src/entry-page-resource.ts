@@ -4,6 +4,14 @@ import {
   resourceFromAttributes,
 } from '@opentelemetry/resources';
 import { EntryPageConfig } from './types';
+import {
+  ATTR_ENTRY_PAGE_HASH,
+  ATTR_ENTRY_PAGE_HOSTNAME,
+  ATTR_ENTRY_PAGE_PATH,
+  ATTR_ENTRY_PAGE_REFERRER,
+  ATTR_ENTRY_PAGE_SEARCH,
+  ATTR_ENTRY_PAGE_URL,
+} from './semantic-attributes';
 
 export const defaultConfig: EntryPageConfig = {
   path: true,
@@ -25,12 +33,12 @@ export function configureEntryPageResource(
   const { href, pathname, search, hash, hostname } = window.location;
 
   const attributes: DetectedResourceAttributes = {
-    'entry_page.url': optionalAttribute(options.url, href),
-    'entry_page.path': optionalAttribute(options.path, pathname),
-    'entry_page.search': optionalAttribute(options.search, search),
-    'entry_page.hash': optionalAttribute(options.hash, hash),
-    'entry_page.hostname': optionalAttribute(options.hostname, hostname),
-    'entry_page.referrer': optionalAttribute(
+    [ATTR_ENTRY_PAGE_URL]: optionalAttribute(options.url, href),
+    [ATTR_ENTRY_PAGE_PATH]: optionalAttribute(options.path, pathname),
+    [ATTR_ENTRY_PAGE_SEARCH]: optionalAttribute(options.search, search),
+    [ATTR_ENTRY_PAGE_HASH]: optionalAttribute(options.hash, hash),
+    [ATTR_ENTRY_PAGE_HOSTNAME]: optionalAttribute(options.hostname, hostname),
+    [ATTR_ENTRY_PAGE_REFERRER]: optionalAttribute(
       options.referrer,
       document.referrer,
     ),
