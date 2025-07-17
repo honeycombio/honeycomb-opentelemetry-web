@@ -2,6 +2,8 @@
  * Custom semantic attribute constants for the Honeycomb OpenTelemetry Web SDK.
  * These attributes extend the standard OpenTelemetry semantic conventions with
  * Honeycomb-specific and browser-specific attributes.
+ *
+ * https://github.com/open-telemetry/semantic-conventions/tree/main/model/browser
  */
 
 // =============================================================================
