@@ -6,14 +6,10 @@
 
 Honeycomb wrapper for [OpenTelemetry](https://opentelemetry.io) in the browser. Detailed documentation for setup, instrumentation and troubleshooting can be found [here](https://docs.honeycomb.io/get-started/start-building/web/).
 
-<!-- TODO: happy badges of the OTel versions we are using -->
-<!-- TODO: evergreen question of whether to use fields or attributes -->
-**STATUS: this library is in BETA.** Data shapes are stable and safe for production. We are actively seeking feedback to ensure usability.
-
 Latest release:
 
-* built with OpenTelemetry JS [Stable v2.0.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v2.0.0), [Experimental v0.202.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.202.0), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0), [Semantic Conventions v1.34.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/semconv%2Fv1.34.0)
-* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.48.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.48.0)
+* built with OpenTelemetry JS [Stable v2.0.1](https://github.com/open-telemetry/opentelemetry-js/releases/tag/v2.0.1), [Experimental v0.203.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/experimental%2Fv0.203.0), [API v1.9.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/api%2Fv1.9.0), [Semantic Conventions v1.36.0](https://github.com/open-telemetry/opentelemetry-js/releases/tag/semconv%2Fv1.34.0)
+* compatible with OpenTelemetry Auto-Instrumentations for Web [~0.49.0](https://github.com/open-telemetry/opentelemetry-js-contrib/releases/tag/auto-instrumentations-web-v0.49.0)
 
 This package sets up OpenTelemetry for tracing, using our recommended practices, including:
 
@@ -26,10 +22,6 @@ This package sets up OpenTelemetry for tracing, using our recommended practices,
 * An informative debug mode
 * Links to traces in Honeycomb
 * Automatically enabled [Web Vitals](https://web.dev/articles/vitals) & error instrumentation
-
-<!-- TODO: determine whether we must call this a distro instead of a wrapper. -->
-
-<!-- Things to come: smoke tests in multiple browsers, smoke tests for popular frameworks, CDN distribution -->
 
 ## Why use this?
 

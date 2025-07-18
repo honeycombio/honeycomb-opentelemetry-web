@@ -1,5 +1,15 @@
 # honeycomb-opentelemetry-web changelog
 
+## v1.0.0 - 2025-07-18
+
+- feat: Add timeouts as a SDK config option (#564) | @jairo-mendoza
+- maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 8 updates (#569) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#570) | @dependabot
+- maint(deps): bump on-headers and compression in /packages/honeycomb-opentelemetry-web/examples/custom-with-collector-ts (#573) | @dependabot
+- maint: named exports instead of `export *` (#572) | @pkanal
+- feat: Export attribute names as constants (#571) | @pkanal
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 4 updates (#568) | @dependabot
+
 ## v0.21.0 [beta] - 2025-07-01
 
 ### ✨ Features
