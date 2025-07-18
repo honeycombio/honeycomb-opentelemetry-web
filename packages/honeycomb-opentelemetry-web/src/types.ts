@@ -49,6 +49,10 @@ export interface WebSDKConfiguration {
   serviceVersion?: string;
   spanProcessor?: SpanProcessor;
   spanProcessors?: SpanProcessor[];
+  timeout?: number;
+  tracesTimeout?: number;
+  metricsTimeout?: number;
+  logsTimeout?: number;
   traceExporter: SpanExporter;
   spanLimits: SpanLimits;
   idGenerator: IdGenerator;
@@ -122,6 +126,18 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * E.g. adding attributes to a span.
    */
   spanProcessors?: SpanProcessor[];
+
+  /** Timeout used by exporters when sending data. Defaults to 10000ms (10 seconds). */
+  timeout?: number;
+
+  /** Timeout used by the traces exporter when sending data. Overrides timeout for trace data. */
+  tracesTimeout?: number;
+
+  /** Timeout used by the metrics exporter when sending data. Overrides timeout for metric data. */
+  metricsTimeout?: number;
+
+  /** Timeout used by the logs exporter when sending data. Overrides timeout for log data. */
+  logsTimeout?: number;
 
   /** Provide an array of exporters
    * Use this to configure custom tracing services in addition
