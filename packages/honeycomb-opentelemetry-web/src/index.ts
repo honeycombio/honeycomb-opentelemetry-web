@@ -157,3 +157,5 @@ export {
   ATTR_TTFB_WAITING_DURATION,
   ATTR_TTFB_WAITING_TIME,
 } from './semantic-attributes';
+
+export { UserInteractionInstrumentation } from './experimental/user-interaction-instrumentation/user-interaction-instrumentation';
