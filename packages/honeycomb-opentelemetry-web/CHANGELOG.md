@@ -1,5 +1,9 @@
 # honeycomb-opentelemetry-web changelog
 
+## v1.0.1 - 2025-07-21
+
+- fix: export experimental user interaction instrumentation (#575) | @pkanal
+
 ## v1.0.0 - 2025-07-18
 
 - feat: Add timeouts as a SDK config option (#564) | @jairo-mendoza
