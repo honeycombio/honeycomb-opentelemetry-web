@@ -192,7 +192,6 @@ Here is a list of what gets instrumented automatically by including `getWebAutoI
 * [Fetch request instrumentation](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-fetch)
 * [XML HTTP request instrumentation](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-xml-http-request)
 * [User interaction instrumentation](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/packages/instrumentation-user-interaction)
-
 * [Web vitals instrumentation](../../docs/web-vitals.md)
 
 ## Fields emitted
