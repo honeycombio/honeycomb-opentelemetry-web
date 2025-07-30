@@ -188,11 +188,11 @@ For these reasons, we do not enable ZoneContextManager by default.
 
 Here is a list of what gets instrumented automatically by including `getWebAutoInstrumentations` and `WebVitalsInstrumentation` in the list of instrumentations while initializing the SDK:
 
-* [Document & resource loading instrumentation](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-document-load#readme)
+* [Document & resource loading instrumentation](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/packages/instrumentation-document-load)
 * [Fetch request instrumentation](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-fetch)
 * [XML HTTP request instrumentation](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-xml-http-request)
-* [User interaction instrumentation](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-user-interaction)
-* [Web vitals instrumentation](./docs/web-vitals.md)
+* [User interaction instrumentation](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/packages/instrumentation-user-interaction)
+* [Web vitals instrumentation](../../docs/web-vitals.md)
 
 ## Fields emitted
 
