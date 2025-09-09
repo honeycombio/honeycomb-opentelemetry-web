@@ -1,5 +1,22 @@
 # honeycomb-opentelemetry-web changelog
 
+## v1.0.2 - 2025-09-09
+
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#596) | @dependabot
+- maint(deps): bump the example-deps group across 6 directories with 9 updates (#597) | @dependabot
+- maint(deps): bump @babel/runtime from 7.28.3 to 7.28.4 in /packages/honeycomb-opentelemetry-web (#599) | @dependabot
+- maint(deps): bump ua-parser-js from 1.0.40 to 1.0.41 in /packages/honeycomb-opentelemetry-web (#592) | @dependabot
+- maint(deps-dev): bump rollup from 4.46.3 to 4.48.1 in /packages/honeycomb-opentelemetry-web in the dev-dependencies group (#591) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 5 updates (#589) | @dependabot
+- maint(deps): bump @babel/runtime from 7.28.2 to 7.28.3 in /packages/honeycomb-opentelemetry-web (#588) | @dependabot
+- maint(deps-dev): bump tmp from 0.2.3 to 0.2.4 in /packages/honeycomb-opentelemetry-web (#587) | @dependabot
+- maint(deps): bump the example-deps group across 6 directories with 11 updates (#584) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#585) | @dependabot
+- fix: fix links in README (#582) | @beekhc
+- maint(deps): bump @babel/runtime from 7.27.6 to 7.28.2 in /packages/honeycomb-opentelemetry-web (#580) | @dependabot
+- maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 2 updates (#581) | @dependabot
+- maint(deps): bump form-data from 4.0.3 to 4.0.4 in /packages/honeycomb-opentelemetry-web (#579) | @dependabot
+
 ## v1.0.1 - 2025-07-21
 
 - fix: export experimental user interaction instrumentation (#575) | @pkanal
