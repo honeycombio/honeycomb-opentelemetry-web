@@ -1,6 +1,6 @@
 {
   "name": "@honeycombio/opentelemetry-web",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Honeycomb OpenTelemetry Wrapper for Browser Applications",
   "repository": {
     "type": "git",
