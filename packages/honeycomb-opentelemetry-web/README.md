@@ -51,16 +51,13 @@ import { HoneycombWebSDK, WebVitalsInstrumentation } from '@honeycombio/opentele
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 const sdk = new HoneycombWebSDK({
+  // endpoint: "https://api.eu1.honeycomb.io/v1/traces", // Send to EU instance of Honeycomb. Defaults to sending to US instance.
   apiKey: 'api-key-goes-here',
   serviceName: 'your-great-browser-application',
   instrumentations: [getWebAutoInstrumentations(), new WebVitalsInstrumentation()], // add automatic instrumentation
 });
 sdk.start();
 ```
-
-> ### EU instance
-> The SDK sends data to the North America instance of honeycomb by default. If your team is set up in the EU instance add the following field to your SDK.
-> `endpoint: "https://ui.eu1.honeycomb.io"`
 
 4. Build and run your application, and then look for data in Honeycomb. On the Home screen, choose your application by looking for the service name in the Dataset dropdown at the top. Data should populate.
 
