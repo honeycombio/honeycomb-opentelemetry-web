@@ -17,7 +17,12 @@
  * limitations under the License.
  */
 
-import { ContextManager, metrics, TextMapPropagator, trace } from '@opentelemetry/api';
+import {
+  ContextManager,
+  metrics,
+  TextMapPropagator,
+  trace,
+} from '@opentelemetry/api';
 import {
   Instrumentation,
   registerInstrumentations,
