@@ -51,6 +51,7 @@ import { HoneycombWebSDK, WebVitalsInstrumentation } from '@honeycombio/opentele
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 const sdk = new HoneycombWebSDK({
+  // endpoint: "https://api.eu1.honeycomb.io/v1/traces", // Send to EU instance of Honeycomb. Defaults to sending to US instance.
   apiKey: 'api-key-goes-here',
   serviceName: 'your-great-browser-application',
   instrumentations: [getWebAutoInstrumentations(), new WebVitalsInstrumentation()], // add automatic instrumentation
