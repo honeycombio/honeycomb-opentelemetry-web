@@ -52,6 +52,7 @@ export interface WebSDKConfiguration {
   timeout?: number;
   tracesTimeout?: number;
   metricsTimeout?: number;
+  disableMetrics?: boolean;
   logsTimeout?: number;
   traceExporter: SpanExporter;
   spanLimits: SpanLimits;
@@ -141,13 +142,19 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
 
   /** Provide an array of exporters
    * Use this to configure custom tracing services in addition
-   * to the default honeycomb one.
+   * to the default Honeycomb one.
    * E.g. You want to send data to another service.
    */
   traceExporters?: SpanExporter[];
 
-  /** Disable the default honeycomb SpanExporters
-   * `true` Disables the default honeycomb span exporter, `false` enables.
+  /** Disable the default Honeycomb MetricExporter
+   * `true` Disables the default Honeycomb metric exporter, `false` enables.
+   * Defaults to 'false'.
+   */
+  disableMetrics?: boolean;
+
+  /** Disable the default Honeycomb SpanExporters
+   * `true` Disables the default Honeycomb span exporter, `false` enables.
    * in this case you should provide other exporters in the `traceExporters` field.
    * Defaults to 'false'.
    */
