@@ -17,7 +17,12 @@
  * limitations under the License.
  */
 
-import { ContextManager, metrics, TextMapPropagator } from '@opentelemetry/api';
+import {
+  ContextManager,
+  metrics,
+  TextMapPropagator,
+  trace,
+} from '@opentelemetry/api';
 import {
   Instrumentation,
   registerInstrumentations,
@@ -169,10 +174,6 @@ export class WebSDK {
       return;
     }
 
-    registerInstrumentations({
-      instrumentations: this._instrumentations,
-    });
-
     if (this._autoDetectResources) {
       const internalConfig: ResourceDetectionConfig = {
         detectors: this._resourceDetectors,
@@ -220,6 +221,7 @@ export class WebSDK {
       contextManager: this._tracerProviderConfig?.contextManager,
       propagator: this._tracerProviderConfig?.textMapPropagator,
     });
+    trace.setGlobalTracerProvider(tracerProvider);
 
     if (this._meterProviderConfig) {
       const readers = this._meterProviderConfig.metricExporters.map(
@@ -246,6 +248,10 @@ export class WebSDK {
       });
       logs.setGlobalLoggerProvider(this._loggerProvider);
     }
+
+    registerInstrumentations({
+      instrumentations: this._instrumentations,
+    });
   }
 
   /* Experimental getter method: not currently part of the upstream
