@@ -23,6 +23,6 @@
     "chokidar": "^4.0.3",
     "chokidar-cli": "^3.0.0",
     "esbuild": "0.25.9",
-    "serve": "^14.2.4"
+    "serve": "^14.2.5"
   }
 }
