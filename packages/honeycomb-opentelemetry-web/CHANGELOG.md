@@ -1,5 +1,12 @@
 # honeycomb-opentelemetry-web changelog
 
+## v1.0.3 - 2025-09-24
+
+- fix: fix instrumentation to get correct tracer (#602) | @beekhc
+- maint: Set before prior to the shai hulud supply chain attack (#608) | @wolfgangcodes
+- maint: ignore post install scripts. (#607) | @wolfgangcodes
+- docs: Add documentation for sending data to EU instance (#601) | @arriIsHere
+
 ## v1.0.2 - 2025-09-09
 
 - maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#596) | @dependabot
