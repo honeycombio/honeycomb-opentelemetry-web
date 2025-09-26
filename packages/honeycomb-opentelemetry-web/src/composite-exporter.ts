@@ -51,11 +51,9 @@ export function configureMetricExporters(
   options?: HoneycombOptions,
 ): PushMetricExporter[] {
   const exporters: PushMetricExporter[] = [];
-  // Early return if metrics are disabled
-  if (options?.disableMetrics) {
-    return [];
+  if (options?.disableDefaultMetricExporter !== true) {
+    exporters.push(configureHoneycombHttpJsonMetricExporter(options));
   }
-  exporters.push(configureHoneycombHttpJsonMetricExporter(options));
   if (options?.localVisualizations) {
     // TODO: Create a console link exporter for metrics.
     exporters.push(new ConsoleMetricExporter());

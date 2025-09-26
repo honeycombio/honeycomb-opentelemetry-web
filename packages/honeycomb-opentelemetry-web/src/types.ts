@@ -52,7 +52,7 @@ export interface WebSDKConfiguration {
   timeout?: number;
   tracesTimeout?: number;
   metricsTimeout?: number;
-  disableMetrics?: boolean;
+  disableDefaultMetricExporter?: boolean;
   logsTimeout?: number;
   traceExporter: SpanExporter;
   spanLimits: SpanLimits;
@@ -151,7 +151,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * `true` Disables the default Honeycomb metric exporter, `false` enables.
    * Defaults to 'false'.
    */
-  disableMetrics?: boolean;
+  disableDefaultMetricExporter?: boolean;
 
   /** Disable the default Honeycomb SpanExporters
    * `true` Disables the default Honeycomb span exporter, `false` enables.
