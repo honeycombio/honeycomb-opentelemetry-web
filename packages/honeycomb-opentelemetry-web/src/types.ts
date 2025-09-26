@@ -145,7 +145,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * to the default Honeycomb one.
    * E.g. You want to send data to another service.
    */
-  metricExporters?: MetricExporter[];
+  metricExporters?: PushMetricExporter[];
 
   /** Disable the default Honeycomb MetricExporter
    * `true` Disables the default Honeycomb metric exporter, `false` enables.
