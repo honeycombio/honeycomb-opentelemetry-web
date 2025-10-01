@@ -17,12 +17,12 @@
   "dependencies": {
     "@honeycombio/opentelemetry-web": "file:../..",
     "@opentelemetry/auto-instrumentations-web": "^0.46.0",
-    "@opentelemetry/context-zone": "^2.0.1"
+    "@opentelemetry/context-zone": "^2.1.0"
   },
   "devDependencies": {
     "chokidar": "^4.0.3",
     "chokidar-cli": "^3.0.0",
     "esbuild": "0.25.9",
-    "serve": "^14.2.4"
+    "serve": "^14.2.5"
   }
 }

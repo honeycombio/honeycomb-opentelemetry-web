@@ -15,6 +15,6 @@
   "devDependencies": {
     "chokidar": "^4.0.3",
     "chokidar-cli": "^3.0.0",
-    "serve": "^14.2.4"
+    "serve": "^14.2.5"
   }
 }
