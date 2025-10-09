@@ -18,7 +18,7 @@ import { defaultSessionProvider } from './default-session-provider';
  * If you needed to support this in production, you'd want to create a similar file that exposes the functionality you
  * need for you use cases.
  *
- * The getOtel* functions are provided for ease of exploration. Your CDN wrapper should expose only what you intend to use. 
+ * The getOtel* functions are provided for ease of exploration. Your CDN wrapper should expose only what you intend to use.
  *
  * Here we're making the assumption that we need to be able to:
  * - Initialize the HoneycombWebSDK
