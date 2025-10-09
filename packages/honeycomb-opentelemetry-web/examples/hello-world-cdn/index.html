@@ -16,6 +16,12 @@
       <div>
         <span id="dadJokeText"></span>
       </div>
+      <div>
+        <span>Session ID: <code id="sessionId">-</code></span>
+      </div>
+      <div>
+        <span>Jokes remaining this session: <code id="jokesRemaining"></span>
+      </div>
     </section>
 
     <!-- Scripts here. Don't remove ↓ -->
@@ -23,6 +29,43 @@
     <script>
       const configDefaults = {
         ignoreNetworkEvents: true,
+      };
+
+      // Your session logic is probably based on cookies or local storage.
+      // But for this example, we will use a random ID generator and call 5 jokes a session.
+      const getJokeCountSessionProvider = (MAX_JOKES = 5) => {
+        let sessionId = null;
+        let count = 0;
+        const jokeLimit = MAX_JOKES;
+
+        return {
+          incrementJokeCount: () => {
+            if (count >= MAX_JOKES) {
+              const newSessionId = crypto.randomUUID();
+              sessionId = newSessionId;
+              count = 0;
+              return;
+            }
+            count++;
+          },
+          currentJokeCount: () => count,
+          jokeLimit: () => jokeLimit,
+          getSessionId: () => {
+            if (sessionId === null) {
+              // Consider using from RandomIdGenerator from @opentelemetry/sdk-trace-base
+              sessionId = crypto.randomUUID();
+            }
+            return sessionId;
+          },
+        };
+      };
+
+      const sessionProvider = getJokeCountSessionProvider();
+
+      const updateJokeCount = () => {
+          const jokesRemaining =  sessionProvider.jokeLimit() - sessionProvider.currentJokeCount();
+        document.getElementById('jokesRemaining').innerText = jokesRemaining
+
       };
 
       const main = () => {
@@ -38,6 +81,7 @@
               includeTimingsAsSpans: true,
             },
           },
+          sessionProvider,
         };
 
         const instOpts = {
@@ -53,7 +97,8 @@
           'hello-world-cdn',
         );
         sdk.start();
-
+        document.getElementById('sessionId').innerText = sdk.getSessionId();
+        updateJokeCount();
         const buttonElement = document.getElementById('loadDadJoke');
 
         buttonElement.addEventListener('click', () => {
@@ -77,6 +122,10 @@
             })
             .finally(() => {
               span.end();
+              sessionProvider.incrementJokeCount();
+              document.getElementById('sessionId').innerText =
+                sdk.getSessionId();
+              updateJokeCount();
             })
             .catch((e) => {
               console.error(e);
