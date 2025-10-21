@@ -58,7 +58,7 @@ export function configureMetricExporters(
   }
 
   if (options?.disableDefaultMetricExporter !== true) {
-    exporters.push(configureHoneycombHttpJsonMetricExporter(options));
+    exporters.unshift(configureHoneycombHttpJsonMetricExporter(options));
   }
 
   if (options?.localVisualizations) {
