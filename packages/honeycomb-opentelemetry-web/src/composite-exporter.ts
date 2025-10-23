@@ -51,11 +51,21 @@ export function configureMetricExporters(
   options?: HoneycombOptions,
 ): PushMetricExporter[] {
   const exporters: PushMetricExporter[] = [];
-  exporters.push(configureHoneycombHttpJsonMetricExporter(options));
+
+  // if there is an array of user-provided exporters, add them
+  if (options?.metricExporters) {
+    exporters.push(...options.metricExporters);
+  }
+
+  if (options?.disableDefaultMetricExporter !== true) {
+    exporters.unshift(configureHoneycombHttpJsonMetricExporter(options));
+  }
+
   if (options?.localVisualizations) {
     // TODO: Create a console link exporter for metrics.
     exporters.push(new ConsoleMetricExporter());
   }
+
   return exporters;
 }
 
