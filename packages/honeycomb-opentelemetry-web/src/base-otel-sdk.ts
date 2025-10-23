@@ -17,12 +17,7 @@
  * limitations under the License.
  */
 
-import {
-  ContextManager,
-  metrics,
-  TextMapPropagator,
-  trace,
-} from '@opentelemetry/api';
+import { ContextManager, metrics, TextMapPropagator } from '@opentelemetry/api';
 import {
   Instrumentation,
   registerInstrumentations,
@@ -221,7 +216,6 @@ export class WebSDK {
       contextManager: this._tracerProviderConfig?.contextManager,
       propagator: this._tracerProviderConfig?.textMapPropagator,
     });
-    trace.setGlobalTracerProvider(tracerProvider);
 
     if (this._meterProviderConfig) {
       const readers = this._meterProviderConfig.metricExporters.map(
