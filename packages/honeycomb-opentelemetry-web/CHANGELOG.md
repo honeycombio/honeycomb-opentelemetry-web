@@ -1,5 +1,11 @@
 # honeycomb-opentelemetry-web changelog
 
+## v1.1.0 - 2025-10-24
+
+- feat: Add options metricExporters and disableDefaultMetricExporter (#605) | @sodabrew
+- feat: expose session provider and OpenTelemetry APIs in CDN wrapper (#614) | @wolfgangcodes
+- fix: remove redundant call to setGlobalTracerProvider as its set upon creation. (#615) | @wolfgangcodes
+
 ## v1.0.3 - 2025-09-24
 
 - fix: fix instrumentation to get correct tracer (#602) | @beekhc
