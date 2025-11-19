@@ -137,7 +137,6 @@ export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
   onError = (event: ErrorEvent | PromiseRejectionEvent) => {
     const error: Error | undefined =
       'reason' in event ? event.reason : event.error;
-    console.log(this.applyCustomAttributesOnSpan);
     if (error) {
       recordException(error, {}, this.tracer, this.applyCustomAttributesOnSpan);
     }
