@@ -55,8 +55,12 @@ const main = () => {
     contextManager: new ZoneContextManager(),
     webVitalsInstrumentationConfig: {
       vitalsToTrack: ['CLS', 'FCP', 'INP', 'LCP', 'TTFB'],
+      cls: {
+        reportAllChanges: true,
+      },
       lcp: {
         dataAttributes: ['hello', 'barBiz'],
+        reportAllChanges: true,
       },
     },
     localVisualizations: true,
