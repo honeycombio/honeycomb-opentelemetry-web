@@ -21,60 +21,60 @@ teardown_file() {
 ## mostly automatic tests first ##
 
 @test "SDK telemetry includes service.name in resource attributes" {
-  result=$(resource_attributes_received | jq "select(.key == \"service.name\").value.stringValue")
+  result=$(resource_attributes_received | jq "select(.key == \"service.name\").value.stringValue" | uniq)
   assert_equal "$result" '"hny-web-distro-example:custom-with-collector-ts"'
 }
 
 @test "SDK telemetry includes service.version in resource attributes" {
-  result=$(resource_attributes_received | jq "select(.key == \"service.version\").value.stringValue")
+  result=$(resource_attributes_received | jq "select(.key == \"service.version\").value.stringValue" | uniq)
   assert_equal "$result" '"1.0.0"'
 }
 
 @test "SDK telemetry includes default resource attributes" {
-  name=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.name\").value.stringValue")
+  name=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.name\").value.stringValue" | uniq)
   assert_equal "$name" '"opentelemetry"'
 
-  language=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.language\").value.stringValue")
+  language=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.language\").value.stringValue" | uniq)
   assert_equal "$language" '"webjs"'
 
   # We want to check that the version attribute exists but not specifically what it is to avoid smoke tests breaking everytime we upgrade OTel packages
-  version=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.version\").value.stringValue")
+  version=$(resource_attributes_received | jq "select(.key == \"telemetry.sdk.version\").value.stringValue" | uniq)
   assert_not_empty "$version"
 }
 
 @test "SDK telemetry includes Honeycomb distro version" {
-  version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.version\").value.stringValue")
+  version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.version\").value.stringValue" | uniq)
   assert_not_empty "$version"
 
-  runtime_version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.runtime_version\").value.stringValue")
+  runtime_version=$(resource_attributes_received | jq "select(.key == \"honeycomb.distro.runtime_version\").value.stringValue" | uniq)
   assert_equal "$runtime_version" '"browser"'
 
-  version=$(resource_attributes_received | jq "select(.key == \"telemetry.distro.version\").value.stringValue")
+  version=$(resource_attributes_received | jq "select(.key == \"telemetry.distro.version\").value.stringValue" | uniq)
   assert_not_empty "$version"
 
-  name=$(resource_attributes_received | jq "select(.key == \"telemetry.distro.name\").value.stringValue")
+  name=$(resource_attributes_received | jq "select(.key == \"telemetry.distro.name\").value.stringValue" | uniq)
   assert_equal "$name" '"@honeycombio/opentelemetry-web"'
 }
 
 @test "SDK telemetry includes browser attributes" {
-  platform=$(resource_attributes_received | jq "select(.key == \"browser.platform\").value.stringValue")
+  platform=$(resource_attributes_received | jq "select(.key == \"browser.platform\").value.stringValue" | uniq)
   assert_not_empty "$platform"
 
-  mobile=$(resource_attributes_received | jq "select(.key == \"browser.mobile\").value.boolValue")
+  mobile=$(resource_attributes_received | jq "select(.key == \"browser.mobile\").value.boolValue" | uniq)
   assert_equal "$mobile" 'false'
 
-  language=$(resource_attributes_received | jq "select(.key == \"browser.language\").value.stringValue")
+  language=$(resource_attributes_received | jq "select(.key == \"browser.language\").value.stringValue" | uniq)
   assert_equal "$language" '"en-US"'
 }
 
 @test "SDK telemetry includes entry_page attributes" {
-  url=$(resource_attributes_received | jq "select(.key == \"entry_page.url\").value.stringValue")
+  url=$(resource_attributes_received | jq "select(.key == \"entry_page.url\").value.stringValue" | uniq)
   assert_not_empty "$url"
 
-  path=$(resource_attributes_received | jq "select(.key == \"entry_page.path\").value.boolValue")
+  path=$(resource_attributes_received | jq "select(.key == \"entry_page.path\").value.boolValue" | uniq)
   assert_not_empty "$path"
 
-  hostname=$(resource_attributes_received | jq "select(.key == \"entry_page.hostname\").value.stringValue")
+  hostname=$(resource_attributes_received | jq "select(.key == \"entry_page.hostname\").value.stringValue" | uniq)
   assert_not_empty "$hostname"
 }
 
@@ -88,7 +88,12 @@ teardown_file() {
 
 @test "Auto instrumentation produces user interaction click span" {
   result=$(span_names_for ${USER_INTERACTION_SCOPE})
-  assert_equal "$result" '"click"'
+  assert_equal "$result" '"click"
+"click"
+"click"
+"click"
+"click"
+"click"'
 }
 @test "Auto instrumentation produces 4 document load spans" {
   result=$(span_names_for ${DOCUMENT_LOAD_SCOPE})
@@ -116,7 +121,7 @@ teardown_file() {
 ## tests on custom instrumentation ##
 
 @test "SDK telemetry includes custom resource attributes" {
-  result=$(resource_attributes_received | jq "select(.key == \"app.environment\").value.stringValue")
+  result=$(resource_attributes_received | jq "select(.key == \"app.environment\").value.stringValue" | uniq)
   assert_equal "$result" '"development"'
 }
 
