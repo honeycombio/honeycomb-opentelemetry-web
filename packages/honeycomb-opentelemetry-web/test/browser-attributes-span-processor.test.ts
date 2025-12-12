@@ -27,6 +27,7 @@ describe('BrowserAttributesSpanProcessor', () => {
 
     expect(finishedSpans[0].attributes).toEqual({
       'browser.width': 1024,
+      'browser.page.visibility': 'visible',
       'browser.height': 768,
       'page.hash': '#the-hash',
       'page.hostname': 'something-something.com',
