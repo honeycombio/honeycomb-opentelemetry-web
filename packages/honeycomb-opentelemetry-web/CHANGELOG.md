@@ -1,5 +1,16 @@
 # honeycomb-opentelemetry-web changelog
 
+## v1.2.0 - 2025-12-12
+
+- feat: add page visibility state as a browser attribute (#624) | @MustafaHaddara
+- fix: Remove console log from onError handler (#622) | @msolli
+- maint(deps): bump web-vitals from 5.0.3 to 5.1.0 in /packages/honeycomb-opentelemetry-web (#586) | @dependabot
+- maint(deps): bump js-yaml in /packages/honeycomb-opentelemetry-web/examples/experimental/user-interaction-instrumentation (#620) | @dependabot
+- maint(deps): bump node-forge from 1.3.1 to 1.3.2 in /packages/honeycomb-opentelemetry-web/examples/hello-world-react-create-app (#623) | @dependabot
+- maint(deps): bump @opentelemetry/semantic-conventions from 1.36.0 to 1.37.0 in /packages/honeycomb-opentelemetry-web in the otel group across 1 directory (#617) | @dependabot
+- maint(deps): bump the example-deps group across 4 directories with 2 updates (#613) | @dependabot
+- maint(deps): bump on-headers and serve in /packages/honeycomb-opentelemetry-web/examples/hello-world-custom-exporter (#610) | @dependabot
+
 ## v1.1.0 - 2025-10-24
 
 - feat: Add options metricExporters and disableDefaultMetricExporter (#605) | @sodabrew
