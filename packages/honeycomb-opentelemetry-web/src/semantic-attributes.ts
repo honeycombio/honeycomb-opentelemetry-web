@@ -40,6 +40,12 @@ export const ATTR_BROWSER_WIDTH = 'browser.width';
  */
 export const ATTR_BROWSER_HEIGHT = 'browser.height';
 
+/**
+ * The visibility state of the page.
+ * @example "visible", "hidden"
+ */
+export const ATTR_BROWSER_PAGE_VISIBILITY = 'browser.page.visibility';
+
 // =============================================================================
 // Device Attributes
 // =============================================================================

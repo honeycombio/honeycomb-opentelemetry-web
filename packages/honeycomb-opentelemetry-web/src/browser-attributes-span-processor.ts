@@ -2,6 +2,7 @@ import { Span } from '@opentelemetry/api';
 import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
 import {
   ATTR_BROWSER_HEIGHT,
+  ATTR_BROWSER_PAGE_VISIBILITY,
   ATTR_BROWSER_WIDTH,
   ATTR_PAGE_HASH,
   ATTR_PAGE_HOSTNAME,
@@ -32,6 +33,8 @@ export class BrowserAttributesSpanProcessor implements SpanProcessor {
       [ATTR_PAGE_SEARCH]: search,
 
       [ATTR_URL_PATH]: pathname,
+
+      [ATTR_BROWSER_PAGE_VISIBILITY]: document.visibilityState,
     });
   }
 
