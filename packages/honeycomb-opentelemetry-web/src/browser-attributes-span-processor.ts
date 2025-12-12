@@ -22,7 +22,6 @@ export class BrowserAttributesSpanProcessor implements SpanProcessor {
 
   onStart(span: Span) {
     const { href, pathname, search, hash, hostname } = window.location;
-    console.log(document.visibilityState);
 
     span.setAttributes({
       [ATTR_BROWSER_WIDTH]: window.innerWidth,
