@@ -399,7 +399,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   }
 
   private processPerformanceLongAnimationFrameTimingSpans(
-    parentPrefix: string,
     perfEntry?: PerformanceLongAnimationFrameTiming,
   ) {
     if (!perfEntry) return;
@@ -411,23 +410,19 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       { startTime: perfEntry.startTime },
       (span) => {
         span.setAttributes(loafAttributes);
-        this.processPerformanceScriptTimingSpans(
-          parentPrefix,
-          perfEntry.scripts,
-        );
+        this.processPerformanceScriptTimingSpans(perfEntry.scripts);
         span.end(perfEntry.startTime + perfEntry.duration);
       },
     );
   }
 
   private processPerformanceScriptTimingSpans(
-    parentPrefix: string,
     perfScriptEntries?: PerformanceScriptTiming[],
   ) {
     if (!perfScriptEntries) return;
     if (!perfScriptEntries?.length) return;
 
-    perfScriptEntries.map((scriptPerfEntry) => {
+    perfScriptEntries.forEach((scriptPerfEntry) => {
       this.tracer.startActiveSpan(
         scriptPerfEntry.name,
         { startTime: scriptPerfEntry.startTime },
@@ -613,10 +608,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
 
         if (includeTimingsAsSpans) {
           longAnimationFrameEntries.forEach((perfEntry) => {
-            this.processPerformanceLongAnimationFrameTimingSpans(
-              'inp',
-              perfEntry,
-            );
+            this.processPerformanceLongAnimationFrameTimingSpans(perfEntry);
           });
         }
         inpSpan.end(interactionTime + inpDuration);
