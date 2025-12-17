@@ -359,10 +359,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }
   }
 
-  private getAttrPrefix(name: string) {
-    return name.toLowerCase();
-  }
-
   private getAttributesForPerformanceLongAnimationFrameTiming(
     perfEntry: PerformanceLongAnimationFrameTiming,
   ) {
