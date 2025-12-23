@@ -113,6 +113,7 @@ import {
   ATTR_TTFB_WAITING_DURATION,
   ATTR_TTFB_WAITING_TIME,
 } from './semantic-attributes';
+import { hrTime } from '@opentelemetry/core';
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
@@ -130,6 +131,14 @@ interface VitalOpts extends ReportOpts {
    * }
    */
   applyCustomAttributes?: ApplyCustomAttributesFn;
+}
+
+interface ClsVitalOpts extends VitalOpts {
+  /**
+   * Will filter the values of these data attributes if provided, otherwise will send all data-* attributes an LCP entry
+   * An empty allow list, such as { dataAttributes: [] } will disable sending data-* attributes
+   */
+  dataAttributes?: string[];
 }
 
 interface LcpVitalOpts extends VitalOpts {
@@ -432,7 +441,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     });
   }
 
-  private getElementFromNode(node: Node | null): Element | undefined {
+  private getElementFromNode(
+    node: Node | undefined | null,
+  ): Element | undefined {
     if (node?.nodeType === Node.ELEMENT_NODE) {
       return node as Element;
     }
@@ -467,8 +478,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }
   }
 
-  onReportCLS = (cls: CLSMetricWithAttribution, clsOpts: VitalOpts = {}) => {
-    const { applyCustomAttributes } = clsOpts;
+  onReportCLS = (cls: CLSMetricWithAttribution, clsOpts: ClsVitalOpts = {}) => {
+    const { applyCustomAttributes, dataAttributes } = clsOpts;
     if (!this.isEnabled()) return;
 
     const { name, attribution, entries } = cls;
@@ -478,20 +489,21 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       largestShiftValue,
       loadState,
       largestShiftEntry,
+      largestShiftSource,
     }: CLSAttribution = attribution;
 
     // Calculate session window timing
     const firstShiftTime = entries[0]?.startTime || 0;
     const lastShiftTime = entries[entries.length - 1]?.startTime || 0;
     const lastShiftDuration = entries[entries.length - 1]?.duration || 0;
-    const endTine = lastShiftTime + lastShiftDuration;
+    const startTime = hrTime(firstShiftTime);
+    const endTime = hrTime(lastShiftTime + lastShiftDuration);
 
     // Create parent span covering the session window period
-    this.tracer.startSpan(name, {
-      startTime: firstShiftTime,
+    const span = this.tracer.startSpan(name, {
+      startTime: startTime,
     });
 
-    const span = this.tracer.startSpan(name);
     span.setAttributes({
       [ATTR_CLS_ID]: cls.id,
       [ATTR_CLS_DELTA]: cls.delta,
@@ -506,11 +518,22 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_CLS_HAD_RECENT_INPUT]: largestShiftEntry?.hadRecentInput,
     });
 
+    const largestShiftElement = this.getElementFromNode(
+      largestShiftSource?.node,
+    );
+
+    this.addDataAttributes(
+      largestShiftElement,
+      span,
+      dataAttributes,
+      'cls.largestShift',
+    );
+
     if (applyCustomAttributes) {
       applyCustomAttributes(cls, span);
     }
 
-    span.end(endTine);
+    span.end(endTime);
   };
 
   onReportLCP = (lcp: LCPMetricWithAttribution, lcpOpts: LcpVitalOpts = {}) => {
