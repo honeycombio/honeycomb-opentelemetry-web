@@ -471,7 +471,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     const { applyCustomAttributes } = clsOpts;
     if (!this.isEnabled()) return;
 
-    const { name, attribution } = cls;
+    const { name, attribution, entries } = cls;
     const {
       largestShiftTarget,
       largestShiftTime,
@@ -479,6 +479,17 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       loadState,
       largestShiftEntry,
     }: CLSAttribution = attribution;
+
+    // Calculate session window timing
+    const firstShiftTime = entries[0]?.startTime || 0;
+    const lastShiftTime = entries[entries.length - 1]?.startTime || 0;
+    const lastShiftDuration = entries[entries.length - 1]?.duration || 0;
+    const endTine = lastShiftTime + lastShiftDuration;
+
+    // Create parent span covering the session window period
+    this.tracer.startSpan(name, {
+      startTime: firstShiftTime,
+    });
 
     const span = this.tracer.startSpan(name);
     span.setAttributes({
@@ -499,7 +510,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       applyCustomAttributes(cls, span);
     }
 
-    span.end();
+    span.end(endTine);
   };
 
   onReportLCP = (lcp: LCPMetricWithAttribution, lcpOpts: LcpVitalOpts = {}) => {
