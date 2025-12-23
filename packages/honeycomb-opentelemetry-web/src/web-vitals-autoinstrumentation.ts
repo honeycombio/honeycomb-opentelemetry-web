@@ -551,7 +551,12 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       lcpEntry,
     }: LCPAttribution = attribution;
 
-    const span = this.tracer.startSpan(name);
+    const startTime = lcpEntry?.loadTime || 0;
+    const endTime = lcpEntry?.renderTime || 0;
+
+    const span = this.tracer.startSpan(name, {
+      startTime,
+    });
     span.setAttributes({
       [ATTR_LCP_ID]: lcp.id,
       [ATTR_LCP_DELTA]: lcp.delta,
@@ -574,7 +579,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       applyCustomAttributes(lcp, span);
     }
 
-    span.end();
+    span.end(endTime);
   };
 
   onReportINP = (
