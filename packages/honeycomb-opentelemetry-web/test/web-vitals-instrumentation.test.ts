@@ -311,6 +311,48 @@ const TTFB: TTFBMetricWithAttribution = {
     requestDuration: 300,
     cacheDuration: 100,
     connectionDuration: 200,
+    navigationEntry: {
+      activationStart: 0,
+      entryType: 'navigation',
+      name: '',
+      startTime: 0,
+      duration: 0,
+      initiatorType: 'navigation',
+      nextHopProtocol: '',
+      renderBlockingStatus: 'non-blocking',
+      deliveryType: '',
+      workerStart: 0,
+      redirectStart: 0,
+      redirectEnd: 0,
+      fetchStart: 0,
+      domainLookupStart: 0,
+      domainLookupEnd: 0,
+      connectStart: 0,
+      secureConnectionStart: 0,
+      connectEnd: 0,
+      requestStart: 0,
+      responseStart: 2500,
+      firstInterimResponseStart: 0,
+      responseEnd: 0,
+      transferSize: 0,
+      encodedBodySize: 0,
+      decodedBodySize: 0,
+      responseStatus: 200,
+      serverTiming: [],
+      unloadEventStart: 0,
+      unloadEventEnd: 0,
+      domInteractive: 0,
+      domContentLoadedEventStart: 0,
+      domContentLoadedEventEnd: 0,
+      domComplete: 0,
+      loadEventStart: 0,
+      loadEventEnd: 0,
+      type: 'navigate',
+      redirectCount: 0,
+      toJSON() {
+        return '';
+      },
+    } as PerformanceNavigationTiming,
   },
 };
 
@@ -691,6 +733,14 @@ describe('Web Vitals Instrumentation Tests', () => {
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(TTFBAttr);
+
+      // Verify explicit timing from actual browser events
+      // For normal (non-prerendered) pages: activationStart (0) to responseStart (2500ms)
+      const expectedStart = hrTime(0); // activationStart for normal page
+      const expectedEnd = hrTime(2500); // navigationEntry.responseStart
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should not create a span when disabled', () => {
