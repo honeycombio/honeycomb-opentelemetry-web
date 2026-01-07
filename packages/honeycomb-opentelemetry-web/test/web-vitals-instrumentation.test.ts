@@ -17,7 +17,32 @@ const CLS: CLSMetricWithAttribution = {
   delta: 0.2,
   rating: 'needs-improvement',
   navigationType: 'back-forward',
-  entries: [],
+  entries: [
+    {
+      hadRecentInput: false,
+      value: 0.1,
+      sources: [],
+      duration: 0.2,
+      entryType: 'layout-shift',
+      name: 'layout-shift',
+      startTime: 100,
+      toJSON() {
+        return '';
+      },
+    },
+    {
+      hadRecentInput: true,
+      value: 0.2,
+      sources: [],
+      duration: 0.3,
+      entryType: 'layout-shift',
+      name: 'layout-shift',
+      startTime: 200,
+      toJSON() {
+        return '';
+      },
+    },
+  ],
   attribution: {
     largestShiftTarget: 'div#my-biggest-shift-element',
     largestShiftTime: 100,
@@ -50,7 +75,6 @@ const CLSAttr = {
   'cls.largest_shift_value': 0.2,
   'cls.load_state': 'complete',
   'cls.had_recent_input': true,
-  'cls.entries': '',
   'cls.my_custom_attr': 'custom_attr',
 };
 const div = document.createElement('div');
@@ -100,7 +124,6 @@ const LCPAttr = {
   'lcp.resource_load_delay': 100,
   'lcp.resource_load_duration': 20,
   'lcp.element_render_delay': 20,
-  'lcp.entries': '',
   'lcp.my_custom_attr': 'custom_attr',
   'lcp.resource_load_time': 20,
 };
@@ -207,7 +230,6 @@ const INPAttr = {
   'inp.interaction_target': 'div#inp-element',
   'inp.interaction_type': 'pointer',
   'inp.load_state': 'complete',
-  'inp.entries': '',
   'inp.my_custom_attr': 'custom_attr',
   'inp.next_paint_time': 400,
   'inp.presentation_delay': 500,
@@ -293,7 +315,6 @@ const FCPAttr = {
   'fcp.time_to_first_byte': 200,
   'fcp.time_since_first_byte': 400,
   'fcp.load_state': 'complete',
-  'fcp.entries': '',
   'fcp.my_custom_attr': 'custom_attr',
 };
 
@@ -367,7 +388,6 @@ const TTFBAttr = {
   'ttfb.connection_duration': 200,
   'ttfb.cache_duration': 100,
   'ttfb.request_duration': 300,
-  'ttfb.entries': '',
   'ttfb.my_custom_attr': 'custom_attr',
   'ttfb.waiting_time': 100,
   'ttfb.connection_time': 200,
@@ -399,7 +419,15 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(CLSAttr);
+      expect(span.attributes).toMatchObject(CLSAttr);
+
+      // Verify explicit timing from actual browser events
+      // CLS uses session window: first shift (100ms) to last shift + duration (200.3ms)
+      const expectedStart = hrTime(100); // First entry startTime
+      const expectedEnd = hrTime(200.3); // Last entry startTime + duration
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should not create a span when disabled', () => {
@@ -436,7 +464,7 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(LCPAttr);
+      expect(span.attributes).toMatchObject(LCPAttr);
 
       // Verify explicit timing from actual browser events
       // Performance entry times are DOMHighResTimeStamp (ms since time origin)
@@ -539,7 +567,7 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(INPAttr);
+      expect(span.attributes).toMatchObject(INPAttr);
 
       // Verify explicit timing from actual browser events
       // INP timing: interactionTime (10ms) to interactionTime + duration (1152ms)
@@ -688,7 +716,7 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(FCPAttr);
+      expect(span.attributes).toMatchObject(FCPAttr);
 
       // Verify explicit timing from actual browser events
       // For normal (non-prerendered) pages: activationStart (0) to fcpEntry.startTime (2500ms)
@@ -732,7 +760,7 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(TTFBAttr);
+      expect(span.attributes).toMatchObject(TTFBAttr);
 
       // Verify explicit timing from actual browser events
       // For normal (non-prerendered) pages: activationStart (0) to responseStart (2500ms)
