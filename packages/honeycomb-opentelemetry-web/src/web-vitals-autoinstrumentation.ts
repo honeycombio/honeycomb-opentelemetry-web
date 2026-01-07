@@ -693,6 +693,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       dnsDuration,
       requestDuration,
       waitingDuration,
+      navigationEntry,
     }: TTFBAttribution = attribution;
     const attributes = {
       [ATTR_TTFB_ID]: ttfb.id,
@@ -711,13 +712,14 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_TTFB_CONNECTION_TIME]: connectionDuration,
       [ATTR_TTFB_REQUEST_TIME]: requestDuration,
     };
-
-    const span = this.tracer.startSpan(name);
+    const span = this.tracer.startSpan(name, {
+      startTime: navigationEntry?.startTime,
+    });
     span.setAttributes(attributes);
     if (applyCustomAttributes) {
       applyCustomAttributes(ttfb, span);
     }
-    span.end();
+    span.end(ttfb.value);
   };
 
   disable(): void {
