@@ -138,7 +138,7 @@ All vitals have the following attributes, they will each be namespaced by the na
 
 ```
 
-**Span Timing:** The span represents the LCP loading lifecycle. The start time is when the LCP resource started loading (`loadTime`), and the end time is when the LCP element finished rendering (`renderTime`). The span duration represents the actual time to load and render the LCP element.
+**Span Timing:** The span represents the LCP loading lifecycle. The start time is when the LCP resource started loading (`loadTime`), and the end time is when the LCP element rendering began (`renderTime`). For text-only LCP elements, `loadTime` is `0` since there is no resource to load. The span duration represents the time to load and render the LCP element.
 
 ### [Interaction to Next Paint](https://web.dev/articles/optimize-inp) attributes
 
