@@ -604,9 +604,12 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }: INPAttribution = attribution;
 
     const inpDuration = inputDelay + processingDuration + presentationDelay;
+    const startTime = hrTime(interactionTime);
+    const endTime = hrTime(interactionTime + inpDuration);
+
     this.tracer.startActiveSpan(
       name,
-      { startTime: interactionTime },
+      { startTime },
       (inpSpan) => {
         const inpAttributes = {
           [ATTR_INP_ID]: inp.id,
@@ -646,7 +649,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
             this.processPerformanceLongAnimationFrameTimingSpans(perfEntry);
           });
         }
-        inpSpan.end(interactionTime + inpDuration);
+        inpSpan.end(endTime);
       },
     );
   };
@@ -665,10 +668,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }: FCPAttribution = attribution;
 
     // For prerendered pages, use activationStart; otherwise use navigation start (0)
-    const startTime =
-      navigationEntry?.activationStart || navigationEntry?.startTime;
+    const startTime = hrTime(navigationEntry?.activationStart || 0);
     // FCP entry's startTime is the raw timestamp from time origin
-    const fcpTime = fcpEntry?.startTime || 0;
+    const endTime = hrTime(fcpEntry?.startTime || 0);
 
     const span = this.tracer.startSpan(name, { startTime });
 
@@ -687,7 +689,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       applyCustomAttributes(fcp, span);
     }
 
-    span.end(fcpTime);
+    span.end(endTime);
   };
 
   onReportTTFB = (
@@ -708,10 +710,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }: TTFBAttribution = attribution;
 
     // For prerendered pages, use activationStart; otherwise use navigation start (0)
-    const startTime =
-      navigationEntry?.activationStart || navigationEntry?.startTime;
+    const startTime = hrTime(navigationEntry?.activationStart || 0);
     // TTFB responseStart is the raw timestamp from time origin
-    const ttfbTime = navigationEntry?.responseStart || 0;
+    const endTime = hrTime(navigationEntry?.responseStart || 0);
 
     const attributes = {
       [ATTR_TTFB_ID]: ttfb.id,
@@ -736,7 +737,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     if (applyCustomAttributes) {
       applyCustomAttributes(ttfb, span);
     }
-    span.end(ttfbTime);
+    span.end(endTime);
   };
 
   disable(): void {
