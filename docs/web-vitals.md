@@ -84,7 +84,7 @@ All vitals have the following attributes, they will each be namespaced by the na
 
 ```
 
-**Span Timing:** The span represents the CLS session window from the first layout shift to the last layout shift. The start time is when the first shift occurred, and the end time is when the last shift completed (last shift start time + duration). This accurately represents the time period during which layout shifts occurred.
+**Span Timing:** The span represents the CLS session window from the first layout shift to the last layout shift. The start time is when the first shift occurred, and the end time is when the last shift occurred. `LayoutShift` entries always have `duration: 0` according to the [Layout Instability API specification](https://wicg.github.io/layout-instability/). When CLS = 0 (no shifts), a zero-duration span is created at time origin.
 
 ### [Largest Contentful Paint](https://web.dev/articles/lcp) attributes
 

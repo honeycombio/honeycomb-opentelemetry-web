@@ -495,9 +495,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     // Calculate session window timing
     const firstShiftTime = entries[0]?.startTime || 0;
     const lastShiftTime = entries[entries.length - 1]?.startTime || 0;
-    const lastShiftDuration = entries[entries.length - 1]?.duration || 0;
     const startTime = hrTime(firstShiftTime);
-    const endTime = hrTime(lastShiftTime + lastShiftDuration);
+    const endTime = hrTime(lastShiftTime);
 
     // Create parent span covering the session window period
     const span = this.tracer.startSpan(name, {

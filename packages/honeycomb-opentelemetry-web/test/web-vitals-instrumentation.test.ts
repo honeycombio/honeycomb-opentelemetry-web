@@ -22,7 +22,7 @@ const CLS: CLSMetricWithAttribution = {
       hadRecentInput: false,
       value: 0.1,
       sources: [],
-      duration: 0.2,
+      duration: 0,
       entryType: 'layout-shift',
       name: 'layout-shift',
       startTime: 100,
@@ -34,7 +34,7 @@ const CLS: CLSMetricWithAttribution = {
       hadRecentInput: true,
       value: 0.2,
       sources: [],
-      duration: 0.3,
+      duration: 0,
       entryType: 'layout-shift',
       name: 'layout-shift',
       startTime: 200,
@@ -52,7 +52,7 @@ const CLS: CLSMetricWithAttribution = {
       hadRecentInput: true,
       value: 0.2,
       sources: [],
-      duration: 0.3,
+      duration: 0,
       entryType: 'layout-shift',
       name: 'layout-shift',
       startTime: 0.1,
@@ -421,10 +421,8 @@ describe('Web Vitals Instrumentation Tests', () => {
       );
       expect(span.attributes).toMatchObject(CLSAttr);
 
-      // Verify explicit timing from actual browser events
-      // CLS uses session window: first shift (100ms) to last shift + duration (200.3ms)
-      const expectedStart = hrTime(100); // First entry startTime
-      const expectedEnd = hrTime(200.3); // Last entry startTime + duration
+      const expectedStart = hrTime(100);
+      const expectedEnd = hrTime(200);
 
       expect(span.startTime).toEqual(expectedStart);
       expect(span.endTime).toEqual(expectedEnd);
