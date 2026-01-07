@@ -279,7 +279,7 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   lcp?: LcpVitalOpts;
 
   /** Config specific to CLS (Cumulative Layout Shift) */
-  cls?: VitalOpts;
+  cls?: ClsVitalOpts;
 
   /** Config specific to INP (Interaction to Next Paint) */
   inp?: InpVitalOpts;
