@@ -6,6 +6,7 @@ import {
   TTFBMetricWithAttribution,
 } from 'web-vitals';
 import { WebVitalsInstrumentation } from '../src/web-vitals-autoinstrumentation';
+import { hrTime } from '@opentelemetry/core';
 
 import { setupTestExporter } from './test-helpers';
 
@@ -343,6 +344,15 @@ describe('Web Vitals Instrumentation Tests', () => {
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(LCPAttr);
+
+      // Verify explicit timing from actual browser events
+      // Performance entry times are DOMHighResTimeStamp (ms since time origin)
+      // which are converted to absolute HrTime using hrTime() helper
+      const expectedStart = hrTime(0); // lcpEntry.loadTime
+      const expectedEnd = hrTime(74.09999999403954); // lcpEntry.renderTime
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should not create a span when disabled', () => {

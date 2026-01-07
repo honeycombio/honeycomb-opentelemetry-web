@@ -551,8 +551,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       lcpEntry,
     }: LCPAttribution = attribution;
 
-    const startTime = lcpEntry?.loadTime || 0;
-    const endTime = lcpEntry?.renderTime || 0;
+    const startTime = hrTime(lcpEntry?.loadTime || 0);
+    const endTime = hrTime(lcpEntry?.renderTime || 0);
 
     const span = this.tracer.startSpan(name, {
       startTime,
