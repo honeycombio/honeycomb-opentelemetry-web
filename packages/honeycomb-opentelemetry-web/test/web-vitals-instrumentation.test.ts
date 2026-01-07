@@ -447,6 +447,15 @@ describe('Web Vitals Instrumentation Tests', () => {
         '@honeycombio/instrumentation-web-vitals',
       );
       expect(span.attributes).toEqual(INPAttr);
+
+      // Verify explicit timing from actual browser events
+      // INP timing: interactionTime (10ms) to interactionTime + duration (1152ms)
+      const inpDuration = 42 + 600 + 500; // inputDelay + processingDuration + presentationDelay = 1142
+      const expectedStart = hrTime(10); // interactionTime
+      const expectedEnd = hrTime(10 + inpDuration); // interactionTime + inpDuration
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should create a include timings when enabled', () => {
