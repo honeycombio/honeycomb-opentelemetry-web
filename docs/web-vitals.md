@@ -84,7 +84,7 @@ All vitals have the following attributes, they will each be namespaced by the na
 
 ```
 
-The event time is when the single largest layout shift contributing to the page's CLS score occurred. (performance.timeOrigin + metric.largestShiftTime)
+**Span Timing:** The span represents the CLS session window from the first layout shift to the last layout shift. The start time is when the first shift occurred, and the end time is when the last shift completed (last shift start time + duration). This accurately represents the time period during which layout shifts occurred.
 
 ### [Largest Contentful Paint](https://web.dev/articles/lcp) attributes
 
@@ -138,7 +138,7 @@ The event time is when the single largest layout shift contributing to the page'
 
 ```
 
-The event time is the start of the page load (performance.timeOrigin), the duration is equivalent to "lcp.value"
+**Span Timing:** The span represents the LCP loading lifecycle. The start time is when the LCP resource started loading (`loadTime`), and the end time is when the LCP element finished rendering (`renderTime`). The span duration represents the actual time to load and render the LCP element.
 
 ### [Interaction to Next Paint](https://web.dev/articles/optimize-inp) attributes
 
@@ -176,7 +176,7 @@ The event time is the start of the page load (performance.timeOrigin), the durat
 
 ```
 
-The event time is equal to the time the interaction began {[TODO] `attribution.eventTime + performance.timeOrigin`? or just `attribution.eventTime`}, the duration is equal to `inp.value`
+**Span Timing:** The span represents the user interaction timing. The start time is when the user interaction began (`interactionTime`), and the end time is when the next paint completed (`interactionTime + inp.value`). The span duration represents the total time from interaction to next paint.
 
 ### [First Contentful Paint](https://web.dev/articles/fcp) attributes
 
@@ -208,7 +208,7 @@ The event time is equal to the time the interaction began {[TODO] `attribution.e
 
 ```
 
-The event time is equal to the start of the page load, the duration is equal to `fcp.value`
+**Span Timing:** The span represents the time from when the user first sees the page to when the first contentful paint occurs. For normal pages, this starts at navigation start (`performance.timeOrigin`). For prerendered pages, this starts at activation time (`activationStart`) when the user actually sees the page. The end time is when FCP occurred. The span duration equals `fcp.value`.
 
 ### [Time to First Byte](https://web.dev/articles/ttfb) attributes
 
@@ -244,7 +244,7 @@ The event time is equal to the start of the page load, the duration is equal to 
 
 ```
 
-The event time is equal to the timeOrigin & the duration is equal to ttfb.value
+**Span Timing:** The span represents the time from when the user initiates the page load to when the first byte is received. For normal pages, this starts at navigation start (`performance.timeOrigin`). For prerendered pages, this starts at activation time (`activationStart`) when the user actually sees the page. The end time is when the first byte was received (`responseStart`). The span duration equals `ttfb.value`.
 
 ## Customization of event attributes
 
