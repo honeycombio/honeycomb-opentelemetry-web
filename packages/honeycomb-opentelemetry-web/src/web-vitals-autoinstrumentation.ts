@@ -656,10 +656,21 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     if (!this.isEnabled()) return;
 
     const { name, attribution } = fcp;
-    const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
-      attribution;
+    const {
+      timeToFirstByte,
+      firstByteToFCP,
+      loadState,
+      fcpEntry,
+      navigationEntry,
+    }: FCPAttribution = attribution;
 
-    const span = this.tracer.startSpan(name);
+    // For prerendered pages, use activationStart; otherwise use navigation start (0)
+    const startTime =
+      navigationEntry?.activationStart || navigationEntry?.startTime;
+    // FCP entry's startTime is the raw timestamp from time origin
+    const fcpTime = fcpEntry?.startTime || 0;
+
+    const span = this.tracer.startSpan(name, { startTime });
 
     span.setAttributes({
       [ATTR_FCP_ID]: fcp.id,
@@ -676,7 +687,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       applyCustomAttributes(fcp, span);
     }
 
-    span.end();
+    span.end(fcpTime);
   };
 
   onReportTTFB = (
@@ -695,6 +706,13 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       waitingDuration,
       navigationEntry,
     }: TTFBAttribution = attribution;
+
+    // For prerendered pages, use activationStart; otherwise use navigation start (0)
+    const startTime =
+      navigationEntry?.activationStart || navigationEntry?.startTime;
+    // TTFB responseStart is the raw timestamp from time origin
+    const ttfbTime = navigationEntry?.responseStart || 0;
+
     const attributes = {
       [ATTR_TTFB_ID]: ttfb.id,
       [ATTR_TTFB_DELTA]: ttfb.delta,
@@ -712,14 +730,13 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_TTFB_CONNECTION_TIME]: connectionDuration,
       [ATTR_TTFB_REQUEST_TIME]: requestDuration,
     };
-    const span = this.tracer.startSpan(name, {
-      startTime: navigationEntry?.startTime,
-    });
+
+    const span = this.tracer.startSpan(name, { startTime });
     span.setAttributes(attributes);
     if (applyCustomAttributes) {
       applyCustomAttributes(ttfb, span);
     }
-    span.end(ttfb.value);
+    span.end(ttfbTime);
   };
 
   disable(): void {
