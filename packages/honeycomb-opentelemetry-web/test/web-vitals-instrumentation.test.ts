@@ -6,6 +6,7 @@ import {
   TTFBMetricWithAttribution,
 } from 'web-vitals';
 import { WebVitalsInstrumentation } from '../src/web-vitals-autoinstrumentation';
+import { hrTime } from '@opentelemetry/core';
 
 import { setupTestExporter } from './test-helpers';
 
@@ -16,7 +17,32 @@ const CLS: CLSMetricWithAttribution = {
   delta: 0.2,
   rating: 'needs-improvement',
   navigationType: 'back-forward',
-  entries: [],
+  entries: [
+    {
+      hadRecentInput: false,
+      value: 0.1,
+      sources: [],
+      duration: 0,
+      entryType: 'layout-shift',
+      name: 'layout-shift',
+      startTime: 100,
+      toJSON() {
+        return '';
+      },
+    },
+    {
+      hadRecentInput: true,
+      value: 0.2,
+      sources: [],
+      duration: 0,
+      entryType: 'layout-shift',
+      name: 'layout-shift',
+      startTime: 200,
+      toJSON() {
+        return '';
+      },
+    },
+  ],
   attribution: {
     largestShiftTarget: 'div#my-biggest-shift-element',
     largestShiftTime: 100,
@@ -26,7 +52,7 @@ const CLS: CLSMetricWithAttribution = {
       hadRecentInput: true,
       value: 0.2,
       sources: [],
-      duration: 0.3,
+      duration: 0,
       entryType: 'layout-shift',
       name: 'layout-shift',
       startTime: 0.1,
@@ -49,7 +75,6 @@ const CLSAttr = {
   'cls.largest_shift_value': 0.2,
   'cls.load_state': 'complete',
   'cls.had_recent_input': true,
-  'cls.entries': '',
   'cls.my_custom_attr': 'custom_attr',
 };
 const div = document.createElement('div');
@@ -99,7 +124,6 @@ const LCPAttr = {
   'lcp.resource_load_delay': 100,
   'lcp.resource_load_duration': 20,
   'lcp.element_render_delay': 20,
-  'lcp.entries': '',
   'lcp.my_custom_attr': 'custom_attr',
   'lcp.resource_load_time': 20,
 };
@@ -206,7 +230,6 @@ const INPAttr = {
   'inp.interaction_target': 'div#inp-element',
   'inp.interaction_type': 'pointer',
   'inp.load_state': 'complete',
-  'inp.entries': '',
   'inp.my_custom_attr': 'custom_attr',
   'inp.next_paint_time': 400,
   'inp.presentation_delay': 500,
@@ -229,6 +252,57 @@ const FCP: FCPMetricWithAttribution = {
     timeToFirstByte: 200,
     firstByteToFCP: 400,
     loadState: 'complete',
+    fcpEntry: {
+      name: 'first-contentful-paint',
+      entryType: 'paint',
+      startTime: 2500,
+      duration: 0,
+      toJSON() {
+        return '';
+      },
+    },
+    navigationEntry: {
+      activationStart: 0,
+      entryType: 'navigation',
+      name: '',
+      startTime: 0,
+      duration: 0,
+      initiatorType: 'navigation',
+      nextHopProtocol: '',
+      renderBlockingStatus: 'non-blocking',
+      deliveryType: '',
+      workerStart: 0,
+      redirectStart: 0,
+      redirectEnd: 0,
+      fetchStart: 0,
+      domainLookupStart: 0,
+      domainLookupEnd: 0,
+      connectStart: 0,
+      secureConnectionStart: 0,
+      connectEnd: 0,
+      requestStart: 0,
+      responseStart: 200,
+      firstInterimResponseStart: 0,
+      responseEnd: 0,
+      transferSize: 0,
+      encodedBodySize: 0,
+      decodedBodySize: 0,
+      responseStatus: 200,
+      serverTiming: [],
+      unloadEventStart: 0,
+      unloadEventEnd: 0,
+      domInteractive: 0,
+      domContentLoadedEventStart: 0,
+      domContentLoadedEventEnd: 0,
+      domComplete: 0,
+      loadEventStart: 0,
+      loadEventEnd: 0,
+      type: 'navigate',
+      redirectCount: 0,
+      toJSON() {
+        return '';
+      },
+    } as PerformanceNavigationTiming,
   },
 };
 
@@ -241,7 +315,6 @@ const FCPAttr = {
   'fcp.time_to_first_byte': 200,
   'fcp.time_since_first_byte': 400,
   'fcp.load_state': 'complete',
-  'fcp.entries': '',
   'fcp.my_custom_attr': 'custom_attr',
 };
 
@@ -259,6 +332,48 @@ const TTFB: TTFBMetricWithAttribution = {
     requestDuration: 300,
     cacheDuration: 100,
     connectionDuration: 200,
+    navigationEntry: {
+      activationStart: 0,
+      entryType: 'navigation',
+      name: '',
+      startTime: 0,
+      duration: 0,
+      initiatorType: 'navigation',
+      nextHopProtocol: '',
+      renderBlockingStatus: 'non-blocking',
+      deliveryType: '',
+      workerStart: 0,
+      redirectStart: 0,
+      redirectEnd: 0,
+      fetchStart: 0,
+      domainLookupStart: 0,
+      domainLookupEnd: 0,
+      connectStart: 0,
+      secureConnectionStart: 0,
+      connectEnd: 0,
+      requestStart: 0,
+      responseStart: 2500,
+      firstInterimResponseStart: 0,
+      responseEnd: 0,
+      transferSize: 0,
+      encodedBodySize: 0,
+      decodedBodySize: 0,
+      responseStatus: 200,
+      serverTiming: [],
+      unloadEventStart: 0,
+      unloadEventEnd: 0,
+      domInteractive: 0,
+      domContentLoadedEventStart: 0,
+      domContentLoadedEventEnd: 0,
+      domComplete: 0,
+      loadEventStart: 0,
+      loadEventEnd: 0,
+      type: 'navigate',
+      redirectCount: 0,
+      toJSON() {
+        return '';
+      },
+    } as PerformanceNavigationTiming,
   },
 };
 
@@ -273,7 +388,6 @@ const TTFBAttr = {
   'ttfb.connection_duration': 200,
   'ttfb.cache_duration': 100,
   'ttfb.request_duration': 300,
-  'ttfb.entries': '',
   'ttfb.my_custom_attr': 'custom_attr',
   'ttfb.waiting_time': 100,
   'ttfb.connection_time': 200,
@@ -305,7 +419,13 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(CLSAttr);
+      expect(span.attributes).toMatchObject(CLSAttr);
+
+      const expectedStart = hrTime(100);
+      const expectedEnd = hrTime(200);
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should not create a span when disabled', () => {
@@ -342,7 +462,16 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(LCPAttr);
+      expect(span.attributes).toMatchObject(LCPAttr);
+
+      // Verify explicit timing from actual browser events
+      // Performance entry times are DOMHighResTimeStamp (ms since time origin)
+      // which are converted to absolute HrTime using hrTime() helper
+      const expectedStart = hrTime(0); // lcpEntry.loadTime
+      const expectedEnd = hrTime(74.09999999403954); // lcpEntry.renderTime
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should not create a span when disabled', () => {
@@ -436,7 +565,16 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(INPAttr);
+      expect(span.attributes).toMatchObject(INPAttr);
+
+      // Verify explicit timing from actual browser events
+      // INP timing: interactionTime (10ms) to interactionTime + duration (1152ms)
+      const inpDuration = 42 + 600 + 500; // inputDelay + processingDuration + presentationDelay = 1142
+      const expectedStart = hrTime(10); // interactionTime
+      const expectedEnd = hrTime(10 + inpDuration); // interactionTime + inpDuration
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should create a include timings when enabled', () => {
@@ -576,7 +714,15 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(FCPAttr);
+      expect(span.attributes).toMatchObject(FCPAttr);
+
+      // Verify explicit timing from actual browser events
+      // For normal (non-prerendered) pages: activationStart (0) to fcpEntry.startTime (2500ms)
+      const expectedStart = hrTime(0); // activationStart for normal page
+      const expectedEnd = hrTime(2500); // fcpEntry.startTime
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should not create a span when disabled', () => {
@@ -612,7 +758,15 @@ describe('Web Vitals Instrumentation Tests', () => {
       expect(span.instrumentationScope.name).toBe(
         '@honeycombio/instrumentation-web-vitals',
       );
-      expect(span.attributes).toEqual(TTFBAttr);
+      expect(span.attributes).toMatchObject(TTFBAttr);
+
+      // Verify explicit timing from actual browser events
+      // For normal (non-prerendered) pages: activationStart (0) to responseStart (2500ms)
+      const expectedStart = hrTime(0); // activationStart for normal page
+      const expectedEnd = hrTime(2500); // navigationEntry.responseStart
+
+      expect(span.startTime).toEqual(expectedStart);
+      expect(span.endTime).toEqual(expectedEnd);
     });
 
     it('should not create a span when disabled', () => {

@@ -113,6 +113,7 @@ import {
   ATTR_TTFB_WAITING_DURATION,
   ATTR_TTFB_WAITING_TIME,
 } from './semantic-attributes';
+import { hrTime } from '@opentelemetry/core';
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
@@ -130,6 +131,14 @@ interface VitalOpts extends ReportOpts {
    * }
    */
   applyCustomAttributes?: ApplyCustomAttributesFn;
+}
+
+interface ClsVitalOpts extends VitalOpts {
+  /**
+   * Will filter the values of these data attributes if provided, otherwise will send all data-* attributes an LCP entry
+   * An empty allow list, such as { dataAttributes: [] } will disable sending data-* attributes
+   */
+  dataAttributes?: string[];
 }
 
 interface LcpVitalOpts extends VitalOpts {
@@ -270,7 +279,7 @@ export interface WebVitalsInstrumentationConfig extends InstrumentationConfig {
   lcp?: LcpVitalOpts;
 
   /** Config specific to CLS (Cumulative Layout Shift) */
-  cls?: VitalOpts;
+  cls?: ClsVitalOpts;
 
   /** Config specific to INP (Interaction to Next Paint) */
   inp?: InpVitalOpts;
@@ -359,10 +368,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }
   }
 
-  private getAttrPrefix(name: string) {
-    return name.toLowerCase();
-  }
-
   private getAttributesForPerformanceLongAnimationFrameTiming(
     perfEntry: PerformanceLongAnimationFrameTiming,
   ) {
@@ -399,7 +404,6 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
   }
 
   private processPerformanceLongAnimationFrameTimingSpans(
-    parentPrefix: string,
     perfEntry?: PerformanceLongAnimationFrameTiming,
   ) {
     if (!perfEntry) return;
@@ -411,23 +415,19 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       { startTime: perfEntry.startTime },
       (span) => {
         span.setAttributes(loafAttributes);
-        this.processPerformanceScriptTimingSpans(
-          parentPrefix,
-          perfEntry.scripts,
-        );
+        this.processPerformanceScriptTimingSpans(perfEntry.scripts);
         span.end(perfEntry.startTime + perfEntry.duration);
       },
     );
   }
 
   private processPerformanceScriptTimingSpans(
-    parentPrefix: string,
     perfScriptEntries?: PerformanceScriptTiming[],
   ) {
     if (!perfScriptEntries) return;
     if (!perfScriptEntries?.length) return;
 
-    perfScriptEntries.map((scriptPerfEntry) => {
+    perfScriptEntries.forEach((scriptPerfEntry) => {
       this.tracer.startActiveSpan(
         scriptPerfEntry.name,
         { startTime: scriptPerfEntry.startTime },
@@ -441,7 +441,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     });
   }
 
-  private getElementFromNode(node: Node | null): Element | undefined {
+  private getElementFromNode(
+    node: Node | undefined | null,
+  ): Element | undefined {
     if (node?.nodeType === Node.ELEMENT_NODE) {
       return node as Element;
     }
@@ -476,20 +478,31 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }
   }
 
-  onReportCLS = (cls: CLSMetricWithAttribution, clsOpts: VitalOpts = {}) => {
-    const { applyCustomAttributes } = clsOpts;
+  onReportCLS = (cls: CLSMetricWithAttribution, clsOpts: ClsVitalOpts = {}) => {
+    const { applyCustomAttributes, dataAttributes } = clsOpts;
     if (!this.isEnabled()) return;
 
-    const { name, attribution } = cls;
+    const { name, attribution, entries } = cls;
     const {
       largestShiftTarget,
       largestShiftTime,
       largestShiftValue,
       loadState,
       largestShiftEntry,
+      largestShiftSource,
     }: CLSAttribution = attribution;
 
-    const span = this.tracer.startSpan(name);
+    // Calculate session window timing
+    const firstShiftTime = entries[0]?.startTime || 0;
+    const lastShiftTime = entries[entries.length - 1]?.startTime || 0;
+    const startTime = hrTime(firstShiftTime);
+    const endTime = hrTime(lastShiftTime);
+
+    // Create parent span covering the session window period
+    const span = this.tracer.startSpan(name, {
+      startTime: startTime,
+    });
+
     span.setAttributes({
       [ATTR_CLS_ID]: cls.id,
       [ATTR_CLS_DELTA]: cls.delta,
@@ -504,11 +517,22 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_CLS_HAD_RECENT_INPUT]: largestShiftEntry?.hadRecentInput,
     });
 
+    const largestShiftElement = this.getElementFromNode(
+      largestShiftSource?.node,
+    );
+
+    this.addDataAttributes(
+      largestShiftElement,
+      span,
+      dataAttributes,
+      'cls.largestShift',
+    );
+
     if (applyCustomAttributes) {
       applyCustomAttributes(cls, span);
     }
 
-    span.end();
+    span.end(endTime);
   };
 
   onReportLCP = (lcp: LCPMetricWithAttribution, lcpOpts: LcpVitalOpts = {}) => {
@@ -526,7 +550,12 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       lcpEntry,
     }: LCPAttribution = attribution;
 
-    const span = this.tracer.startSpan(name);
+    const startTime = hrTime(lcpEntry?.loadTime || 0);
+    const endTime = hrTime(lcpEntry?.renderTime || 0);
+
+    const span = this.tracer.startSpan(name, {
+      startTime,
+    });
     span.setAttributes({
       [ATTR_LCP_ID]: lcp.id,
       [ATTR_LCP_DELTA]: lcp.delta,
@@ -549,7 +578,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       applyCustomAttributes(lcp, span);
     }
 
-    span.end();
+    span.end(endTime);
   };
 
   onReportINP = (
@@ -574,54 +603,50 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }: INPAttribution = attribution;
 
     const inpDuration = inputDelay + processingDuration + presentationDelay;
-    this.tracer.startActiveSpan(
-      name,
-      { startTime: interactionTime },
-      (inpSpan) => {
-        const inpAttributes = {
-          [ATTR_INP_ID]: inp.id,
-          [ATTR_INP_DELTA]: inp.delta,
-          [ATTR_INP_VALUE]: inp.value,
-          [ATTR_INP_RATING]: inp.rating,
-          [ATTR_INP_NAVIGATION_TYPE]: inp.navigationType,
-          [ATTR_INP_INPUT_DELAY]: inputDelay,
-          [ATTR_INP_INTERACTION_TARGET]: interactionTarget,
-          [ATTR_INP_INTERACTION_TIME]: interactionTime,
-          [ATTR_INP_INTERACTION_TYPE]: interactionType,
-          [ATTR_INP_LOAD_STATE]: loadState,
-          [ATTR_INP_NEXT_PAINT_TIME]: nextPaintTime,
-          [ATTR_INP_PRESENTATION_DELAY]: presentationDelay,
-          [ATTR_INP_PROCESSING_DURATION]: processingDuration,
-          [ATTR_INP_DURATION]: inpDuration,
-          // These will be deprecated in a future version
-          [ATTR_INP_ELEMENT]: interactionTarget,
-          [ATTR_INP_EVENT_TYPE]: interactionType,
-        };
+    const startTime = hrTime(interactionTime);
+    const endTime = hrTime(interactionTime + inpDuration);
 
-        inpSpan.setAttributes(inpAttributes);
-        inp.entries.forEach((inpEntry) => {
-          this.addDataAttributes(
-            this.getElementFromNode(inpEntry.target),
-            inpSpan,
-            dataAttributes,
-            'inp',
-          );
+    this.tracer.startActiveSpan(name, { startTime }, (inpSpan) => {
+      const inpAttributes = {
+        [ATTR_INP_ID]: inp.id,
+        [ATTR_INP_DELTA]: inp.delta,
+        [ATTR_INP_VALUE]: inp.value,
+        [ATTR_INP_RATING]: inp.rating,
+        [ATTR_INP_NAVIGATION_TYPE]: inp.navigationType,
+        [ATTR_INP_INPUT_DELAY]: inputDelay,
+        [ATTR_INP_INTERACTION_TARGET]: interactionTarget,
+        [ATTR_INP_INTERACTION_TIME]: interactionTime,
+        [ATTR_INP_INTERACTION_TYPE]: interactionType,
+        [ATTR_INP_LOAD_STATE]: loadState,
+        [ATTR_INP_NEXT_PAINT_TIME]: nextPaintTime,
+        [ATTR_INP_PRESENTATION_DELAY]: presentationDelay,
+        [ATTR_INP_PROCESSING_DURATION]: processingDuration,
+        [ATTR_INP_DURATION]: inpDuration,
+        // These will be deprecated in a future version
+        [ATTR_INP_ELEMENT]: interactionTarget,
+        [ATTR_INP_EVENT_TYPE]: interactionType,
+      };
+
+      inpSpan.setAttributes(inpAttributes);
+      inp.entries.forEach((inpEntry) => {
+        this.addDataAttributes(
+          this.getElementFromNode(inpEntry.target),
+          inpSpan,
+          dataAttributes,
+          'inp',
+        );
+      });
+      if (applyCustomAttributes) {
+        applyCustomAttributes(inp, inpSpan);
+      }
+
+      if (includeTimingsAsSpans) {
+        longAnimationFrameEntries.forEach((perfEntry) => {
+          this.processPerformanceLongAnimationFrameTimingSpans(perfEntry);
         });
-        if (applyCustomAttributes) {
-          applyCustomAttributes(inp, inpSpan);
-        }
-
-        if (includeTimingsAsSpans) {
-          longAnimationFrameEntries.forEach((perfEntry) => {
-            this.processPerformanceLongAnimationFrameTimingSpans(
-              'inp',
-              perfEntry,
-            );
-          });
-        }
-        inpSpan.end(interactionTime + inpDuration);
-      },
-    );
+      }
+      inpSpan.end(endTime);
+    });
   };
 
   onReportFCP = (fcp: FCPMetricWithAttribution, fcpOpts: VitalOpts = {}) => {
@@ -629,10 +654,20 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     if (!this.isEnabled()) return;
 
     const { name, attribution } = fcp;
-    const { timeToFirstByte, firstByteToFCP, loadState }: FCPAttribution =
-      attribution;
+    const {
+      timeToFirstByte,
+      firstByteToFCP,
+      loadState,
+      fcpEntry,
+      navigationEntry,
+    }: FCPAttribution = attribution;
 
-    const span = this.tracer.startSpan(name);
+    // For prerendered pages, use activationStart; otherwise use navigation start (0)
+    const startTime = hrTime(navigationEntry?.activationStart || 0);
+    // FCP entry's startTime is the raw timestamp from time origin
+    const endTime = hrTime(fcpEntry?.startTime || 0);
+
+    const span = this.tracer.startSpan(name, { startTime });
 
     span.setAttributes({
       [ATTR_FCP_ID]: fcp.id,
@@ -649,7 +684,7 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       applyCustomAttributes(fcp, span);
     }
 
-    span.end();
+    span.end(endTime);
   };
 
   onReportTTFB = (
@@ -666,7 +701,14 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       dnsDuration,
       requestDuration,
       waitingDuration,
+      navigationEntry,
     }: TTFBAttribution = attribution;
+
+    // For prerendered pages, use activationStart; otherwise use navigation start (0)
+    const startTime = hrTime(navigationEntry?.activationStart || 0);
+    // TTFB responseStart is the raw timestamp from time origin
+    const endTime = hrTime(navigationEntry?.responseStart || 0);
+
     const attributes = {
       [ATTR_TTFB_ID]: ttfb.id,
       [ATTR_TTFB_DELTA]: ttfb.delta,
@@ -685,12 +727,12 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_TTFB_REQUEST_TIME]: requestDuration,
     };
 
-    const span = this.tracer.startSpan(name);
+    const span = this.tracer.startSpan(name, { startTime });
     span.setAttributes(attributes);
     if (applyCustomAttributes) {
       applyCustomAttributes(ttfb, span);
     }
-    span.end();
+    span.end(endTime);
   };
 
   disable(): void {
