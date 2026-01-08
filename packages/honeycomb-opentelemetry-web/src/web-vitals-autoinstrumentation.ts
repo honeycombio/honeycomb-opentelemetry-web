@@ -606,51 +606,47 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     const startTime = hrTime(interactionTime);
     const endTime = hrTime(interactionTime + inpDuration);
 
-    this.tracer.startActiveSpan(
-      name,
-      { startTime },
-      (inpSpan) => {
-        const inpAttributes = {
-          [ATTR_INP_ID]: inp.id,
-          [ATTR_INP_DELTA]: inp.delta,
-          [ATTR_INP_VALUE]: inp.value,
-          [ATTR_INP_RATING]: inp.rating,
-          [ATTR_INP_NAVIGATION_TYPE]: inp.navigationType,
-          [ATTR_INP_INPUT_DELAY]: inputDelay,
-          [ATTR_INP_INTERACTION_TARGET]: interactionTarget,
-          [ATTR_INP_INTERACTION_TIME]: interactionTime,
-          [ATTR_INP_INTERACTION_TYPE]: interactionType,
-          [ATTR_INP_LOAD_STATE]: loadState,
-          [ATTR_INP_NEXT_PAINT_TIME]: nextPaintTime,
-          [ATTR_INP_PRESENTATION_DELAY]: presentationDelay,
-          [ATTR_INP_PROCESSING_DURATION]: processingDuration,
-          [ATTR_INP_DURATION]: inpDuration,
-          // These will be deprecated in a future version
-          [ATTR_INP_ELEMENT]: interactionTarget,
-          [ATTR_INP_EVENT_TYPE]: interactionType,
-        };
+    this.tracer.startActiveSpan(name, { startTime }, (inpSpan) => {
+      const inpAttributes = {
+        [ATTR_INP_ID]: inp.id,
+        [ATTR_INP_DELTA]: inp.delta,
+        [ATTR_INP_VALUE]: inp.value,
+        [ATTR_INP_RATING]: inp.rating,
+        [ATTR_INP_NAVIGATION_TYPE]: inp.navigationType,
+        [ATTR_INP_INPUT_DELAY]: inputDelay,
+        [ATTR_INP_INTERACTION_TARGET]: interactionTarget,
+        [ATTR_INP_INTERACTION_TIME]: interactionTime,
+        [ATTR_INP_INTERACTION_TYPE]: interactionType,
+        [ATTR_INP_LOAD_STATE]: loadState,
+        [ATTR_INP_NEXT_PAINT_TIME]: nextPaintTime,
+        [ATTR_INP_PRESENTATION_DELAY]: presentationDelay,
+        [ATTR_INP_PROCESSING_DURATION]: processingDuration,
+        [ATTR_INP_DURATION]: inpDuration,
+        // These will be deprecated in a future version
+        [ATTR_INP_ELEMENT]: interactionTarget,
+        [ATTR_INP_EVENT_TYPE]: interactionType,
+      };
 
-        inpSpan.setAttributes(inpAttributes);
-        inp.entries.forEach((inpEntry) => {
-          this.addDataAttributes(
-            this.getElementFromNode(inpEntry.target),
-            inpSpan,
-            dataAttributes,
-            'inp',
-          );
+      inpSpan.setAttributes(inpAttributes);
+      inp.entries.forEach((inpEntry) => {
+        this.addDataAttributes(
+          this.getElementFromNode(inpEntry.target),
+          inpSpan,
+          dataAttributes,
+          'inp',
+        );
+      });
+      if (applyCustomAttributes) {
+        applyCustomAttributes(inp, inpSpan);
+      }
+
+      if (includeTimingsAsSpans) {
+        longAnimationFrameEntries.forEach((perfEntry) => {
+          this.processPerformanceLongAnimationFrameTimingSpans(perfEntry);
         });
-        if (applyCustomAttributes) {
-          applyCustomAttributes(inp, inpSpan);
-        }
-
-        if (includeTimingsAsSpans) {
-          longAnimationFrameEntries.forEach((perfEntry) => {
-            this.processPerformanceLongAnimationFrameTimingSpans(perfEntry);
-          });
-        }
-        inpSpan.end(endTime);
-      },
-    );
+      }
+      inpSpan.end(endTime);
+    });
   };
 
   onReportFCP = (fcp: FCPMetricWithAttribution, fcpOpts: VitalOpts = {}) => {
