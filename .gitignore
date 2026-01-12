@@ -140,3 +140,4 @@ junit.xml
 
 # example build outputs
 build
+tmp/**
