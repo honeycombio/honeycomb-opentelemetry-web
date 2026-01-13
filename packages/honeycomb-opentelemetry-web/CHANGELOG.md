@@ -1,5 +1,11 @@
 # honeycomb-opentelemetry-web changelog
 
+## v1.3.0 - 2026-01-13
+
+- feat: Add accurate span timing for Core Web Vitals (#628) | @wolfgangcodes
+- maint(deps): bump qs and express in /packages/honeycomb-opentelemetry-web/examples/custom-with-collector-ts (#627) | @dependabot
+- maint(deps): bump qs and express in /packages/honeycomb-opentelemetry-web/examples/experimental/user-interaction-instrumentation (#626) | @dependabot
+
 ## v1.2.0 - 2025-12-12
 
 - feat: add page visibility state as a browser attribute (#624) | @MustafaHaddara
