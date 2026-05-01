@@ -141,11 +141,11 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - run:
-          name: store npm auth token
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run: npm run build
-      - run: npm publish --access public
+      - run: |
+          export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
+          [[ "${CIRCLE_TAG##*-v}" == *-* ]] && DIST_TAG="next" || DIST_TAG="latest"
+          npm publish --access public --tag "$DIST_TAG"
 
 workflows:
   build-web-distro:
