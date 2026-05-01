@@ -2,7 +2,9 @@
 
 ## Available Tag Prefixes
 
-We currently publish 2 packages from this repository. Each package is versioned separately, and may be released independently. We manage releases via git tags, and we use the following tags for each package:
+This repo can publish multiple packages.
+Each package is versioned separately, and may be released independently.
+We manage releases via git tags, and we use the following tags for each package:
 
 | package                                 | tag                                     |
 | --------------------------------------- | --------------------------------------- |
