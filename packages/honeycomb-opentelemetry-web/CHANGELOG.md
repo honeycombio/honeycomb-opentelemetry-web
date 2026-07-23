@@ -1,5 +1,9 @@
 # honeycomb-opentelemetry-web changelog
 
+## v1.3.1 - 2026-07-23
+
+- fix: cache width/height when layout changes (#652) | @mustafahaddara
+
 ## v1.3.0 - 2026-01-13
 
 - feat: Add accurate span timing for Core Web Vitals (#628) | @wolfgangcodes
@@ -65,7 +69,7 @@
 
 ### ✨ Features
 
-- feat: Send data-* attributes for INP. (#554) | @wolfgangcodes
+- feat: Send data-\* attributes for INP. (#554) | @wolfgangcodes
 
 ### 🛠️ Maintenance
 
@@ -78,12 +82,15 @@
 ## v0.20.0 [beta] - 2025-06-19
 
 ### ✨ Features
+
 - feat: add service version attribute (#553) | @jairo-mendoza
 
 ### 🐛 Fixes
+
 - fix: honoring custom sampler when provided by user. (#559) | @howardyoo
 
 ### 🛠️ Maintenance
+
 - chore: Update examples to remove FID. (#548) | wolfgangcodes
 - maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 7 updates (#551) | @dependabot
 - maint(deps): bump web-vitals from 5.0.2 to 5.0.3 in /packages/honeycomb-opentelemetry-web (#555) | @dependabot
@@ -95,9 +102,11 @@
 ## v0.19.0 [beta] - 2025-06-04
 
 ### ✨ Features
+
 - feat: add metrics and logs configuration (#545) | @(beeklimt@honeycomb.io)
 
 ### 🛠️ Maintenance
+
 - maint(deps): bump web-vitals from 5.0.1 to 5.0.2 in /packages/honeycomb-opentelemetry-web (#543) | @(49699333+dependabot[bot]@users.noreply.github.com)
 - maint(deps): bump @babel/runtime from 7.27.1 to 7.27.4 in /packages/honeycomb-opentelemetry-web (#544) | @(49699333+dependabot[bot]@users.noreply.github.com)
 - maint(deps): bump web-vitals from 5.0.0 to 5.0.1 in /packages/honeycomb-opentelemetry-web (#540) | @(49699333+dependabot[bot]@users.noreply.github.com)
@@ -106,15 +115,19 @@
 ## v0.18.0 [beta] - 2025-05-20
 
 ### 💥 Breaking Changes
+
 - **chore: Upgrade to web-vitals 5.0.0 (#534)** removes support for FID since it has been removed from `web-vitals@5.0.0`. For the full set of upstream changes see changelog [here](https://github.com/GoogleChrome/web-vitals/blob/main/CHANGELOG.md#v500-2025-05-07)
 
 ### ✨ Features
+
 - feat: telemetry distro attrs (#530) | @martin308
 
 ### 🐛 Fixes
+
 - fix: upgrade orb version to test bugfix (#524) | @arriIsHere
 
 ### 🛠️ Maintenance
+
 - maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 9 updates (#535) | @dependabot
 - maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 3 updates (#536) | @dependabot
 - chore: Upgrade to web-vitals 5.0.0 (#534) | @wolfgangcodes
@@ -141,7 +154,7 @@
 
 - maint(deps): bump @opentelemetry/semantic-conventions from 1.30.0 to 1.32.0 in /packages/honeycomb-opentelemetry-web in the otel group (#512) | @dependabot
 - Add top-level types element to package.json (#499) | @sodabrew
- (tag: honeycomb-opentelemetry-web-v0.17.0)- rel: v0.17.0 (#511) | @pkanal
+  (tag: honeycomb-opentelemetry-web-v0.17.0)- rel: v0.17.0 (#511) | @pkanal
 
 ## v0.17.0 [beta] - 2025-04-07
 
@@ -269,12 +282,11 @@
 - maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 8 updates (#407) | @dependabot
 - feat(honeycomb-opentelemetry-web): Add support for differing subdomains for debug link exporter. (#406) | @wolfgangcodes
 
-
 ## v0.10.0 [beta] - 2024-11-27
 
 - maint(deps): bump the otel group in /packages/experimental-opentelemetry-web with 8 updates (#395) | @dependabot
 - maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 9 updates (#397) | @dependabot
- (main)- maint(deps-dev): bump the dev-dependencies group in /packages/experimental-opentelemetry-web with 3 updates (#396) | @dependabot
+  (main)- maint(deps-dev): bump the dev-dependencies group in /packages/experimental-opentelemetry-web with 3 updates (#396) | @dependabot
 - maint(deps-dev): bump the dev-dependencies group in /packages/honeycomb-opentelemetry-web with 4 updates (#398) | @dependabot
 - fix: Fix TTFB and FCP metrics not appearing (#394) | @jairo-mendoza
 - maint(deps): bump the otel group in /packages/honeycomb-opentelemetry-web with 3 updates (#388) | @dependabot
@@ -286,6 +298,7 @@
 - docs: add documentation on ContextManagers and Zone.js (#386) | @MustafaHaddara
 
 ## v0.9.0 [beta] - 2024-11-08
+
 - (breaking) `headers` config option only accepts string keys (see upstream change in @opentelemetry/exporter-trace-otlp-http `v0.84.0`)
 - docs: copy README to package directory (#384) | @mustafahaddara
 - fix(rollup): Remove x64 specific package (#382) | @martin308
@@ -319,10 +332,12 @@
 - maint(deps-dev): bump serve from 14.2.3 to 14.2.4 in /packages/honeycomb-opentelemetry-web/examples/hello-world-web in the example-deps group (#341) | @dependabot
 
 ## v0.8.1 [beta] - 2024-10-22
+
 - fix(honeycomb-opentelemetry-web): Add check for lcpEntry.element (#342) | @wolfgangcodes
 
 ## v0.8.0 [Beta] - 2024-10-17
-- fix: This code duplicated  not needed. (#329) | @wolfgangcodes
+
+- fix: This code duplicated not needed. (#329) | @wolfgangcodes
 - maint(deps-dev): bump the dev-dependencies group across 1 directory with 4 updates (#325) | @dependabot
 - maint(deps-dev): bump tslib from 2.6.3 to 2.7.0 in /packages/honeycomb-opentelemetry-web (#295) | @dependabot
 - maint(deps-dev): bump husky from 9.1.4 to 9.1.6 in /packages/honeycomb-opentelemetry-web (#293) | @dependabot
@@ -339,6 +354,7 @@
 - chore: Update release readme. (#302) | @wolfgangcodes
 
 ## v0.7.0 [beta] - 2024-09-16
+
 - maint(deps): bump the example-deps group across 1 directory with 3 updates (#288) | @dependabot
 - maint(deps-dev): bump rollup from 4.20.0 to 4.21.3 in /packages/honeycomb-opentelemetry-web (#289) | @dependabot
 - maint(deps-dev): bump lint-staged from 15.2.8 to 15.2.10 in /packages/honeycomb-opentelemetry-web (#277) | @dependabot
@@ -353,7 +369,9 @@
 - chore: update gitignore paths (#239) | @pkanal
 - docs: Add example for a span processor that hooks into react router (#233) | @pkanal
 -
+
 ## v0.6.0 [beta] - 2024-08-09
+
 - feat: Add LOAF support for onINP (#191) | @wolfgangcodes
 - docs: Tell people about the session ID (#232) | @jessitron
 - refactor: export multiple packages (#203) | @MustafaHaddara
@@ -367,6 +385,7 @@
 - maint(deps): bump web-vitals from 4.2.1 to 4.2.2 (#199) | @dependabot
 
 ## v0.5.0 [beta] - 2024-07-18
+
 - maint(deps-dev): bump esbuild from 0.21.5 to 0.22.0 in /examples/hello-world-web in the example-deps group (#184) | @dependabot
 - maint(deps): bump web-vitals from 4.2.0 to 4.2.1 (#183) | @dependabot
 - docs: update vulnerability reporting process (#193) | @robbkidd
@@ -376,6 +395,7 @@
 - feat: Update example to nest spans. (#189) | @wolfgangcodes
 
 ## v0.4.0 [beta] - 2024-06-21
+
 - maint(deps): bump the otel group across 1 directory with 9 updates (#178) | @dependabot
 - maint(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#179) | @dependabot
 - maint(deps): bump web-vitals from 4.0.1 to 4.2.0 (#177) | @dependabot
@@ -385,6 +405,7 @@
 - feat: include url.path attribute (#171) | @MustafaHaddara
 
 ## v0.3.0 [beta] - 2024-05-23
+
 - maint(deps): bump the otel group with 8 updates (#147) | @dependabot
 - maint(deps-dev): bump the dev-dependencies group with 2 updates (#155) | @dependabot
 - maint(deps-dev): bump esbuild from 0.20.2 to 0.21.3 in /examples/hello-world-web in the example-deps group across 1 directory (#157) | @dependabot
@@ -397,11 +418,13 @@
 - maint: adding more detail to the release guide (#146) | @mustafahaddara
 
 ## v0.2.1 [beta] - 2024-05-10
+
 - maint(deps-dev): bump the dev-dependencies group across 1 directory with 3 updates (#144) | @dependabot
 - fix: Add ability to disable, don't clobber defaults when passing other config params. (#140) | @wolfgangcodes
 - fix: properly declare devDependencies (#143) | @mustafahaddara
 
 ## v0.2.0 [beta] - 2024-05-01
+
 - fix: add opentelemetry/core as a peerdependency to package.json (#136) | @Aghassi
 - feat: Add headers option to main SDK config (#135) | @pkanal
 - maint(deps): bump the otel group with 7 updates (#133) | @dependabot
@@ -440,7 +463,7 @@
 
 - docs: add JS docs for web vitals instrumentation (#92) | @pkanal @JamieDanielson
 - feat: ✨ Config for web vitals (#91) | @pkanal
-- feat: initial web vitals instrumentation  (#84) | @pkanal
+- feat: initial web vitals instrumentation (#84) | @pkanal
 
 ### Maintenance
 
