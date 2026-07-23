@@ -18,14 +18,26 @@ import {
  * Static attributes (e.g. User Agent) are added to the Resource.
  */
 export class BrowserAttributesSpanProcessor implements SpanProcessor {
-  constructor() {}
+  private width = window.innerWidth;
+  private height = window.innerHeight;
+
+  constructor() {
+    window.addEventListener(
+      'resize',
+      () => {
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+      },
+      { passive: true },
+    );
+  }
 
   onStart(span: Span) {
     const { href, pathname, search, hash, hostname } = window.location;
 
     span.setAttributes({
-      [ATTR_BROWSER_WIDTH]: window.innerWidth,
-      [ATTR_BROWSER_HEIGHT]: window.innerHeight,
+      [ATTR_BROWSER_WIDTH]: this.width,
+      [ATTR_BROWSER_HEIGHT]: this.height,
       [ATTR_PAGE_HASH]: hash,
       [ATTR_PAGE_URL]: href,
       [ATTR_PAGE_ROUTE]: pathname,
