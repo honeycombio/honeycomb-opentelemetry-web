@@ -17,6 +17,7 @@ const CLS: CLSMetricWithAttribution = {
   delta: 0.2,
   rating: 'needs-improvement',
   navigationType: 'back-forward',
+  navigationId: 1,
   entries: [
     {
       hadRecentInput: false,
@@ -88,6 +89,7 @@ const LCP: LCPMetricWithAttribution = {
   delta: 2500,
   rating: 'good',
   navigationType: 'back-forward',
+  navigationId: 1,
   entries: [],
   attribution: {
     target: 'div#lcp-element',
@@ -139,6 +141,7 @@ const performanceEventTiming: PerformanceEventTiming = {
   },
   duration: 0,
   interactionId: 0,
+  targetSelector: '',
   entryType: '',
   startTime: 0,
 };
@@ -151,6 +154,7 @@ const INP: INPMetricWithAttribution = {
   rating: 'good',
   entries: [],
   navigationType: 'back-forward',
+  navigationId: 1,
   attribution: {
     interactionTarget: 'div#inp-element',
     interactionType: 'pointer',
@@ -206,6 +210,7 @@ const INPWithTimings: INPMetricWithAttribution = {
   rating: 'good',
   entries: [],
   navigationType: 'back-forward',
+  navigationId: 1,
   attribution: {
     interactionTarget: 'div#inp-element',
     interactionType: 'pointer',
@@ -247,6 +252,7 @@ const FCP: FCPMetricWithAttribution = {
   delta: 2500,
   rating: 'good',
   navigationType: 'back-forward',
+  navigationId: 1,
   entries: [],
   attribution: {
     timeToFirstByte: 200,
@@ -325,6 +331,7 @@ const TTFB: TTFBMetricWithAttribution = {
   delta: 2500,
   rating: 'good',
   navigationType: 'back-forward',
+  navigationId: 1,
   entries: [],
   attribution: {
     waitingDuration: 100,

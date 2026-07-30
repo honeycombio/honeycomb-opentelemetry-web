@@ -117,6 +117,19 @@ import { hrTime } from '@opentelemetry/core';
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
+/**
+ * As of web-vitals v6, attribution navigation entries may be a
+ * PerformanceSoftNavigation, which has no timing fields; narrow to the
+ * hard-navigation entry. Uses an `in` check rather than `instanceof` so it
+ * also works in environments without the PerformanceNavigationTiming global.
+ */
+const getHardNavigationEntry = (
+  navigationEntry?: PerformanceNavigationTiming | PerformanceSoftNavigation,
+): PerformanceNavigationTiming | undefined =>
+  navigationEntry && 'responseStart' in navigationEntry
+    ? navigationEntry
+    : undefined;
+
 interface VitalOpts extends ReportOpts {
   /**
    * Callback function to add custom attributes to web vitals span.
@@ -603,8 +616,12 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }: INPAttribution = attribution;
 
     const inpDuration = inputDelay + processingDuration + presentationDelay;
-    const startTime = hrTime(interactionTime);
-    const endTime = hrTime(interactionTime + inpDuration);
+    // As of web-vitals v6, interactionTime may be undefined for small
+    // interactions reported without an event timing entry; fall back to
+    // the time origin (0), consistent with the other vitals handlers.
+    const interactionStart = interactionTime ?? 0;
+    const startTime = hrTime(interactionStart);
+    const endTime = hrTime(interactionStart + inpDuration);
 
     this.tracer.startActiveSpan(name, { startTime }, (inpSpan) => {
       const inpAttributes = {
@@ -662,8 +679,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       navigationEntry,
     }: FCPAttribution = attribution;
 
+    const hardNavigationEntry = getHardNavigationEntry(navigationEntry);
     // For prerendered pages, use activationStart; otherwise use navigation start (0)
-    const startTime = hrTime(navigationEntry?.activationStart || 0);
+    const startTime = hrTime(hardNavigationEntry?.activationStart || 0);
     // FCP entry's startTime is the raw timestamp from time origin
     const endTime = hrTime(fcpEntry?.startTime || 0);
 
@@ -704,10 +722,11 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       navigationEntry,
     }: TTFBAttribution = attribution;
 
+    const hardNavigationEntry = getHardNavigationEntry(navigationEntry);
     // For prerendered pages, use activationStart; otherwise use navigation start (0)
-    const startTime = hrTime(navigationEntry?.activationStart || 0);
+    const startTime = hrTime(hardNavigationEntry?.activationStart || 0);
     // TTFB responseStart is the raw timestamp from time origin
-    const endTime = hrTime(navigationEntry?.responseStart || 0);
+    const endTime = hrTime(hardNavigationEntry?.responseStart || 0);
 
     const attributes = {
       [ATTR_TTFB_ID]: ttfb.id,
