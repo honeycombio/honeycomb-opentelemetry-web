@@ -2,12 +2,12 @@
 
 ## Unreleased
 
-- feat: report Core Web Vitals for soft navigations (#TBD) | @wolfgangcodes
-- maint(deps): bump web-vitals from 5.1.0 to 6.1.0 in /packages/honeycomb-opentelemetry-web (#TBD) | @wolfgangcodes
-- maint(deps): bump web-vitals from 4.2.4 to 6.1.0 in the example-deps group across 2 directories (#TBD) | @wolfgangcodes
-- maint: replace the `before` npm pin with a rolling `min-release-age` quarantine (#TBD) | @wolfgangcodes
-- maint: pin Node via .nvmrc and build CI on the same version (#TBD) | @wolfgangcodes
-- docs: document soft navigation support and the new navigation attributes (#TBD) | @wolfgangcodes
+- feat: report Core Web Vitals for soft navigations (#656) | @wolfgangcodes
+- maint(deps): bump web-vitals from 5.1.0 to 6.1.0 in /packages/honeycomb-opentelemetry-web (#656) | @wolfgangcodes
+- maint(deps): bump web-vitals from 4.2.4 to 6.1.0 in the example-deps group across 2 directories (#656) | @wolfgangcodes
+- maint: replace the `before` npm pin with a rolling `min-release-age` quarantine (#656) | @wolfgangcodes
+- maint: pin Node via .nvmrc and build CI on the same version (#656) | @wolfgangcodes
+- docs: document soft navigation support and the new navigation attributes (#656) | @wolfgangcodes
 
 ### Soft navigations
 
