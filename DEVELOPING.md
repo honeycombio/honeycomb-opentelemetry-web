@@ -4,7 +4,52 @@
 
 **Required:**
 
-- Node.js (minimum version declared in package.json)
+- Node.js, version pinned in `.nvmrc` (currently 24.19.0, the same version CI
+  builds on). With `asdf`, install it from the repo root:
+
+  ```sh
+  asdf install nodejs
+  ```
+
+  This requires `legacy_version_file=yes` in `~/.asdfrc` so asdf reads `.nvmrc`.
+  With `nvm`, `nvm use` reads it directly.
+
+- npm >= 11.10.0, which the pinned Node bundles (11.17.0).
+
+  `packages/honeycomb-opentelemetry-web/.npmrc` sets [`min-release-age`](https://docs.npmjs.com/cli/using-npm/config#min-release-age)
+  to quarantine newly published dependency versions. npm only understands that
+  key from 11.10.0 onward; older versions merely *warn* about an unknown key and
+  install anyway, silently dropping the protection.
+
+  Verify before installing dependencies. `npm config get min-release-age` echoes
+  the value whether or not npm understands it, so check the **warning**, not the
+  value -- this should print the quarantine window in days with no
+  `Unknown project config` warning:
+
+  ```sh
+  cd packages/honeycomb-opentelemetry-web && npm config get min-release-age
+  ```
+
+  If you see the warning while on the pinned Node, a separately installed npm is
+  probably taking precedence. `asdf-nodejs` wraps `npm` in a shim that searches
+  `PATH` for an npm *outside* asdf first and only falls back to the bundled one,
+  so a Homebrew npm wins even though asdf comes first on `PATH`. Compare:
+
+  ```sh
+  npm --version                        # what you actually get
+  "$(asdf where nodejs)"/bin/npm --version   # what asdf bundles
+  ```
+
+  Removing the other install (`brew uninstall node`) is the durable fix. To
+  override just for one command, set `ASDF_NODEJS_CANON_NPM_PATH`:
+
+  ```sh
+  ASDF_NODEJS_CANON_NPM_PATH="$(asdf where nodejs)/bin/npm" npm ci
+  ```
+
+  A consequence worth knowing: dependency versions published within that window
+  cannot be installed yet. To take one deliberately sooner, prefer
+  `min-release-age-exclude` for that package over removing the setting.
 
 **Recommended:**
 

@@ -43,13 +43,21 @@ import {
   ATTR_CLS_LARGEST_SHIFT_TIME,
   ATTR_CLS_LARGEST_SHIFT_VALUE,
   ATTR_CLS_LOAD_STATE,
+  ATTR_CLS_NAVIGATION_ID,
+  ATTR_CLS_NAVIGATION_INTERACTION_ID,
+  ATTR_CLS_NAVIGATION_START_TIME,
   ATTR_CLS_NAVIGATION_TYPE,
+  ATTR_CLS_NAVIGATION_URL,
   ATTR_CLS_RATING,
   ATTR_CLS_VALUE,
   ATTR_FCP_DELTA,
   ATTR_FCP_ID,
   ATTR_FCP_LOAD_STATE,
+  ATTR_FCP_NAVIGATION_ID,
+  ATTR_FCP_NAVIGATION_INTERACTION_ID,
+  ATTR_FCP_NAVIGATION_START_TIME,
   ATTR_FCP_NAVIGATION_TYPE,
+  ATTR_FCP_NAVIGATION_URL,
   ATTR_FCP_RATING,
   ATTR_FCP_TIME_SINCE_FIRST_BYTE,
   ATTR_FCP_TIME_TO_FIRST_BYTE,
@@ -64,7 +72,11 @@ import {
   ATTR_INP_INTERACTION_TIME,
   ATTR_INP_INTERACTION_TYPE,
   ATTR_INP_LOAD_STATE,
+  ATTR_INP_NAVIGATION_ID,
+  ATTR_INP_NAVIGATION_INTERACTION_ID,
+  ATTR_INP_NAVIGATION_START_TIME,
   ATTR_INP_NAVIGATION_TYPE,
+  ATTR_INP_NAVIGATION_URL,
   ATTR_INP_NEXT_PAINT_TIME,
   ATTR_INP_PRESENTATION_DELAY,
   ATTR_INP_PROCESSING_DURATION,
@@ -90,7 +102,11 @@ import {
   ATTR_LCP_ELEMENT,
   ATTR_LCP_ELEMENT_RENDER_DELAY,
   ATTR_LCP_ID,
+  ATTR_LCP_NAVIGATION_ID,
+  ATTR_LCP_NAVIGATION_INTERACTION_ID,
+  ATTR_LCP_NAVIGATION_START_TIME,
   ATTR_LCP_NAVIGATION_TYPE,
+  ATTR_LCP_NAVIGATION_URL,
   ATTR_LCP_RATING,
   ATTR_LCP_RESOURCE_LOAD_DELAY,
   ATTR_LCP_RESOURCE_LOAD_DURATION,
@@ -105,7 +121,11 @@ import {
   ATTR_TTFB_DNS_DURATION,
   ATTR_TTFB_DNS_TIME,
   ATTR_TTFB_ID,
+  ATTR_TTFB_NAVIGATION_ID,
+  ATTR_TTFB_NAVIGATION_INTERACTION_ID,
+  ATTR_TTFB_NAVIGATION_START_TIME,
   ATTR_TTFB_NAVIGATION_TYPE,
+  ATTR_TTFB_NAVIGATION_URL,
   ATTR_TTFB_RATING,
   ATTR_TTFB_REQUEST_DURATION,
   ATTR_TTFB_REQUEST_TIME,
@@ -116,6 +136,22 @@ import {
 import { hrTime } from '@opentelemetry/core';
 
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
+
+/**
+ * As of web-vitals v6 an attribution's `navigationEntry` is either a
+ * `PerformanceNavigationTiming` (hard navigation) or a
+ * `PerformanceSoftNavigation` (soft navigation). Only the former carries
+ * request timings such as `activationStart` and `responseStart`.
+ *
+ * We discriminate on `entryType` rather than using `instanceof` so this also
+ * narrows correctly for the plain-object entries used in tests.
+ */
+const asHardNavigationEntry = (
+  entry?: PerformanceNavigationTiming | PerformanceSoftNavigation,
+): PerformanceNavigationTiming | undefined =>
+  entry?.entryType === 'navigation'
+    ? (entry as PerformanceNavigationTiming)
+    : undefined;
 
 interface VitalOpts extends ReportOpts {
   /**
@@ -492,9 +528,14 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       largestShiftSource,
     }: CLSAttribution = attribution;
 
-    // Calculate session window timing
-    const firstShiftTime = entries[0]?.startTime || 0;
-    const lastShiftTime = entries[entries.length - 1]?.startTime || 0;
+    // Calculate session window timing. A soft navigation resets CLS, so the
+    // metric can be reported before any shift has occurred -- anchor those to
+    // the navigation's own start rather than to the page's time origin. For a
+    // hard navigation `navigationStartTime` is 0, leaving this unchanged.
+    const navigationStart = cls.navigationStartTime || 0;
+    const firstShiftTime = entries[0]?.startTime || navigationStart;
+    const lastShiftTime =
+      entries[entries.length - 1]?.startTime || navigationStart;
     const startTime = hrTime(firstShiftTime);
     const endTime = hrTime(lastShiftTime);
 
@@ -509,6 +550,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_CLS_VALUE]: cls.value,
       [ATTR_CLS_RATING]: cls.rating,
       [ATTR_CLS_NAVIGATION_TYPE]: cls.navigationType,
+      [ATTR_CLS_NAVIGATION_ID]: cls.navigationId,
+      [ATTR_CLS_NAVIGATION_URL]: cls.navigationURL,
+      [ATTR_CLS_NAVIGATION_START_TIME]: cls.navigationStartTime,
+      [ATTR_CLS_NAVIGATION_INTERACTION_ID]: cls.navigationInteractionId,
       [ATTR_CLS_LARGEST_SHIFT_TARGET]: largestShiftTarget,
       [ATTR_CLS_ELEMENT]: largestShiftTarget,
       [ATTR_CLS_LARGEST_SHIFT_TIME]: largestShiftTime,
@@ -550,8 +595,13 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       lcpEntry,
     }: LCPAttribution = attribution;
 
-    const startTime = hrTime(lcpEntry?.loadTime || 0);
-    const endTime = hrTime(lcpEntry?.renderTime || 0);
+    // `loadTime` is 0 for LCP elements that load no resource (e.g. text), and a
+    // soft navigation resets LCP, so fall back to the navigation's own start
+    // rather than to the page's time origin. For a hard navigation
+    // `navigationStartTime` is 0, leaving this unchanged.
+    const navigationStart = lcp.navigationStartTime || 0;
+    const startTime = hrTime(lcpEntry?.loadTime || navigationStart);
+    const endTime = hrTime(lcpEntry?.renderTime || navigationStart);
 
     const span = this.tracer.startSpan(name, {
       startTime,
@@ -562,6 +612,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_LCP_VALUE]: lcp.value,
       [ATTR_LCP_RATING]: lcp.rating,
       [ATTR_LCP_NAVIGATION_TYPE]: lcp.navigationType,
+      [ATTR_LCP_NAVIGATION_ID]: lcp.navigationId,
+      [ATTR_LCP_NAVIGATION_URL]: lcp.navigationURL,
+      [ATTR_LCP_NAVIGATION_START_TIME]: lcp.navigationStartTime,
+      [ATTR_LCP_NAVIGATION_INTERACTION_ID]: lcp.navigationInteractionId,
       [ATTR_LCP_ELEMENT]: target,
       [ATTR_LCP_URL]: url,
       [ATTR_LCP_TIME_TO_FIRST_BYTE]: timeToFirstByte,
@@ -603,8 +657,16 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }: INPAttribution = attribution;
 
     const inpDuration = inputDelay + processingDuration + presentationDelay;
-    const startTime = hrTime(interactionTime);
-    const endTime = hrTime(interactionTime + inpDuration);
+    // As of web-vitals v6 `interactionTime` is optional: it is absent when the
+    // event duration fell below the browser's minimum reporting threshold, so
+    // no event timing entry was dispatched to attribute the interaction to. The
+    // measured duration is still valid, so anchor the span to the navigation it
+    // belongs to -- web-vitals itself falls back to `navigationStartTime` for
+    // this case. That is 0 for a hard navigation. The absent
+    // `inp.interaction_time` attribute signals the interaction had no timestamp.
+    const interactionStart = interactionTime ?? inp.navigationStartTime ?? 0;
+    const startTime = hrTime(interactionStart);
+    const endTime = hrTime(interactionStart + inpDuration);
 
     this.tracer.startActiveSpan(name, { startTime }, (inpSpan) => {
       const inpAttributes = {
@@ -613,6 +675,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
         [ATTR_INP_VALUE]: inp.value,
         [ATTR_INP_RATING]: inp.rating,
         [ATTR_INP_NAVIGATION_TYPE]: inp.navigationType,
+        [ATTR_INP_NAVIGATION_ID]: inp.navigationId,
+        [ATTR_INP_NAVIGATION_URL]: inp.navigationURL,
+        [ATTR_INP_NAVIGATION_START_TIME]: inp.navigationStartTime,
+        [ATTR_INP_NAVIGATION_INTERACTION_ID]: inp.navigationInteractionId,
         [ATTR_INP_INPUT_DELAY]: inputDelay,
         [ATTR_INP_INTERACTION_TARGET]: interactionTarget,
         [ATTR_INP_INTERACTION_TIME]: interactionTime,
@@ -658,14 +724,22 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       timeToFirstByte,
       firstByteToFCP,
       loadState,
-      fcpEntry,
       navigationEntry,
     }: FCPAttribution = attribution;
 
-    // For prerendered pages, use activationStart; otherwise use navigation start (0)
-    const startTime = hrTime(navigationEntry?.activationStart || 0);
-    // FCP entry's startTime is the raw timestamp from time origin
-    const endTime = hrTime(fcpEntry?.startTime || 0);
+    // Soft navigations have a non-zero time origin, reported as
+    // `navigationStartTime`. Hard navigations report 0 there, so fall back to
+    // activationStart for prerendered pages and to navigation start (0).
+    const navigationStart =
+      fcp.navigationStartTime ||
+      asHardNavigationEntry(navigationEntry)?.activationStart ||
+      0;
+    const startTime = hrTime(navigationStart);
+    // Derived from the value rather than from `fcpEntry.startTime`, because
+    // web-vitals does not attribute an `fcpEntry` for soft navigations. For a
+    // hard navigation this is equivalent: the value is defined as
+    // `fcpEntry.startTime - activationStart`.
+    const endTime = hrTime(navigationStart + fcp.value);
 
     const span = this.tracer.startSpan(name, { startTime });
 
@@ -675,6 +749,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_FCP_VALUE]: fcp.value,
       [ATTR_FCP_RATING]: fcp.rating,
       [ATTR_FCP_NAVIGATION_TYPE]: fcp.navigationType,
+      [ATTR_FCP_NAVIGATION_ID]: fcp.navigationId,
+      [ATTR_FCP_NAVIGATION_URL]: fcp.navigationURL,
+      [ATTR_FCP_NAVIGATION_START_TIME]: fcp.navigationStartTime,
+      [ATTR_FCP_NAVIGATION_INTERACTION_ID]: fcp.navigationInteractionId,
       [ATTR_FCP_TIME_TO_FIRST_BYTE]: timeToFirstByte,
       [ATTR_FCP_TIME_SINCE_FIRST_BYTE]: firstByteToFCP,
       [ATTR_FCP_LOAD_STATE]: loadState,
@@ -704,10 +782,22 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       navigationEntry,
     }: TTFBAttribution = attribution;
 
-    // For prerendered pages, use activationStart; otherwise use navigation start (0)
-    const startTime = hrTime(navigationEntry?.activationStart || 0);
-    // TTFB responseStart is the raw timestamp from time origin
-    const endTime = hrTime(navigationEntry?.responseStart || 0);
+    const hardNavigationEntry = asHardNavigationEntry(navigationEntry);
+    // Soft navigations have a non-zero time origin, reported as
+    // `navigationStartTime`. Hard navigations report 0 there, so fall back to
+    // activationStart for prerendered pages and to navigation start (0).
+    const navigationStart =
+      ttfb.navigationStartTime || hardNavigationEntry?.activationStart || 0;
+    const startTime = hrTime(navigationStart);
+    // TTFB responseStart is the raw timestamp from time origin. Soft
+    // navigations have no request of their own, so web-vitals reports their
+    // TTFB as 0 and exposes no `responseStart`; the span collapses onto the
+    // soft navigation's start.
+    const endTime = hrTime(
+      hardNavigationEntry
+        ? hardNavigationEntry.responseStart || 0
+        : navigationStart + ttfb.value,
+    );
 
     const attributes = {
       [ATTR_TTFB_ID]: ttfb.id,
@@ -715,6 +805,10 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       [ATTR_TTFB_VALUE]: ttfb.value,
       [ATTR_TTFB_RATING]: ttfb.rating,
       [ATTR_TTFB_NAVIGATION_TYPE]: ttfb.navigationType,
+      [ATTR_TTFB_NAVIGATION_ID]: ttfb.navigationId,
+      [ATTR_TTFB_NAVIGATION_URL]: ttfb.navigationURL,
+      [ATTR_TTFB_NAVIGATION_START_TIME]: ttfb.navigationStartTime,
+      [ATTR_TTFB_NAVIGATION_INTERACTION_ID]: ttfb.navigationInteractionId,
       [ATTR_TTFB_WAITING_DURATION]: waitingDuration,
       [ATTR_TTFB_DNS_DURATION]: dnsDuration,
       [ATTR_TTFB_CONNECTION_DURATION]: connectionDuration,

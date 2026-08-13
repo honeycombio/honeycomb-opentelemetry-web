@@ -1,5 +1,51 @@
 # honeycomb-opentelemetry-web changelog
 
+## Unreleased
+
+- feat: report Core Web Vitals for soft navigations (#TBD) | @wolfgangcodes
+- maint(deps): bump web-vitals from 5.1.0 to 6.1.0 in /packages/honeycomb-opentelemetry-web (#TBD) | @wolfgangcodes
+- maint(deps): bump web-vitals from 4.2.4 to 6.1.0 in the example-deps group across 2 directories (#TBD) | @wolfgangcodes
+- maint: replace the `before` npm pin with a rolling `min-release-age` quarantine (#TBD) | @wolfgangcodes
+- maint: pin Node via .nvmrc and build CI on the same version (#TBD) | @wolfgangcodes
+- docs: document soft navigation support and the new navigation attributes (#TBD) | @wolfgangcodes
+
+### Soft navigations
+
+Single-page apps can now report CLS, INP, LCP, FCP, and TTFB for
+[soft navigations](https://developer.chrome.com/docs/web-platform/soft-navigations)
+by setting `reportSoftNavs` per vital. Requires Chromium 151+; the option is a
+no-op on browsers without support.
+
+```js
+const sdk = new HoneycombWebSDK({
+  serviceName: 'my-app',
+  webVitalsInstrumentationConfig: {
+    cls: { reportSoftNavs: true },
+    inp: { reportSoftNavs: true },
+    lcp: { reportSoftNavs: true },
+  },
+});
+```
+
+Every vital gains four attributes describing the navigation it belongs to:
+`<vital>.navigation_id`, `<vital>.navigation_url`,
+`<vital>.navigation_start_time`, and `<vital>.navigation_interaction_id`.
+`<vital>.navigation_type` can now also be `soft-navigation`. Use
+`<vital>.navigation_url` rather than the URL current at export time to attribute
+a metric to a route, since a metric can be reported after the next navigation
+has already begun.
+
+Vital spans are now timed from the navigation they belong to rather than from the
+page's time origin. Hard-navigation timings are unchanged.
+
+### Upgrading
+
+Local development now requires **npm >= 11.10.0** for the `min-release-age`
+setting that replaced the frozen `before` pin. Older npm versions only warn about
+the unknown key and install anyway, dropping the protection. Node is now pinned
+in `.nvmrc` (24.19.0, bundling npm 11.17.0), which both `asdf install nodejs` and
+`nvm use` read, and CI builds on the same version. See DEVELOPING.md.
+
 ## v1.3.1 - 2026-07-23
 
 - fix: cache width/height when layout changes (#652) | @mustafahaddara

@@ -27,7 +27,9 @@ orbs:
 executors:
   node:
     docker:
-      - image: cimg/node:lts
+      # Keep in sync with .nvmrc. This Node bundles npm 11.17.0, which is
+      # required for the `min-release-age` setting in .npmrc.
+      - image: cimg/node:24.19.0
   github:
     docker:
       - image: cibuilds/github:0.13.0
@@ -41,6 +43,21 @@ jobs:
         default: ''
     steps:
       - checkout
+      - run:
+          name: Assert npm supports min-release-age
+          command: |
+            # .npmrc uses `min-release-age` to quarantine newly published
+            # versions, which needs npm >= 11.10.0 (provided by the pinned Node
+            # image). npm only *warns* about unknown config keys, so an older
+            # npm would silently drop the protection rather than fail. Note
+            # `npm config get min-release-age` echoes the value either way, so
+            # the warning is what has to be checked.
+            npm --version
+            cd << parameters.package-path >>
+            if npm config list 2>&1 | grep -q 'Unknown project config "min-release-age"'; then
+              echo "npm $(npm --version) does not support min-release-age" >&2
+              exit 1
+            fi
       - run:
           name: NPM CI
           command: |
