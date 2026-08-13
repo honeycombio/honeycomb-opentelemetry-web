@@ -16,6 +16,24 @@
       <div>
         <span id="dadJokeText"></span>
       </div>
+
+      <hr />
+
+      <h2>Soft navigations</h2>
+      <p>
+        Core Web Vitals are reported for the initial (hard) page load, and again
+        for each soft navigation once <code>reportSoftNavs</code> is enabled.
+        Requires Chromium 151+. Watch the console: spans after a soft navigation
+        carry <code>&lt;vital&gt;.navigation_type</code> of
+        <code>soft-navigation</code> and a <code>navigation_url</code> naming
+        the route they belong to.
+      </p>
+      <nav class="routes">
+        <button data-route="/products/42">Go to /products/42</button>
+        <button data-route="/products/7">Go to /products/7</button>
+        <button data-route="/">Back to /</button>
+      </nav>
+      <div id="routeOutlet"></div>
     </section>
     <!-- Scripts here. Don't remove ↓ -->
     <script type="module" src="build/bundle.js"></script>

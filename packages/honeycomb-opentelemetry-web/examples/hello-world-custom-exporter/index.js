@@ -27,12 +27,42 @@ const main = () => {
     contextManager: new ZoneContextManager(),
     webVitalsInstrumentationConfig: {
       vitalsToTrack: ['CLS', 'FCP', 'INP', 'LCP', 'TTFB'],
+      // Report vitals for soft navigations as well as the initial page load.
+      // Requires Chromium 151+; on browsers without support the option is
+      // ignored, so it is safe to set unconditionally.
+      cls: { reportSoftNavs: true },
+      fcp: { reportSoftNavs: true },
+      inp: { reportSoftNavs: true },
+      lcp: { reportSoftNavs: true },
+      ttfb: { reportSoftNavs: true },
     },
     traceExporters: [new ConsoleSpanExporter()],
   });
 
   sdk.start();
   const tracer = trace.getTracer('click-tracer');
+
+  // Chrome detects a soft navigation when a user interaction changes the URL
+  // and new content is painted. All three signals are required, which is why
+  // this renders into the DOM rather than only calling pushState.
+  const renderRoute = (path) => {
+    const title = path === '/' ? 'Home' : `Product ${path.split('/').pop()}`;
+    const heading = document.createElement('h3');
+    heading.textContent = title;
+    const body = document.createElement('p');
+    body.textContent = `${title} content painted at ${new Date().toISOString()}`;
+    body.style.cssText =
+      'font-size:1.5rem;min-height:160px;padding:1rem;background:#ffe9a8';
+    document.getElementById('routeOutlet').replaceChildren(heading, body);
+  };
+
+  document.querySelectorAll('.routes [data-route]').forEach((routeButton) => {
+    routeButton.addEventListener('click', () => {
+      const path = routeButton.dataset.route;
+      history.pushState({}, '', path);
+      renderRoute(path);
+    });
+  });
 
   const buttonElement = document.getElementById('loadDadJoke');
 
