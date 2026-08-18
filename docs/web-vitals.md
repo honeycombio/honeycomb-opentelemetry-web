@@ -34,6 +34,36 @@ All vitals have the following attributes, they will each be namespaced by the na
 "<vital-rating>.rating": "good" | "needs-improvement" | "poor"
 
 "<vital-id>.id": string;
+
+/**
+ * The navigation the metric belongs to. `soft-navigation` appears only when
+ * you enable soft navigations; see "Soft Navigations" below.
+ */
+"<vital>.navigation_type": "navigate" | "reload" | "back-forward" | "back-forward-cache" | "prerender" | "restore" | "soft-navigation";
+
+/**
+ * Identifier of the navigation the metric belongs to. Tells soft navigations
+ * apart within one page load.
+ */
+"<vital>.navigation_id": number;
+
+/**
+ * URL of the navigation the metric belongs to. web-vitals can report a metric
+ * after a later navigation begins, so prefer this over the URL at export time.
+ */
+"<vital>.navigation_url": string;
+
+/**
+ * Time origin for the metric, relative to the page's time origin. 0 for a hard
+ * navigation, the soft navigation's start otherwise.
+ */
+"<vital>.navigation_start_time": DOMHighResTimeStamp;
+
+/**
+ * For a soft navigation, the `interactionId` of the interaction that triggered
+ * it. Links the metric to that interaction.
+ */
+"<vital>.navigation_interaction_id": number;
 ```
 
 ### [Cumulative Layout Score](https://web.dev/articles/cls) attributes
@@ -245,6 +275,43 @@ All vitals have the following attributes, they will each be namespaced by the na
 ```
 
 **Span Timing:** The span represents the time from when the user initiates the page load to when the first byte is received. For normal pages, this starts at navigation start (`performance.timeOrigin`). For prerendered pages, this starts at activation time (`activationStart`) when the user actually sees the page. The end time is when the first byte was received (`responseStart`). The span duration equals `ttfb.value`.
+
+## Soft Navigations
+
+By default the SDK measures web vitals only for the initial page load. A
+single-page app that changes route without a full page load can also report
+vitals for those
+[soft navigations](https://developer.chrome.com/docs/web-platform/soft-navigations).
+Set `reportSoftNavs` on each vital you want them for:
+
+```js
+const sdk = new HoneycombWebSDK({
+  serviceName: 'my-app',
+  webVitalsInstrumentationConfig: {
+    cls: { reportSoftNavs: true },
+    inp: { reportSoftNavs: true },
+    lcp: { reportSoftNavs: true },
+  },
+});
+```
+
+Soft navigation spans carry `<vital>.navigation_type: "soft-navigation"` and run
+from the soft navigation's start instead of the page's time origin. Read
+`<vital>.navigation_url` to tell which route a metric belongs to: web-vitals can
+report a metric after the next navigation begins, so the URL at export time may
+name the wrong route.
+
+Before you turn this on:
+
+- Chromium 151+ only. Other browsers ignore the option, so setting it everywhere
+  is safe.
+- web-vitals reports `TTFB` as `0` for a soft navigation, which issues no
+  request.
+- `CLS` and `INP` reset at each soft navigation, and `FCP`/`LCP` measure the
+  first and largest contentful paint *after* it. An element the browser does not
+  repaint adds nothing to the new value.
+- The first soft navigation finalizes the metrics for the initial page load,
+  which changes how you measure first page loads.
 
 ## Customization of event attributes
 

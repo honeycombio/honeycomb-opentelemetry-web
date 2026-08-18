@@ -1,5 +1,11 @@
 # honeycomb-opentelemetry-web changelog
 
+## Unreleased
+
+- feat: report Core Web Vitals for soft navigations (#656) | @wolfgangcodes
+- maint(deps): bump web-vitals from 5.1.0 to 6.1.0 in /packages/honeycomb-opentelemetry-web (#656) | @wolfgangcodes
+- maint: replace the `before` npm pin with `min-release-age` and pin Node via .nvmrc (#656) | @wolfgangcodes
+
 ## v1.3.1 - 2026-07-23
 
 - fix: cache width/height when layout changes (#652) | @mustafahaddara

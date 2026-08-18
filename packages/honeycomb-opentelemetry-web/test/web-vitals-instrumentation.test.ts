@@ -17,6 +17,7 @@ const CLS: CLSMetricWithAttribution = {
   delta: 0.2,
   rating: 'needs-improvement',
   navigationType: 'back-forward',
+  navigationId: 1,
   entries: [
     {
       hadRecentInput: false,
@@ -88,6 +89,7 @@ const LCP: LCPMetricWithAttribution = {
   delta: 2500,
   rating: 'good',
   navigationType: 'back-forward',
+  navigationId: 1,
   entries: [],
   attribution: {
     target: 'div#lcp-element',
@@ -139,6 +141,7 @@ const performanceEventTiming: PerformanceEventTiming = {
   },
   duration: 0,
   interactionId: 0,
+  targetSelector: 'div#data-element',
   entryType: '',
   startTime: 0,
 };
@@ -151,6 +154,7 @@ const INP: INPMetricWithAttribution = {
   rating: 'good',
   entries: [],
   navigationType: 'back-forward',
+  navigationId: 1,
   attribution: {
     interactionTarget: 'div#inp-element',
     interactionType: 'pointer',
@@ -206,6 +210,7 @@ const INPWithTimings: INPMetricWithAttribution = {
   rating: 'good',
   entries: [],
   navigationType: 'back-forward',
+  navigationId: 1,
   attribution: {
     interactionTarget: 'div#inp-element',
     interactionType: 'pointer',
@@ -247,6 +252,7 @@ const FCP: FCPMetricWithAttribution = {
   delta: 2500,
   rating: 'good',
   navigationType: 'back-forward',
+  navigationId: 1,
   entries: [],
   attribution: {
     timeToFirstByte: 200,
@@ -325,6 +331,7 @@ const TTFB: TTFBMetricWithAttribution = {
   delta: 2500,
   rating: 'good',
   navigationType: 'back-forward',
+  navigationId: 1,
   entries: [],
   attribution: {
     waitingDuration: 100,
@@ -393,6 +400,144 @@ const TTFBAttr = {
   'ttfb.connection_time': 200,
   'ttfb.dns_time': 1000,
   'ttfb.request_time': 300,
+};
+
+// A `soft-navigation` performance entry from Chromium 151+. It carries no
+// request timings, so it has no `activationStart` or `responseStart`.
+const softNavigationEntry = {
+  entryType: 'soft-navigation',
+  name: 'https://example.com/products/42',
+  startTime: 5000,
+  duration: 0,
+  interactionId: 77,
+  navigationId: 2,
+  toJSON() {
+    return '';
+  },
+} as PerformanceSoftNavigation;
+
+const SoftNavFCP: FCPMetricWithAttribution = {
+  name: 'FCP',
+  value: 400,
+  id: 'soft-nav-fcp-id',
+  delta: 400,
+  rating: 'good',
+  navigationType: 'soft-navigation',
+  navigationId: 2,
+  navigationInteractionId: 77,
+  navigationStartTime: 5000,
+  navigationURL: 'https://example.com/products/42',
+  entries: [],
+  attribution: {
+    timeToFirstByte: 0,
+    firstByteToFCP: 400,
+    loadState: 'complete',
+    // web-vitals attributes no `fcpEntry` for a soft navigation, so the
+    // paint time comes from `navigationStartTime + value`.
+    navigationEntry: softNavigationEntry,
+  },
+};
+
+const SoftNavTTFB: TTFBMetricWithAttribution = {
+  name: 'TTFB',
+  // A soft navigation issues no request, so web-vitals reports TTFB as 0.
+  value: 0,
+  id: 'soft-nav-ttfb-id',
+  delta: 0,
+  rating: 'good',
+  navigationType: 'soft-navigation',
+  navigationId: 2,
+  navigationInteractionId: 77,
+  navigationStartTime: 5000,
+  navigationURL: 'https://example.com/products/42',
+  entries: [],
+  attribution: {
+    waitingDuration: 0,
+    dnsDuration: 0,
+    requestDuration: 0,
+    cacheDuration: 0,
+    connectionDuration: 0,
+    navigationEntry: softNavigationEntry,
+  },
+};
+
+const SoftNavCLS: CLSMetricWithAttribution = {
+  name: 'CLS',
+  value: 0,
+  id: 'soft-nav-cls-id',
+  delta: 0,
+  rating: 'good',
+  navigationType: 'soft-navigation',
+  navigationId: 2,
+  navigationInteractionId: 77,
+  navigationStartTime: 5000,
+  navigationURL: 'https://example.com/products/42',
+  // The soft navigation reset CLS, so the browser has recorded no shifts.
+  entries: [],
+  attribution: {
+    largestShiftTarget: '',
+    largestShiftTime: 0,
+    largestShiftValue: 0,
+    loadState: 'complete',
+  },
+};
+
+const SoftNavLCP: LCPMetricWithAttribution = {
+  name: 'LCP',
+  value: 600,
+  id: 'soft-nav-lcp-id',
+  delta: 600,
+  rating: 'good',
+  navigationType: 'soft-navigation',
+  navigationId: 2,
+  navigationInteractionId: 77,
+  navigationStartTime: 5000,
+  navigationURL: 'https://example.com/products/42',
+  entries: [],
+  attribution: {
+    target: 'h1#product-title',
+    url: '',
+    timeToFirstByte: 0,
+    resourceLoadDelay: 0,
+    resourceLoadDuration: 0,
+    elementRenderDelay: 600,
+    lcpEntry: {
+      duration: 0,
+      element: null,
+      entryType: 'largest-contentful-paint',
+      id: '',
+      // A text element loads no resource, so `loadTime` is 0.
+      loadTime: 0,
+      name: '',
+      renderTime: 5600,
+      size: 1024,
+      startTime: 5600,
+      url: '',
+      toJSON: () => '',
+    },
+  },
+};
+
+// web-vitals v6 also reports interactions that fell below the browser's
+// minimum event-timing threshold. The browser dispatched no event entry for
+// these, so the interaction attribution fields are missing.
+const SmallINP: INPMetricWithAttribution = {
+  name: 'INP',
+  value: 8,
+  id: 'small-inp-id',
+  delta: 8,
+  rating: 'good',
+  navigationType: 'back-forward-cache',
+  navigationId: 1,
+  entries: [],
+  attribution: {
+    inputDelay: 2,
+    processingDuration: 4,
+    presentationDelay: 2,
+    loadState: 'complete',
+    longAnimationFrameEntries: [],
+    processedEventEntries: [],
+  },
 };
 
 describe('Web Vitals Instrumentation Tests', () => {
@@ -782,6 +927,150 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       expect(exporter.getFinishedSpans().length).toEqual(1);
       expect(exporter.getFinishedSpans()[0].name).toEqual('TTFB');
+    });
+  });
+
+  // web-vitals v6 reports Core Web Vitals for soft navigations when the
+  // config sets `reportSoftNavs`. A soft navigation has a non-zero time
+  // origin, so these spans anchor to `navigationStartTime` instead of 0.
+  describe('soft navigations', () => {
+    it('should pass reportSoftNavs through to every web-vitals reporter', () => {
+      const reporters = {
+        onCLS: jest.fn(),
+        onLCP: jest.fn(),
+        onINP: jest.fn(),
+        onFCP: jest.fn(),
+        onTTFB: jest.fn(),
+      };
+
+      jest.isolateModules(() => {
+        jest.doMock('web-vitals/attribution', () => reporters);
+        const {
+          WebVitalsInstrumentation: Instrumentation,
+        } = require('../src/web-vitals-autoinstrumentation');
+
+        new Instrumentation({
+          cls: { reportSoftNavs: true },
+          lcp: { reportSoftNavs: true },
+          inp: { reportSoftNavs: true },
+          fcp: { reportSoftNavs: true },
+          ttfb: { reportSoftNavs: true },
+        });
+      });
+
+      // The instrumentation hands these opts to web-vitals; storing them
+      // alone would not enable soft navs.
+      Object.values(reporters).forEach((register) => {
+        expect(register).toHaveBeenCalledWith(
+          expect.any(Function),
+          expect.objectContaining({ reportSoftNavs: true }),
+        );
+      });
+    });
+
+    it('should anchor an FCP span to the soft navigation start', () => {
+      const instr = new WebVitalsInstrumentation();
+      instr.onReportFCP(SoftNavFCP, {});
+
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.name).toBe('FCP');
+      expect(span.attributes).toMatchObject({
+        'fcp.navigation_type': 'soft-navigation',
+        'fcp.navigation_id': 2,
+        'fcp.navigation_url': 'https://example.com/products/42',
+        'fcp.navigation_start_time': 5000,
+        'fcp.navigation_interaction_id': 77,
+      });
+      // These times run from the soft nav's time origin. The end is
+      // navigationStartTime + value, since web-vitals supplies no fcpEntry.
+      expect(span.startTime).toEqual(hrTime(5000));
+      expect(span.endTime).toEqual(hrTime(5400));
+    });
+
+    it('should record the navigation URL a soft-nav metric belongs to', () => {
+      const instr = new WebVitalsInstrumentation();
+      // web-vitals can report a soft-nav metric after the next navigation
+      // begins, so the URL comes from the metric instead of the document.
+      instr.onReportTTFB(SoftNavTTFB, {});
+
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.attributes['ttfb.navigation_url']).toBe(
+        'https://example.com/products/42',
+      );
+      expect(span.attributes['ttfb.navigation_id']).toBe(2);
+    });
+
+    it('should collapse a TTFB span onto the soft navigation start', () => {
+      const instr = new WebVitalsInstrumentation();
+      instr.onReportTTFB(SoftNavTTFB, {});
+
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.name).toBe('TTFB');
+      expect(span.attributes).toMatchObject({
+        'ttfb.navigation_type': 'soft-navigation',
+        'ttfb.value': 0,
+      });
+      // A soft navigation issues no request, so web-vitals reports TTFB as 0
+      // and exposes no `responseStart` to end the span with.
+      expect(span.startTime).toEqual(hrTime(5000));
+      expect(span.endTime).toEqual(hrTime(5000));
+    });
+
+    it('should anchor a reset CLS span to the soft navigation start', () => {
+      const instr = new WebVitalsInstrumentation();
+      // CLS resets on a soft navigation, so web-vitals can report it with no
+      // entries to time from.
+      instr.onReportCLS(SoftNavCLS, {});
+
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.name).toBe('CLS');
+      expect(span.startTime).toEqual(hrTime(5000));
+      expect(span.endTime).toEqual(hrTime(5000));
+    });
+
+    it('should anchor a text-element LCP span to the soft navigation start', () => {
+      const instr = new WebVitalsInstrumentation();
+      // A text LCP element loads no resource, so `loadTime` is 0.
+      instr.onReportLCP(SoftNavLCP, { dataAttributes: [] });
+
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.name).toBe('LCP');
+      expect(span.startTime).toEqual(hrTime(5000));
+      expect(span.endTime).toEqual(hrTime(5600));
+    });
+
+    it('should still create an INP span when the interaction was below the reporting threshold', () => {
+      const instr = new WebVitalsInstrumentation();
+      instr.onReportINP(SmallINP, {});
+
+      const span = exporter.getFinishedSpans()[0];
+      expect(span.name).toBe('INP');
+      // Without `interactionTime` the span has no place in time, but
+      // web-vitals still reports the duration.
+      expect(span.startTime).toEqual(hrTime(0));
+      expect(span.endTime).toEqual(hrTime(8));
+      expect(span.attributes['inp.interaction_time']).toBeUndefined();
+      expect(span.attributes['inp.duration']).toEqual(8);
+    });
+
+    it('should anchor an untimed INP span to the soft navigation it belongs to', () => {
+      const instr = new WebVitalsInstrumentation();
+      instr.onReportINP(
+        {
+          ...SmallINP,
+          navigationType: 'soft-navigation',
+          navigationId: 2,
+          navigationStartTime: 5000,
+          navigationURL: 'https://example.com/products/42',
+        },
+        {},
+      );
+
+      const span = exporter.getFinishedSpans()[0];
+      // Without the navigationStartTime fallback this would land at the page's
+      // time origin rather than within the soft navigation.
+      expect(span.startTime).toEqual(hrTime(5000));
+      expect(span.endTime).toEqual(hrTime(5008));
     });
   });
 

@@ -220,9 +220,39 @@ export const ATTR_CLS_RATING = 'cls.rating';
 
 /**
  * CLS navigation type.
- * @example "navigate", "reload", "back-forward"
+ * @example "navigate", "reload", "back-forward", "soft-navigation"
  */
 export const ATTR_CLS_NAVIGATION_TYPE = 'cls.navigation_type';
+
+/**
+ * Identifier of the navigation this CLS metric belongs to. Tells soft
+ * navigations apart within one page load.
+ * @example 2
+ */
+export const ATTR_CLS_NAVIGATION_ID = 'cls.navigation_id';
+
+/**
+ * URL of the navigation this CLS metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
+ * @example "https://example.com/products/42"
+ */
+export const ATTR_CLS_NAVIGATION_URL = 'cls.navigation_url';
+
+/**
+ * Time origin for this CLS metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
+ * @example 5000
+ */
+export const ATTR_CLS_NAVIGATION_START_TIME = 'cls.navigation_start_time';
+
+/**
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this CLS metric to that interaction.
+ * @example 77
+ */
+export const ATTR_CLS_NAVIGATION_INTERACTION_ID =
+  'cls.navigation_interaction_id';
 
 // LCP (Largest Contentful Paint) attributes
 /**
@@ -251,9 +281,39 @@ export const ATTR_LCP_RATING = 'lcp.rating';
 
 /**
  * LCP navigation type.
- * @example "navigate", "reload", "back-forward"
+ * @example "navigate", "reload", "back-forward", "soft-navigation"
  */
 export const ATTR_LCP_NAVIGATION_TYPE = 'lcp.navigation_type';
+
+/**
+ * Identifier of the navigation this LCP metric belongs to. Tells soft
+ * navigations apart within one page load.
+ * @example 2
+ */
+export const ATTR_LCP_NAVIGATION_ID = 'lcp.navigation_id';
+
+/**
+ * URL of the navigation this LCP metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
+ * @example "https://example.com/products/42"
+ */
+export const ATTR_LCP_NAVIGATION_URL = 'lcp.navigation_url';
+
+/**
+ * Time origin for this LCP metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
+ * @example 5000
+ */
+export const ATTR_LCP_NAVIGATION_START_TIME = 'lcp.navigation_start_time';
+
+/**
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this LCP metric to that interaction.
+ * @example 77
+ */
+export const ATTR_LCP_NAVIGATION_INTERACTION_ID =
+  'lcp.navigation_interaction_id';
 
 // INP (Interaction to Next Paint) attributes
 /**
@@ -282,9 +342,39 @@ export const ATTR_INP_RATING = 'inp.rating';
 
 /**
  * INP navigation type.
- * @example "navigate", "reload", "back-forward"
+ * @example "navigate", "reload", "back-forward", "soft-navigation"
  */
 export const ATTR_INP_NAVIGATION_TYPE = 'inp.navigation_type';
+
+/**
+ * Identifier of the navigation this INP metric belongs to. Tells soft
+ * navigations apart within one page load.
+ * @example 2
+ */
+export const ATTR_INP_NAVIGATION_ID = 'inp.navigation_id';
+
+/**
+ * URL of the navigation this INP metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
+ * @example "https://example.com/products/42"
+ */
+export const ATTR_INP_NAVIGATION_URL = 'inp.navigation_url';
+
+/**
+ * Time origin for this INP metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
+ * @example 5000
+ */
+export const ATTR_INP_NAVIGATION_START_TIME = 'inp.navigation_start_time';
+
+/**
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this INP metric to that interaction.
+ * @example 77
+ */
+export const ATTR_INP_NAVIGATION_INTERACTION_ID =
+  'inp.navigation_interaction_id';
 
 // FCP (First Contentful Paint) attributes
 /**
@@ -313,9 +403,39 @@ export const ATTR_FCP_RATING = 'fcp.rating';
 
 /**
  * FCP navigation type.
- * @example "navigate", "reload", "back-forward"
+ * @example "navigate", "reload", "back-forward", "soft-navigation"
  */
 export const ATTR_FCP_NAVIGATION_TYPE = 'fcp.navigation_type';
+
+/**
+ * Identifier of the navigation this FCP metric belongs to. Tells soft
+ * navigations apart within one page load.
+ * @example 2
+ */
+export const ATTR_FCP_NAVIGATION_ID = 'fcp.navigation_id';
+
+/**
+ * URL of the navigation this FCP metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
+ * @example "https://example.com/products/42"
+ */
+export const ATTR_FCP_NAVIGATION_URL = 'fcp.navigation_url';
+
+/**
+ * Time origin for this FCP metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
+ * @example 5000
+ */
+export const ATTR_FCP_NAVIGATION_START_TIME = 'fcp.navigation_start_time';
+
+/**
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this FCP metric to that interaction.
+ * @example 77
+ */
+export const ATTR_FCP_NAVIGATION_INTERACTION_ID =
+  'fcp.navigation_interaction_id';
 
 // TTFB (Time to First Byte) attributes
 /**
@@ -344,9 +464,39 @@ export const ATTR_TTFB_RATING = 'ttfb.rating';
 
 /**
  * TTFB navigation type.
- * @example "navigate", "reload", "back-forward"
+ * @example "navigate", "reload", "back-forward", "soft-navigation"
  */
 export const ATTR_TTFB_NAVIGATION_TYPE = 'ttfb.navigation_type';
+
+/**
+ * Identifier of the navigation this TTFB metric belongs to. Tells soft
+ * navigations apart within one page load.
+ * @example 2
+ */
+export const ATTR_TTFB_NAVIGATION_ID = 'ttfb.navigation_id';
+
+/**
+ * URL of the navigation this TTFB metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
+ * @example "https://example.com/products/42"
+ */
+export const ATTR_TTFB_NAVIGATION_URL = 'ttfb.navigation_url';
+
+/**
+ * Time origin for this TTFB metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
+ * @example 5000
+ */
+export const ATTR_TTFB_NAVIGATION_START_TIME = 'ttfb.navigation_start_time';
+
+/**
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this TTFB metric to that interaction.
+ * @example 77
+ */
+export const ATTR_TTFB_NAVIGATION_INTERACTION_ID =
+  'ttfb.navigation_interaction_id';
 
 // CLS (Cumulative Layout Shift) specific attributes
 /**
