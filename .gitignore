@@ -141,3 +141,6 @@ junit.xml
 # example build outputs
 build
 tmp/**
+
+# local agent tooling (settings, worktrees)
+.claude/
