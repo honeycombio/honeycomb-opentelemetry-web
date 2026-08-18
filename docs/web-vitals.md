@@ -36,33 +36,32 @@ All vitals have the following attributes, they will each be namespaced by the na
 "<vital-id>.id": string;
 
 /**
- * Which navigation the metric was reported for. `soft-navigation` only appears
- * when soft navigations are enabled -- see "Soft Navigations" below.
+ * The navigation the metric belongs to. `soft-navigation` appears only when
+ * you enable soft navigations; see "Soft Navigations" below.
  */
 "<vital>.navigation_type": "navigate" | "reload" | "back-forward" | "back-forward-cache" | "prerender" | "restore" | "soft-navigation";
 
 /**
- * Identifier of the navigation the metric was reported for. Distinguishes
- * soft navigations from each other within a single page load.
+ * Identifier of the navigation the metric belongs to. Tells soft navigations
+ * apart within one page load.
  */
 "<vital>.navigation_id": number;
 
 /**
- * URL of the navigation the metric was reported for. A metric can be reported
- * after a later navigation has already begun, so prefer this over the URL that
- * was current when the span was exported.
+ * URL of the navigation the metric belongs to. web-vitals can report a metric
+ * after a later navigation begins, so prefer this over the URL at export time.
  */
 "<vital>.navigation_url": string;
 
 /**
- * Time origin the metric was measured from, relative to the page's time origin.
- * 0 for a hard navigation, the soft navigation's start otherwise.
+ * Time origin for the metric, relative to the page's time origin. 0 for a hard
+ * navigation, the soft navigation's start otherwise.
  */
 "<vital>.navigation_start_time": DOMHighResTimeStamp;
 
 /**
  * For a soft navigation, the `interactionId` of the interaction that triggered
- * it. Correlates the metric with the interaction responsible.
+ * it. Links the metric to that interaction.
  */
 "<vital>.navigation_interaction_id": number;
 ```
@@ -279,10 +278,11 @@ All vitals have the following attributes, they will each be namespaced by the na
 
 ## Soft Navigations
 
-By default, web vitals are only measured for the initial page load. Single-page
-apps that change route without a full page load can also report vitals for those
-[soft navigations](https://developer.chrome.com/docs/web-platform/soft-navigations),
-by setting `reportSoftNavs` on each vital you want it for:
+By default the SDK measures web vitals only for the initial page load. A
+single-page app that changes route without a full page load can also report
+vitals for those
+[soft navigations](https://developer.chrome.com/docs/web-platform/soft-navigations).
+Set `reportSoftNavs` on each vital you want them for:
 
 ```js
 const sdk = new HoneycombWebSDK({
@@ -295,23 +295,23 @@ const sdk = new HoneycombWebSDK({
 });
 ```
 
-Soft navigation spans carry `<vital>.navigation_type: "soft-navigation"` and are
-timed from the soft navigation's start rather than from the page's time origin.
-Use `<vital>.navigation_url` to tell which route a metric belongs to -- a metric
-can be reported after the next navigation has already begun, so the URL current
-at export time is not reliable.
+Soft navigation spans carry `<vital>.navigation_type: "soft-navigation"` and run
+from the soft navigation's start instead of the page's time origin. Read
+`<vital>.navigation_url` to tell which route a metric belongs to: web-vitals can
+report a metric after the next navigation begins, so the URL at export time may
+name the wrong route.
 
-A few caveats worth knowing before you turn this on:
+Before you turn this on:
 
-- Requires browser support (Chromium 151+). The option is a no-op elsewhere, so
-  it is safe to set unconditionally.
-- `TTFB` is reported as `0` for a soft navigation, since it issues no request of
-  its own.
+- Chromium 151+ only. Other browsers ignore the option, so setting it everywhere
+  is safe.
+- web-vitals reports `TTFB` as `0` for a soft navigation, which issues no
+  request.
 - `CLS` and `INP` reset at each soft navigation, and `FCP`/`LCP` measure the
-  first and largest contentful paint *after* it. Elements that are not
-  repainted do not count toward the new value.
-- Metrics for the initial page load are finalized once the first soft navigation
-  occurs, which changes how first page loads are measured.
+  first and largest contentful paint *after* it. An element the browser does not
+  repaint adds nothing to the new value.
+- The first soft navigation finalizes the metrics for the initial page load,
+  which changes how you measure first page loads.
 
 ## Customization of event attributes
 

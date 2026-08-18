@@ -225,30 +225,30 @@ export const ATTR_CLS_RATING = 'cls.rating';
 export const ATTR_CLS_NAVIGATION_TYPE = 'cls.navigation_type';
 
 /**
- * Identifier of the navigation this CLS metric was reported for. Distinguishes
- * soft navigations from each other within a single page load.
+ * Identifier of the navigation this CLS metric belongs to. Tells soft
+ * navigations apart within one page load.
  * @example 2
  */
 export const ATTR_CLS_NAVIGATION_ID = 'cls.navigation_id';
 
 /**
- * URL of the navigation this CLS metric was reported for. A metric can be
- * reported after a later navigation has already begun, so prefer this over the
- * URL current at export time.
+ * URL of the navigation this CLS metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
  * @example "https://example.com/products/42"
  */
 export const ATTR_CLS_NAVIGATION_URL = 'cls.navigation_url';
 
 /**
- * Time origin this CLS metric was measured from, relative to the page's time
- * origin. 0 for a hard navigation, the soft navigation's start otherwise.
+ * Time origin for this CLS metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
  * @example 5000
  */
 export const ATTR_CLS_NAVIGATION_START_TIME = 'cls.navigation_start_time';
 
 /**
- * For a soft navigation, the `interactionId` of the interaction that triggered
- * it, correlating this CLS metric with the interaction responsible.
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this CLS metric to that interaction.
  * @example 77
  */
 export const ATTR_CLS_NAVIGATION_INTERACTION_ID =
@@ -286,30 +286,30 @@ export const ATTR_LCP_RATING = 'lcp.rating';
 export const ATTR_LCP_NAVIGATION_TYPE = 'lcp.navigation_type';
 
 /**
- * Identifier of the navigation this LCP metric was reported for. Distinguishes
- * soft navigations from each other within a single page load.
+ * Identifier of the navigation this LCP metric belongs to. Tells soft
+ * navigations apart within one page load.
  * @example 2
  */
 export const ATTR_LCP_NAVIGATION_ID = 'lcp.navigation_id';
 
 /**
- * URL of the navigation this LCP metric was reported for. A metric can be
- * reported after a later navigation has already begun, so prefer this over the
- * URL current at export time.
+ * URL of the navigation this LCP metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
  * @example "https://example.com/products/42"
  */
 export const ATTR_LCP_NAVIGATION_URL = 'lcp.navigation_url';
 
 /**
- * Time origin this LCP metric was measured from, relative to the page's time
- * origin. 0 for a hard navigation, the soft navigation's start otherwise.
+ * Time origin for this LCP metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
  * @example 5000
  */
 export const ATTR_LCP_NAVIGATION_START_TIME = 'lcp.navigation_start_time';
 
 /**
- * For a soft navigation, the `interactionId` of the interaction that triggered
- * it, correlating this LCP metric with the interaction responsible.
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this LCP metric to that interaction.
  * @example 77
  */
 export const ATTR_LCP_NAVIGATION_INTERACTION_ID =
@@ -347,30 +347,30 @@ export const ATTR_INP_RATING = 'inp.rating';
 export const ATTR_INP_NAVIGATION_TYPE = 'inp.navigation_type';
 
 /**
- * Identifier of the navigation this INP metric was reported for. Distinguishes
- * soft navigations from each other within a single page load.
+ * Identifier of the navigation this INP metric belongs to. Tells soft
+ * navigations apart within one page load.
  * @example 2
  */
 export const ATTR_INP_NAVIGATION_ID = 'inp.navigation_id';
 
 /**
- * URL of the navigation this INP metric was reported for. A metric can be
- * reported after a later navigation has already begun, so prefer this over the
- * URL current at export time.
+ * URL of the navigation this INP metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
  * @example "https://example.com/products/42"
  */
 export const ATTR_INP_NAVIGATION_URL = 'inp.navigation_url';
 
 /**
- * Time origin this INP metric was measured from, relative to the page's time
- * origin. 0 for a hard navigation, the soft navigation's start otherwise.
+ * Time origin for this INP metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
  * @example 5000
  */
 export const ATTR_INP_NAVIGATION_START_TIME = 'inp.navigation_start_time';
 
 /**
- * For a soft navigation, the `interactionId` of the interaction that triggered
- * it, correlating this INP metric with the interaction responsible.
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this INP metric to that interaction.
  * @example 77
  */
 export const ATTR_INP_NAVIGATION_INTERACTION_ID =
@@ -408,30 +408,30 @@ export const ATTR_FCP_RATING = 'fcp.rating';
 export const ATTR_FCP_NAVIGATION_TYPE = 'fcp.navigation_type';
 
 /**
- * Identifier of the navigation this FCP metric was reported for. Distinguishes
- * soft navigations from each other within a single page load.
+ * Identifier of the navigation this FCP metric belongs to. Tells soft
+ * navigations apart within one page load.
  * @example 2
  */
 export const ATTR_FCP_NAVIGATION_ID = 'fcp.navigation_id';
 
 /**
- * URL of the navigation this FCP metric was reported for. A metric can be
- * reported after a later navigation has already begun, so prefer this over the
- * URL current at export time.
+ * URL of the navigation this FCP metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
  * @example "https://example.com/products/42"
  */
 export const ATTR_FCP_NAVIGATION_URL = 'fcp.navigation_url';
 
 /**
- * Time origin this FCP metric was measured from, relative to the page's time
- * origin. 0 for a hard navigation, the soft navigation's start otherwise.
+ * Time origin for this FCP metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
  * @example 5000
  */
 export const ATTR_FCP_NAVIGATION_START_TIME = 'fcp.navigation_start_time';
 
 /**
- * For a soft navigation, the `interactionId` of the interaction that triggered
- * it, correlating this FCP metric with the interaction responsible.
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this FCP metric to that interaction.
  * @example 77
  */
 export const ATTR_FCP_NAVIGATION_INTERACTION_ID =
@@ -469,30 +469,30 @@ export const ATTR_TTFB_RATING = 'ttfb.rating';
 export const ATTR_TTFB_NAVIGATION_TYPE = 'ttfb.navigation_type';
 
 /**
- * Identifier of the navigation this TTFB metric was reported for. Distinguishes
- * soft navigations from each other within a single page load.
+ * Identifier of the navigation this TTFB metric belongs to. Tells soft
+ * navigations apart within one page load.
  * @example 2
  */
 export const ATTR_TTFB_NAVIGATION_ID = 'ttfb.navigation_id';
 
 /**
- * URL of the navigation this TTFB metric was reported for. A metric can be
- * reported after a later navigation has already begun, so prefer this over the
- * URL current at export time.
+ * URL of the navigation this TTFB metric belongs to. web-vitals can report a
+ * metric after a later navigation begins, so prefer this over the URL at
+ * export time.
  * @example "https://example.com/products/42"
  */
 export const ATTR_TTFB_NAVIGATION_URL = 'ttfb.navigation_url';
 
 /**
- * Time origin this TTFB metric was measured from, relative to the page's time
- * origin. 0 for a hard navigation, the soft navigation's start otherwise.
+ * Time origin for this TTFB metric, relative to the page's time origin. 0 for
+ * a hard navigation, the soft navigation's start otherwise.
  * @example 5000
  */
 export const ATTR_TTFB_NAVIGATION_START_TIME = 'ttfb.navigation_start_time';
 
 /**
- * For a soft navigation, the `interactionId` of the interaction that triggered
- * it, correlating this TTFB metric with the interaction responsible.
+ * For a soft navigation, the `interactionId` of the interaction that
+ * triggered it. Links this TTFB metric to that interaction.
  * @example 77
  */
 export const ATTR_TTFB_NAVIGATION_INTERACTION_ID =

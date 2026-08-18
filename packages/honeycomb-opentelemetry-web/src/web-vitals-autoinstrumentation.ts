@@ -138,13 +138,13 @@ import { hrTime } from '@opentelemetry/core';
 type ApplyCustomAttributesFn = (vital: Metric, span: Span) => void;
 
 // web-vitals v6 reports each metric's time origin as `navigationStartTime`: 0
-// for a hard navigation, the soft navigation's start otherwise. Every span
-// below is anchored to it, so hard-navigation timings are unchanged.
+// for a hard navigation, the soft navigation's start otherwise. The five
+// vitals below anchor their spans to it, so hard-navigation timings hold.
 
 /**
  * Only a hard navigation entry carries `activationStart` and `responseStart`.
- * Narrows on `entryType`, not `instanceof`, which always fails for the
- * plain-object entries used in tests.
+ * Checks `entryType` because `instanceof` fails on the plain-object entries
+ * the tests build.
  */
 const asHardNavigationEntry = (
   entry?: PerformanceNavigationTiming | PerformanceSoftNavigation,
@@ -528,8 +528,8 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       largestShiftSource,
     }: CLSAttribution = attribution;
 
-    // Calculate session window timing. A soft navigation resets CLS, so the
-    // metric can be reported before any shift has occurred.
+    // Calculate session window timing. A soft navigation resets CLS, so
+    // web-vitals can report the metric before any shift happens.
     const navigationStart = cls.navigationStartTime || 0;
     const firstShiftTime = entries[0]?.startTime || navigationStart;
     const lastShiftTime =
@@ -653,10 +653,9 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }: INPAttribution = attribution;
 
     const inpDuration = inputDelay + processingDuration + presentationDelay;
-    // `interactionTime` is absent when the event duration fell below the
-    // browser's minimum reporting threshold, so no entry was dispatched. The
-    // measured duration is still valid, so place the span at the navigation
-    // start rather than dropping it.
+    // The browser dispatches no entry when an event duration falls below its
+    // minimum reporting threshold, leaving `interactionTime` absent. The
+    // duration still holds, so place the span at the navigation start.
     const interactionStart = interactionTime ?? inp.navigationStartTime ?? 0;
     const startTime = hrTime(interactionStart);
     const endTime = hrTime(interactionStart + inpDuration);
@@ -720,15 +719,15 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
       navigationEntry,
     }: FCPAttribution = attribution;
 
-    // Falls back to activationStart so prerendered pages start at activation.
+    // A prerendered page starts when the user sees it, at activationStart.
     const navigationStart =
       fcp.navigationStartTime ||
       asHardNavigationEntry(navigationEntry)?.activationStart ||
       0;
     const startTime = hrTime(navigationStart);
-    // Derived from the value, not `fcpEntry.startTime`: web-vitals attributes
-    // no `fcpEntry` for a soft navigation. Matches for hard navigations, where
-    // the value is `fcpEntry.startTime - activationStart` clamped at 0.
+    // web-vitals attributes no `fcpEntry` for a soft navigation, so the value
+    // carries the paint time. Hard navigations match: web-vitals defines the
+    // value as `fcpEntry.startTime - activationStart`, clamped at 0.
     const endTime = hrTime(navigationStart + fcp.value);
 
     const span = this.tracer.startSpan(name, { startTime });
@@ -773,12 +772,12 @@ export class WebVitalsInstrumentation extends InstrumentationAbstract {
     }: TTFBAttribution = attribution;
 
     const hardNavigationEntry = asHardNavigationEntry(navigationEntry);
-    // Falls back to activationStart so prerendered pages start at activation.
+    // A prerendered page starts when the user sees it, at activationStart.
     const navigationStart =
       ttfb.navigationStartTime || hardNavigationEntry?.activationStart || 0;
     const startTime = hrTime(navigationStart);
-    // A soft navigation issues no request, so web-vitals reports TTFB as 0 and
-    // exposes no `responseStart`; the span collapses onto the navigation start.
+    // A soft navigation issues no request, so web-vitals reports TTFB as 0
+    // and exposes no `responseStart`, collapsing the span onto the start.
     const endTime = hrTime(
       hardNavigationEntry
         ? hardNavigationEntry.responseStart || 0

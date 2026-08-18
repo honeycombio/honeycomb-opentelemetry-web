@@ -46,12 +46,10 @@ jobs:
       - run:
           name: Assert npm supports min-release-age
           command: |
-            # .npmrc uses `min-release-age` to quarantine newly published
-            # versions, which needs npm >= 11.10.0 (provided by the pinned Node
-            # image). npm only *warns* about unknown config keys, so an older
-            # npm would silently drop the protection rather than fail. Note
-            # `npm config get min-release-age` echoes the value either way, so
-            # the warning is what has to be checked.
+            # npm only warns about unknown config keys, so an npm older than
+            # 11.10.0 would drop the `min-release-age` protection in .npmrc
+            # without failing. `npm config get` echoes the value either way,
+            # so grep for the warning instead.
             npm --version
             cd << parameters.package-path >>
             if npm config list 2>&1 | grep -q 'Unknown project config "min-release-age"'; then

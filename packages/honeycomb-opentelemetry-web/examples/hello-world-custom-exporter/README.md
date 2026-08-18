@@ -16,29 +16,27 @@ Now go to [https://ui.honeycomb.io](), click Home, and choose the dataset "web-d
 
 ## Hard and soft navigations
 
-The page reports Core Web Vitals twice over: once for the initial page load (a
-_hard_ navigation), and again for each _soft_ navigation -- a route change that
-does not reload the document, as single-page apps do.
+The page reports Core Web Vitals twice: once for the initial page load (a
+_hard_ navigation), and again for each _soft_ navigation, a route change that
+leaves the document in place the way single-page apps do.
 
 Load the page, then use the "Go to /products/42" buttons and watch the spans in
 the console. The first set of vitals carries
 `<vital>.navigation_type: "navigate"`; each soft navigation produces a further
 set carrying `"soft-navigation"`, along with a `<vital>.navigation_url` naming
-the route the metric belongs to. Prefer that attribute over the URL current when
-the span is exported -- a metric can be reported after the next navigation has
-already begun.
+the route the metric belongs to. Prefer that attribute over the URL at export
+time, since web-vitals can report a metric after the next navigation begins.
 
-A few things worth knowing while reading the output:
+While reading the output:
 
-- This needs Chromium 151+. Elsewhere the `reportSoftNavs` options in
-  `index.js` are ignored and you will only see the hard navigation.
-- `TTFB` is reported as `0` for a soft navigation, since it issues no request
-  of its own.
+- Chromium 151+ only. Other browsers ignore the `reportSoftNavs` options in
+  `index.js`, leaving only the hard navigation.
+- web-vitals reports `TTFB` as `0` for a soft navigation, which issues no
+  request.
 - `CLS` and `INP` reset at each soft navigation, and `FCP`/`LCP` measure the
-  first and largest contentful paint _after_ it. Elements that are not
-  repainted do not count toward the new value.
-- Vitals for the initial page load are finalized once the first soft navigation
-  occurs.
+  first and largest contentful paint _after_ it. An element the browser does not
+  repaint adds nothing to the new value.
+- The first soft navigation finalizes the vitals for the initial page load.
 
 ## Sync changes from `honeycomb-opentelemetry-web` package
 

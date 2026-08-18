@@ -402,9 +402,8 @@ const TTFBAttr = {
   'ttfb.request_time': 300,
 };
 
-// A `soft-navigation` performance entry, as reported by Chromium 151+. Unlike
-// PerformanceNavigationTiming it carries no request timings, so neither
-// `activationStart` nor `responseStart` is available.
+// A `soft-navigation` performance entry from Chromium 151+. It carries no
+// request timings, so it has no `activationStart` or `responseStart`.
 const softNavigationEntry = {
   entryType: 'soft-navigation',
   name: 'https://example.com/products/42',
@@ -433,15 +432,15 @@ const SoftNavFCP: FCPMetricWithAttribution = {
     timeToFirstByte: 0,
     firstByteToFCP: 400,
     loadState: 'complete',
-    // web-vitals attributes no `fcpEntry` for a soft navigation -- the paint
-    // time has to be derived from `navigationStartTime + value`.
+    // web-vitals attributes no `fcpEntry` for a soft navigation, so the
+    // paint time comes from `navigationStartTime + value`.
     navigationEntry: softNavigationEntry,
   },
 };
 
 const SoftNavTTFB: TTFBMetricWithAttribution = {
   name: 'TTFB',
-  // Soft navigations issue no request of their own, so TTFB is reported as 0.
+  // A soft navigation issues no request, so web-vitals reports TTFB as 0.
   value: 0,
   id: 'soft-nav-ttfb-id',
   delta: 0,
@@ -473,7 +472,7 @@ const SoftNavCLS: CLSMetricWithAttribution = {
   navigationInteractionId: 77,
   navigationStartTime: 5000,
   navigationURL: 'https://example.com/products/42',
-  // Reset by the soft navigation, so no shifts have been recorded yet.
+  // The soft navigation reset CLS, so the browser has recorded no shifts.
   entries: [],
   attribution: {
     largestShiftTarget: '',
@@ -507,7 +506,7 @@ const SoftNavLCP: LCPMetricWithAttribution = {
       element: null,
       entryType: 'largest-contentful-paint',
       id: '',
-      // A text element loads no resource, so loadTime is 0.
+      // A text element loads no resource, so `loadTime` is 0.
       loadTime: 0,
       name: '',
       renderTime: 5600,
@@ -520,8 +519,8 @@ const SoftNavLCP: LCPMetricWithAttribution = {
 };
 
 // web-vitals v6 also reports interactions that fell below the browser's
-// minimum event-timing threshold. No event entry was dispatched for these, so
-// the interaction-specific attribution fields are absent.
+// minimum event-timing threshold. The browser dispatched no event entry for
+// these, so the interaction attribution fields are missing.
 const SmallINP: INPMetricWithAttribution = {
   name: 'INP',
   value: 8,
@@ -931,9 +930,9 @@ describe('Web Vitals Instrumentation Tests', () => {
     });
   });
 
-  // web-vitals v6 reports Core Web Vitals for soft navigations when
-  // `reportSoftNavs` is set. Soft navigations have a non-zero time origin, so
-  // spans must be anchored to `navigationStartTime` rather than to 0.
+  // web-vitals v6 reports Core Web Vitals for soft navigations when the
+  // config sets `reportSoftNavs`. A soft navigation has a non-zero time
+  // origin, so these spans anchor to `navigationStartTime` instead of 0.
   describe('soft navigations', () => {
     it('should pass reportSoftNavs through to every web-vitals reporter', () => {
       const reporters = {
@@ -959,8 +958,8 @@ describe('Web Vitals Instrumentation Tests', () => {
         });
       });
 
-      // The opts object is handed to web-vitals itself, not merely stored on
-      // the instrumentation -- that hand-off is what enables soft navs.
+      // The instrumentation hands these opts to web-vitals; storing them
+      // alone would not enable soft navs.
       Object.values(reporters).forEach((register) => {
         expect(register).toHaveBeenCalledWith(
           expect.any(Function),
@@ -982,16 +981,16 @@ describe('Web Vitals Instrumentation Tests', () => {
         'fcp.navigation_start_time': 5000,
         'fcp.navigation_interaction_id': 77,
       });
-      // Not hrTime(0): the paint is measured from the soft nav's time origin.
-      // End is navigationStartTime + value, since there is no fcpEntry to read.
+      // These times run from the soft nav's time origin. The end is
+      // navigationStartTime + value, since web-vitals supplies no fcpEntry.
       expect(span.startTime).toEqual(hrTime(5000));
       expect(span.endTime).toEqual(hrTime(5400));
     });
 
     it('should record the navigation URL a soft-nav metric belongs to', () => {
       const instr = new WebVitalsInstrumentation();
-      // A soft-nav metric can be reported after the next navigation has begun,
-      // so the URL must come from the metric rather than from the document.
+      // web-vitals can report a soft-nav metric after the next navigation
+      // begins, so the URL comes from the metric instead of the document.
       instr.onReportTTFB(SoftNavTTFB, {});
 
       const span = exporter.getFinishedSpans()[0];
@@ -1011,16 +1010,16 @@ describe('Web Vitals Instrumentation Tests', () => {
         'ttfb.navigation_type': 'soft-navigation',
         'ttfb.value': 0,
       });
-      // A soft navigation issues no request of its own, so web-vitals reports
-      // TTFB as 0 and exposes no `responseStart` to end the span with.
+      // A soft navigation issues no request, so web-vitals reports TTFB as 0
+      // and exposes no `responseStart` to end the span with.
       expect(span.startTime).toEqual(hrTime(5000));
       expect(span.endTime).toEqual(hrTime(5000));
     });
 
     it('should anchor a reset CLS span to the soft navigation start', () => {
       const instr = new WebVitalsInstrumentation();
-      // CLS resets on a soft navigation, so it can be reported before any
-      // layout shift has occurred -- i.e. with no entries to time from.
+      // CLS resets on a soft navigation, so web-vitals can report it with no
+      // entries to time from.
       instr.onReportCLS(SoftNavCLS, {});
 
       const span = exporter.getFinishedSpans()[0];
@@ -1046,8 +1045,8 @@ describe('Web Vitals Instrumentation Tests', () => {
 
       const span = exporter.getFinishedSpans()[0];
       expect(span.name).toBe('INP');
-      // interactionTime is absent, so the span cannot be placed in time, but
-      // the measured duration is still reported.
+      // Without `interactionTime` the span has no place in time, but
+      // web-vitals still reports the duration.
       expect(span.startTime).toEqual(hrTime(0));
       expect(span.endTime).toEqual(hrTime(8));
       expect(span.attributes['inp.interaction_time']).toBeUndefined();

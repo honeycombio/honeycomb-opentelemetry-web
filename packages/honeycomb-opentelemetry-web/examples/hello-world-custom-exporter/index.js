@@ -28,8 +28,8 @@ const main = () => {
     webVitalsInstrumentationConfig: {
       vitalsToTrack: ['CLS', 'FCP', 'INP', 'LCP', 'TTFB'],
       // Report vitals for soft navigations as well as the initial page load.
-      // Requires Chromium 151+; on browsers without support the option is
-      // ignored, so it is safe to set unconditionally.
+      // Chromium 151+ only; other browsers ignore the option, so setting it
+      // everywhere is safe.
       cls: { reportSoftNavs: true },
       fcp: { reportSoftNavs: true },
       inp: { reportSoftNavs: true },
@@ -42,9 +42,9 @@ const main = () => {
   sdk.start();
   const tracer = trace.getTracer('click-tracer');
 
-  // Chrome detects a soft navigation when a user interaction changes the URL
-  // and new content is painted. All three signals are required, which is why
-  // this renders into the DOM rather than only calling pushState.
+  // Chrome detects a soft navigation only when an interaction changes the URL
+  // and the page paints new content. pushState alone is not enough, so this
+  // renders into the DOM too.
   const renderRoute = (path) => {
     const title = path === '/' ? 'Home' : `Product ${path.split('/').pop()}`;
     const heading = document.createElement('h3');
