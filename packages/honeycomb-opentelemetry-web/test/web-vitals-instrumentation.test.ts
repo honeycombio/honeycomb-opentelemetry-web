@@ -935,21 +935,38 @@ describe('Web Vitals Instrumentation Tests', () => {
   // `reportSoftNavs` is set. Soft navigations have a non-zero time origin, so
   // spans must be anchored to `navigationStartTime` rather than to 0.
   describe('soft navigations', () => {
-    it('should accept reportSoftNavs for every tracked vital', () => {
-      const instr = new WebVitalsInstrumentation({
-        cls: { reportSoftNavs: true },
-        lcp: { reportSoftNavs: true },
-        inp: { reportSoftNavs: true },
-        fcp: { reportSoftNavs: true },
-        ttfb: { reportSoftNavs: true },
+    it('should pass reportSoftNavs through to every web-vitals reporter', () => {
+      const reporters = {
+        onCLS: jest.fn(),
+        onLCP: jest.fn(),
+        onINP: jest.fn(),
+        onFCP: jest.fn(),
+        onTTFB: jest.fn(),
+      };
+
+      jest.isolateModules(() => {
+        jest.doMock('web-vitals/attribution', () => reporters);
+        const {
+          WebVitalsInstrumentation: Instrumentation,
+        } = require('../src/web-vitals-autoinstrumentation');
+
+        new Instrumentation({
+          cls: { reportSoftNavs: true },
+          lcp: { reportSoftNavs: true },
+          inp: { reportSoftNavs: true },
+          fcp: { reportSoftNavs: true },
+          ttfb: { reportSoftNavs: true },
+        });
       });
 
-      expect(instr.isEnabled()).toBe(true);
-      expect(instr.clsOpts).toMatchObject({ reportSoftNavs: true });
-      expect(instr.lcpOpts).toMatchObject({ reportSoftNavs: true });
-      expect(instr.inpOpts).toMatchObject({ reportSoftNavs: true });
-      expect(instr.fcpOpts).toMatchObject({ reportSoftNavs: true });
-      expect(instr.ttfbOpts).toMatchObject({ reportSoftNavs: true });
+      // The opts object is handed to web-vitals itself, not merely stored on
+      // the instrumentation -- that hand-off is what enables soft navs.
+      Object.values(reporters).forEach((register) => {
+        expect(register).toHaveBeenCalledWith(
+          expect.any(Function),
+          expect.objectContaining({ reportSoftNavs: true }),
+        );
+      });
     });
 
     it('should anchor an FCP span to the soft navigation start', () => {
