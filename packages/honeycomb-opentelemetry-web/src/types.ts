@@ -32,7 +32,7 @@ import {
   SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
 import { PushMetricExporter } from '@opentelemetry/sdk-metrics';
-import { LogRecordExporter } from '@opentelemetry/sdk-logs';
+import { LogRecordExporter, LogRecordProcessor } from '@opentelemetry/sdk-logs';
 import { SessionProvider } from '@opentelemetry/web-common';
 import { WebVitalsInstrumentationConfig } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentationConfig } from './global-errors-autoinstrumentation';
@@ -54,11 +54,13 @@ export interface WebSDKConfiguration {
   metricsTimeout?: number;
   disableDefaultMetricExporter?: boolean;
   logsTimeout?: number;
+  disableDefaultLogExporter?: boolean;
   traceExporter: SpanExporter;
   spanLimits: SpanLimits;
   idGenerator: IdGenerator;
   metricExporters: PushMetricExporter[];
   logExporters: LogRecordExporter[];
+  logRecordProcessors?: LogRecordProcessor[];
 }
 
 /**
@@ -166,6 +168,28 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * Defaults to 'false'.
    */
   disableDefaultTraceExporter?: boolean;
+
+  /** Provide an array of log record exporters
+   * Use this to configure custom logging services in addition
+   * to the default Honeycomb one.
+   * E.g. You want to send data to another service.
+   */
+  logExporters?: LogRecordExporter[];
+
+  /** Disable the default Honeycomb LogRecordExporter
+   * `true` Disables the default Honeycomb log exporter, `false` enables.
+   * in this case you should provide other exporters in the `logExporters` field.
+   * Defaults to 'false'.
+   */
+  disableDefaultLogExporter?: boolean;
+
+  /** Provide an array of log record processors that should be applied to all log records.
+   * These are applied in addition to the default `BatchLogRecordProcessor` that wraps each
+   * configured log exporter. To replace the default batching behavior entirely, also set
+   * `disableDefaultLogExporter` to `true`.
+   * The processors will be applied in the order they are specified.
+   */
+  logRecordProcessors?: LogRecordProcessor[];
 
   /** The sample rate used to determine whether a trace is exported.
    * This must be a whole positive number. Only 1 out of every `sampleRate` traces will be randomly selected to be sent.
