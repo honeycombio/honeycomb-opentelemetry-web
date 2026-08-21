@@ -17,7 +17,7 @@ This package sets up OpenTelemetry for tracing, using our recommended practices,
 * Easy configuration to send to Honeycomb
 * Basic sampler to control event volume
 * Multi span attributes
-* 'session.id' on every span, generated on page load
+* 'session.id' on every span and log record, persisted across page loads
 * Convenient packaging
 * An informative debug mode
 * Links to traces in Honeycomb
@@ -189,6 +189,47 @@ sdk.start();
 Zone.js has known limitations with async/await code, and [requires](https://github.com/open-telemetry/opentelemetry-js/tree/main/packages/opentelemetry-context-zone-peer-dep#installation) your code to be transpiled down to ES2015. It also may carry a performance penalty.
 
 For these reasons, we do not enable ZoneContextManager by default.
+
+### Sessions
+
+Every span and log record carries a `session.id`. The session is stored in
+`localStorage`, so it survives a page load, and it expires after 30 minutes without
+activity or 4 hours in total, whichever comes first.
+
+Restoring a stored session takes a single microtask, which settles before any browser
+event, timer or network callback can run. Telemetry produced by instrumentation
+therefore already carries the restored session id. `start()` returns a promise if you
+want to be certain, which matters only when creating spans by hand in the same tick as
+the call:
+
+```js
+const sdk = new HoneycombWebSDK({ /* ... */ });
+await sdk.start();
+
+// This span is guaranteed to carry the restored session id.
+trace.getTracer('my-tracer').startSpan('my-span').end();
+```
+
+Awaiting is optional; ignoring the returned promise leaves existing code working as
+before.
+
+To change the expiry windows, or to manage sessions yourself, pass a `sessionProvider`:
+
+```js
+import { createDefaultSessionProvider } from '@honeycombio/opentelemetry-web';
+
+const sdk = new HoneycombWebSDK({
+  // other config options omitted...
+  sessionProvider: createDefaultSessionProvider({
+    maxDuration: 60 * 60, // seconds
+    inactivityTimeout: 10 * 60, // seconds
+  }),
+});
+```
+
+A `sessionProvider` need only implement `getSessionId()`. When storage is unavailable,
+as in Safari's private mode, the session quietly falls back to lasting a single page
+load.
 
 ## Auto-instrumentation
 

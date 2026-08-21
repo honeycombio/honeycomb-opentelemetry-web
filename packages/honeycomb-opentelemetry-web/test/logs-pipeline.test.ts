@@ -71,7 +71,7 @@ describe('logger provider config', () => {
 
   const startSdk = (options: HoneycombOptions) => {
     sdk = new HoneycombWebSDK({ ...baseOptions, ...options });
-    sdk.start();
+    void sdk.start();
     return sdk;
   };
 
@@ -99,6 +99,13 @@ describe('logger provider config', () => {
     return provider ? provider._sharedState.processors : [];
   };
 
+  /* The SDK always prepends a session log record processor so that session.id is
+   * stamped on a record before any exporting processor sees it. These assertions
+   * are about the exporting processors, which therefore start at index 1. */
+  const exportingLogRecordProcessors = (
+    honeycomb: HoneycombWebSDK,
+  ): LogRecordProcessor[] => logRecordProcessors(honeycomb).slice(1);
+
   /* Waits for the promise chain inside BatchLogRecordProcessor's export to settle.
    * The export path itself is timer-free, so a single macrotask tick is enough. */
   const settleExport = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -106,7 +113,7 @@ describe('logger provider config', () => {
   test('it wraps the default Honeycomb log exporter in a BatchLogRecordProcessor', () => {
     const honeycomb = startSdk({});
 
-    const processors = logRecordProcessors(honeycomb);
+    const processors = exportingLogRecordProcessors(honeycomb);
     expect(processors).toHaveLength(1);
     expect(processors[0]).toBeInstanceOf(BatchLogRecordProcessor);
   });
@@ -119,7 +126,7 @@ describe('logger provider config', () => {
       ],
     });
 
-    const processors = logRecordProcessors(honeycomb);
+    const processors = exportingLogRecordProcessors(honeycomb);
     expect(processors).toHaveLength(3);
     processors.forEach((processor) => {
       expect(processor).toBeInstanceOf(BatchLogRecordProcessor);
@@ -154,10 +161,12 @@ describe('logger provider config', () => {
     const honeycomb = startSdk({
       disableDefaultLogExporter: true,
       logExporters: [batchedExporter],
-      logRecordProcessors: [new SimpleLogRecordProcessor(immediateExporter)],
+      logRecordProcessors: [
+        new SimpleLogRecordProcessor({ exporter: immediateExporter }),
+      ],
     });
 
-    const processors = logRecordProcessors(honeycomb);
+    const processors = exportingLogRecordProcessors(honeycomb);
     expect(processors).toHaveLength(2);
     expect(processors[0]).toBeInstanceOf(SimpleLogRecordProcessor);
     expect(processors[1]).toBeInstanceOf(BatchLogRecordProcessor);
@@ -174,15 +183,68 @@ describe('logger provider config', () => {
     expect(batchedExporter.getFinishedLogRecords()).toHaveLength(1);
   });
 
+  test('it stamps session.id onto every log record', async () => {
+    const exporter = new InMemoryLogRecordExporter();
+    const honeycomb = startSdk({
+      disableDefaultLogExporter: true,
+      logExporters: [exporter],
+    });
+
+    logs.getLogger('logs-pipeline-testing').emit({ body: 'hello' });
+    await honeycomb.forceFlush();
+
+    const [record] = exporter.getFinishedLogRecords();
+    expect(record.attributes['session.id']).toEqual(
+      expect.stringMatching(/^[a-z0-9]{32}$/),
+    );
+  });
+
+  test('it stamps the same session.id onto log records and spans', async () => {
+    const exporter = new InMemoryLogRecordExporter();
+    const honeycomb = startSdk({
+      disableDefaultLogExporter: true,
+      logExporters: [exporter],
+    });
+
+    const span = trace.getTracer('logs-pipeline-testing').startSpan('a-span');
+    span.end();
+    logs.getLogger('logs-pipeline-testing').emit({ body: 'hello' });
+    await honeycomb.forceFlush();
+
+    const [record] = exporter.getFinishedLogRecords();
+    expect(record.attributes['session.id']).toBe(
+      (span as unknown as { attributes: Record<string, string> }).attributes[
+        'session.id'
+      ],
+    );
+  });
+
+  test('it uses a caller-supplied sessionProvider for log records', async () => {
+    const exporter = new InMemoryLogRecordExporter();
+    const honeycomb = startSdk({
+      disableDefaultLogExporter: true,
+      logExporters: [exporter],
+      sessionProvider: { getSessionId: () => 'my-own-session' },
+    });
+
+    logs.getLogger('logs-pipeline-testing').emit({ body: 'hello' });
+    await honeycomb.forceFlush();
+
+    const [record] = exporter.getFinishedLogRecords();
+    expect(record.attributes['session.id']).toBe('my-own-session');
+  });
+
   test('it configures a logger provider from logRecordProcessors alone', () => {
     const honeycomb = startSdk({
       disableDefaultLogExporter: true,
       logRecordProcessors: [
-        new SimpleLogRecordProcessor(new InMemoryLogRecordExporter()),
+        new SimpleLogRecordProcessor({
+          exporter: new InMemoryLogRecordExporter(),
+        }),
       ],
     });
 
-    const processors = logRecordProcessors(honeycomb);
+    const processors = exportingLogRecordProcessors(honeycomb);
     expect(processors).toHaveLength(1);
     expect(processors[0]).toBeInstanceOf(SimpleLogRecordProcessor);
   });

@@ -20,6 +20,13 @@ export {
   recordException,
 } from './global-errors-autoinstrumentation';
 export { BaggageSpanProcessor } from './baggage-span-processor';
+export {
+  createDefaultSessionProvider,
+  defaultSessionProvider,
+  DEFAULT_SESSION_INACTIVITY_TIMEOUT_SECONDS,
+  DEFAULT_SESSION_MAX_DURATION_SECONDS,
+} from './default-session-provider';
+export type { DefaultSessionProviderOptions } from './default-session-provider';
 export type {
   WebSDKConfiguration,
   HoneycombOptions,

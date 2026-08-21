@@ -170,7 +170,7 @@ describe('span processor config', () => {
   });
 
   beforeEach(() => {
-    honeycomb.start();
+    void honeycomb.start();
     exporter.reset();
 
     try {
@@ -279,7 +279,7 @@ describe('disabling browser attributes', () => {
     };
 
     const honeycomb = new HoneycombWebSDK(config);
-    honeycomb.start();
+    void honeycomb.start();
     exporter.reset();
 
     try {
