@@ -4,21 +4,274 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Honeycomb OpenTelemetry Web Distro</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #1c1c1c;
+        --muted: #5f6b7a;
+        --bg: #f6f7f9;
+        --card: #ffffff;
+        --line: #dfe3e8;
+        --accent: #b45309;
+        --live: #0f766e;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e8eaed;
+          --muted: #9aa4b2;
+          --bg: #14171c;
+          --card: #1c2027;
+          --line: #2c323b;
+          --accent: #f0b429;
+          --live: #5eead4;
+        }
+      }
+      body {
+        margin: 0;
+        padding: 1.5rem;
+        background: var(--bg);
+        color: var(--fg);
+        font:
+          15px/1.5 system-ui,
+          -apple-system,
+          sans-serif;
+      }
+      main {
+        max-width: 60rem;
+        margin: 0 auto;
+        display: grid;
+        gap: 1rem;
+      }
+      h1 {
+        font-size: 1.4rem;
+        margin: 0;
+      }
+      h2 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin: 0 0 0.6rem;
+      }
+      section {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 1rem;
+      }
+      .mono,
+      code,
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      #currentSessionId {
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: var(--accent);
+        word-break: break-all;
+      }
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+        gap: 0.75rem;
+        margin: 1rem 0 0;
+      }
+      .facts div {
+        display: grid;
+        gap: 0.15rem;
+      }
+      .facts dt {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+      .facts dd {
+        margin: 0;
+        font-variant-numeric: tabular-nums;
+      }
+      button {
+        font: inherit;
+        padding: 0.45rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--bg);
+        color: inherit;
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      button[aria-pressed='true'] {
+        border-color: var(--live);
+        color: var(--live);
+        font-weight: 600;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.35rem 0.5rem;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+      td.id {
+        word-break: break-all;
+      }
+      tr.current td.id {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .muted {
+        color: var(--muted);
+      }
+      ul {
+        margin: 0.25rem 0 0;
+        padding-left: 1.1rem;
+      }
+      li {
+        margin: 0.25rem 0;
+      }
+    </style>
   </head>
   <body>
-    <ul id="spans-go-here"></ul>
-    <section class="example-app">
+    <main class="example-app">
       <header class="header">
-        <h1 data-hello="hello" data-foo="42" data-bar-biz>👋 Hello World</h1>
+        <h1 data-hello="hello" data-foo="42" data-bar-biz>
+          👋 Session rollover demo
+        </h1>
+        <p class="muted" id="configLine">Loading the SDK…</p>
       </header>
 
-      <button id="loadDadJoke" data-button="joke-generator">
-        Get A Random Dad Joke
-      </button>
-      <div>
-        <span id="dadJokeText"></span>
-      </div>
-    </section>
+      <section>
+        <h2>Current session.id</h2>
+        <div id="currentSessionId" class="mono">waiting for the SDK…</div>
+        <dl class="facts">
+          <div>
+            <dt>Session age</dt>
+            <dd id="sessionAge">–</dd>
+          </div>
+          <div>
+            <dt>Max duration ends in</dt>
+            <dd id="maxCountdown">–</dd>
+          </div>
+          <div>
+            <dt>Inactivity ends in</dt>
+            <dd id="inactivityCountdown">–</dd>
+          </div>
+          <div>
+            <dt>Last telemetry read</dt>
+            <dd id="lastRead">–</dd>
+          </div>
+          <div>
+            <dt>Telemetry reads</dt>
+            <dd id="readCount">0</dd>
+          </div>
+          <div>
+            <dt>Sessions seen</dt>
+            <dd id="sessionCount">0</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Controls</h2>
+        <div class="controls">
+          <button id="emitSpan" data-button="emit-span">
+            Emit a span (counts as activity)
+          </button>
+          <button id="toggleHeartbeat" aria-pressed="false">
+            Start heartbeat
+          </button>
+          <button id="forceSession">Force a new session</button>
+          <button id="clearStorage">Clear stored session</button>
+          <button id="reload">Reload page</button>
+          <button id="loadDadJoke" data-button="joke-generator">
+            Get a random dad joke
+          </button>
+        </div>
+        <p class="muted" id="dadJokeText"></p>
+      </section>
+
+      <section>
+        <h2>Observed sessions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>session.id</th>
+              <th>Why it changed</th>
+            </tr>
+          </thead>
+          <tbody id="sessionLog">
+            <tr>
+              <td colspan="3" class="muted">Nothing observed yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>localStorage["opentelemetry-session"]</h2>
+        <pre id="storageView" class="mono">–</pre>
+      </section>
+
+      <section>
+        <h2>Things to try</h2>
+        <ul>
+          <li>
+            <strong>Watch it roll over on its own.</strong> Leave the page
+            alone. With no telemetry, the session expires one inactivity timeout
+            after the last read and a new id appears in the log.
+          </li>
+          <li>
+            <strong>Keep it alive, then watch max duration win.</strong> Click
+            <em>Start heartbeat</em>. A span every few seconds keeps resetting
+            the inactivity timer, so the session survives until it hits the max
+            duration and rolls over anyway.
+          </li>
+          <li>
+            <strong>See persistence.</strong> Reload the page. The same id comes
+            back out of <code>localStorage</code> — a session outlives the page
+            load. Reload after the max duration has passed and you get a new
+            one, because the stored session records its start time.
+          </li>
+          <li>
+            <strong>Start from scratch.</strong> <em>Clear stored session</em>
+            then reload: a brand new id is minted.
+          </li>
+        </ul>
+        <p class="muted">
+          "Activity" means <strong>emitted telemetry</strong>, not mouse
+          movement: the inactivity timer only resets when a span or log record
+          reads the session id, and <code>SessionManager</code> ignores reads
+          within 5 seconds of the previous one. Clicking a button here does
+          count, because user-interaction instrumentation turns the click into a
+          span.
+        </p>
+      </section>
+    </main>
     <!-- Scripts here. Don't remove ↓ -->
     <script type="module" src="build/bundle.js"></script>
   </body>
