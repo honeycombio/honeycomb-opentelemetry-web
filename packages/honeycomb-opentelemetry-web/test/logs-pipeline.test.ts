@@ -154,7 +154,9 @@ describe('logger provider config', () => {
     const honeycomb = startSdk({
       disableDefaultLogExporter: true,
       logExporters: [batchedExporter],
-      logRecordProcessors: [new SimpleLogRecordProcessor(immediateExporter)],
+      logRecordProcessors: [
+        new SimpleLogRecordProcessor({ exporter: immediateExporter }),
+      ],
     });
 
     const processors = logRecordProcessors(honeycomb);
@@ -178,7 +180,9 @@ describe('logger provider config', () => {
     const honeycomb = startSdk({
       disableDefaultLogExporter: true,
       logRecordProcessors: [
-        new SimpleLogRecordProcessor(new InMemoryLogRecordExporter()),
+        new SimpleLogRecordProcessor({
+          exporter: new InMemoryLogRecordExporter(),
+        }),
       ],
     });
 

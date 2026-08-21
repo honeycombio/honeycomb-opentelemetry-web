@@ -237,7 +237,7 @@ export class WebSDK {
       const processors: LogRecordProcessor[] = [
         ...(this._loggerProviderConfig.logRecordProcessors ?? []),
         ...this._loggerProviderConfig.logExporters.map((exporter) => {
-          return new BatchLogRecordProcessor(exporter);
+          return new BatchLogRecordProcessor({ exporter });
         }),
       ];
       this._loggerProvider = new LoggerProvider({

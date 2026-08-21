@@ -1,13 +1,19 @@
-import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
-import { defaultOptions, TRACES_PATH } from '../src/util';
-import {
-  MISSING_API_KEY_ERROR,
-  MISSING_SERVICE_NAME_ERROR,
-} from '../src/validate-options';
-
+/* DiagConsoleLogger calls the console methods @opentelemetry/api captured at
+ * module load, deliberately bypassing anything that patches console later. The
+ * spy therefore has to be in place before the API module is first loaded, which
+ * means requiring these modules rather than importing them. */
 const consoleSpy = jest
   .spyOn(console, 'debug')
   .mockImplementation(() => undefined);
+
+/* eslint-disable @typescript-eslint/no-var-requires */
+const { HoneycombWebSDK } =
+  require('../src/honeycomb-otel-sdk') as typeof import('../src/honeycomb-otel-sdk');
+const { defaultOptions, TRACES_PATH } =
+  require('../src/util') as typeof import('../src/util');
+const { MISSING_API_KEY_ERROR, MISSING_SERVICE_NAME_ERROR } =
+  require('../src/validate-options') as typeof import('../src/validate-options');
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 afterEach(() => {
   consoleSpy.mockClear();
@@ -23,14 +29,12 @@ describe('when debug is set to true', () => {
       new HoneycombWebSDK({
         debug: true,
       });
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        2,
+      expect(consoleSpy).toHaveBeenCalledWith(
         '@honeycombio/opentelemetry-web: 🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(3, MISSING_API_KEY_ERROR);
-      expect(consoleSpy).toHaveBeenNthCalledWith(4, MISSING_SERVICE_NAME_ERROR);
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        5,
+      expect(consoleSpy).toHaveBeenCalledWith(MISSING_API_KEY_ERROR);
+      expect(consoleSpy).toHaveBeenCalledWith(MISSING_SERVICE_NAME_ERROR);
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${defaultOptions.tracesEndpoint}'`,
       );
       expect(consoleSpy.mock.calls[5][0]).toContain(
@@ -48,24 +52,19 @@ describe('when debug is set to true', () => {
         sampleRate: 2,
       };
       new HoneycombWebSDK(testConfig);
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        3,
+      expect(consoleSpy).toHaveBeenCalledWith(
         '@honeycombio/opentelemetry-web: 🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        4,
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: API Key configured for traces: '${testConfig.apiKey}'`,
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        5,
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: Service Name configured for traces: '${testConfig.serviceName}'`,
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        6,
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: '${testConfig.endpoint}/${TRACES_PATH}'`,
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        7,
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${testConfig.sampleRate}'`,
       );
     });
@@ -77,24 +76,19 @@ describe('when debug is set to true', () => {
         sampleRate: 2,
       };
       new HoneycombWebSDK(testConfig);
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        3,
+      expect(consoleSpy).toHaveBeenCalledWith(
         '@honeycombio/opentelemetry-web: 🐝 Honeycomb Web SDK Debug Mode Enabled 🐝',
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        4,
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: API Key configured for traces: '${testConfig.apiKey}'`,
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        5,
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: Service Name configured for traces: '${testConfig.serviceName}'`,
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        6,
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: Endpoint configured for traces: 'https://api.honeycomb.io/v1/traces'`,
       );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        7,
+      expect(consoleSpy).toHaveBeenCalledWith(
         `@honeycombio/opentelemetry-web: Sample Rate configured for traces: '${testConfig.sampleRate}'`,
       );
     });
