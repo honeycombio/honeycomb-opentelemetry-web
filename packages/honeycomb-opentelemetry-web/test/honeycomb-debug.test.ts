@@ -6,14 +6,12 @@ const consoleSpy = jest
   .spyOn(console, 'debug')
   .mockImplementation(() => undefined);
 
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { HoneycombWebSDK } =
   require('../src/honeycomb-otel-sdk') as typeof import('../src/honeycomb-otel-sdk');
 const { defaultOptions, TRACES_PATH } =
   require('../src/util') as typeof import('../src/util');
 const { MISSING_API_KEY_ERROR, MISSING_SERVICE_NAME_ERROR } =
   require('../src/validate-options') as typeof import('../src/validate-options');
-/* eslint-enable @typescript-eslint/no-var-requires */
 
 afterEach(() => {
   consoleSpy.mockClear();

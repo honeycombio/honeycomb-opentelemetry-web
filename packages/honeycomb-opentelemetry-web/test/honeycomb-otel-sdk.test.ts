@@ -178,7 +178,7 @@ describe('span processor config', () => {
         .getTracer('span-processor-testing')
         .startSpan('A Very Important Browser Span!');
       span.end();
-    } catch (e) {
+    } catch {
       // Ignore the error
     }
   });
@@ -287,7 +287,7 @@ describe('disabling browser attributes', () => {
         .getTracer('browser-span-processor-testing')
         .startSpan('A Very Important Browser Span!');
       span.end();
-    } catch (e) {
+    } catch {
       // Ignore the error
     }
 
