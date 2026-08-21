@@ -73,11 +73,21 @@ export function configureLogExporters(
   options?: HoneycombOptions,
 ): LogRecordExporter[] {
   const exporters: LogRecordExporter[] = [];
-  exporters.push(configureHoneycombHttpJsonLogExporter(options));
+
+  // if there is an array of user-provided exporters, add them
+  if (options?.logExporters) {
+    exporters.push(...options.logExporters);
+  }
+
+  if (options?.disableDefaultLogExporter !== true) {
+    exporters.unshift(configureHoneycombHttpJsonLogExporter(options));
+  }
+
   if (options?.localVisualizations) {
     // TODO: Create a console link exporter for logs.
     exporters.push(new ConsoleLogRecordExporter());
   }
+
   return exporters;
 }
 

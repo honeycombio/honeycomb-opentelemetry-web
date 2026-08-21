@@ -44,9 +44,10 @@ import {
   PushMetricExporter,
 } from '@opentelemetry/sdk-metrics';
 import {
+  BatchLogRecordProcessor,
   LoggerProvider,
   LogRecordExporter,
-  SimpleLogRecordProcessor,
+  LogRecordProcessor,
 } from '@opentelemetry/sdk-logs';
 import {
   ATTR_SERVICE_NAME,
@@ -73,6 +74,7 @@ export class WebSDK {
 
   private _loggerProviderConfig?: {
     logExporters: LogRecordExporter[];
+    logRecordProcessors?: LogRecordProcessor[];
   };
 
   private _instrumentations: (Instrumentation | Instrumentation[])[];
@@ -148,9 +150,10 @@ export class WebSDK {
       };
     }
 
-    if (configuration.logExporters) {
+    if (configuration.logExporters || configuration.logRecordProcessors) {
       this._loggerProviderConfig = {
-        logExporters: configuration.logExporters,
+        logExporters: configuration.logExporters ?? [],
+        logRecordProcessors: configuration.logRecordProcessors,
       };
     }
 
@@ -231,11 +234,12 @@ export class WebSDK {
     }
 
     if (this._loggerProviderConfig) {
-      const processors = this._loggerProviderConfig.logExporters.map(
-        (exporter) => {
-          return new SimpleLogRecordProcessor(exporter);
-        },
-      );
+      const processors: LogRecordProcessor[] = [
+        ...(this._loggerProviderConfig.logRecordProcessors ?? []),
+        ...this._loggerProviderConfig.logExporters.map((exporter) => {
+          return new BatchLogRecordProcessor(exporter);
+        }),
+      ];
       this._loggerProvider = new LoggerProvider({
         resource: this._resource,
         processors,
