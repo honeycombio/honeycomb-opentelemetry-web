@@ -36,6 +36,8 @@ import { LogRecordExporter, LogRecordProcessor } from '@opentelemetry/sdk-logs';
 import { SessionProvider } from '@opentelemetry/web-common';
 import { WebVitalsInstrumentationConfig } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentationConfig } from './global-errors-autoinstrumentation';
+import { NavigationTimingInstrumentationConfig } from '@opentelemetry/browser-instrumentation/experimental/navigation-timing';
+import { ResourceTimingInstrumentationConfig } from '@opentelemetry/browser-instrumentation/experimental/resource-timing';
 
 export interface WebSDKConfiguration {
   autoDetectResources: boolean;
@@ -240,6 +242,26 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
   /** Config options for web vitals instrumentation. Enabled by default. */
   webVitalsInstrumentationConfig?: WebVitalsInstrumentationConfig;
   globalErrorsInstrumentationConfig?: GlobalErrorsInstrumentationConfig;
+
+  /**
+   * Config options for navigation timing instrumentation. Disabled by default;
+   * set `enabled: true` to turn it on.
+   *
+   * Emits a `browser.navigation_timing` log record per page load, carrying the
+   * PerformanceNavigationTiming milestones.
+   */
+  navigationTimingInstrumentationConfig?: NavigationTimingInstrumentationConfig;
+
+  /**
+   * Config options for resource timing instrumentation. Disabled by default;
+   * set `enabled: true` to turn it on.
+   *
+   * Emits a `browser.resource_timing` log record per resource the browser
+   * loads, so it is the higher volume of the two. Narrow it with
+   * `initiatorTypes` and `ignoreUrls`. This SDK's own export endpoints are
+   * always ignored.
+   */
+  resourceTimingInstrumentationConfig?: ResourceTimingInstrumentationConfig;
 
   /**
    * Controls the verbosity of logs. Utilizes OpenTelemetry's `DiagLogLevel` enum. Defaults to 'DEBUG'.

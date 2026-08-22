@@ -11,6 +11,7 @@ import {
   configureTraceExporters,
 } from './composite-exporter';
 import { configureSpanProcessors } from './configure-span-processors';
+import { configureBrowserTimingInstrumentations } from './configure-browser-timings';
 import { configureResourceAttributes } from './configure-resource-attributes';
 
 export class HoneycombWebSDK extends WebSDK {
@@ -30,6 +31,9 @@ export class HoneycombWebSDK extends WebSDK {
         ),
       );
     }
+    // Navigation and resource timing are opt in, so unlike the two above they
+    // are added only when a caller asks for them.
+    instrumentations.push(...configureBrowserTimingInstrumentations(options));
 
     super({
       ...options,
