@@ -38,6 +38,10 @@ describe('Smoke Tests', () => {
       .and('be.calledWithMatch', 'Honeycomb Web SDK Debug Mode Enabled')
       .and('be.calledWithMatch', '@honeycombio/opentelemetry-web')
       .and('be.calledWithMatch', 'button clicked')
-      .and('be.calledWithMatch', 'XHR success');
+      /* The OTLP exporter moved from XMLHttpRequest to fetch, and its success
+       * message went from 'XHR success' to
+       * 'export response success (status: 200)'. Matching the stable prefix
+       * rather than the status code. */
+      .and('be.calledWithMatch', 'export response success');
   });
 });
