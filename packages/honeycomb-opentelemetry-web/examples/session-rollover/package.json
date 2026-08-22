@@ -1,0 +1,28 @@
+{
+  "name": "session-rollover",
+  "version": "0.0.1",
+  "description": "An example vanilla web app that demonstrates session rollover with Honeycomb's OpenTelemetry Web Distro",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild index.js --bundle --sourcemap --outfile=build/bundle.js",
+    "start": "npm run build && serve .",
+    "build-src": "cd ../../ && npm run build",
+    "watch:build-bundle": "npm run build-src && npm run build",
+    "watch:build": "chokidar \"../../src/*.ts\" -c \"npm run watch:build-bundle\"",
+    "dev": "npm run start & npm run watch:build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@honeycombio/opentelemetry-web": "file:../..",
+    "@opentelemetry/auto-instrumentations-web": "^0.46.0",
+    "@opentelemetry/context-zone": "^2.1.0"
+  },
+  "devDependencies": {
+    "chokidar": "^4.0.3",
+    "chokidar-cli": "^3.0.0",
+    "esbuild": "0.25.9",
+    "serve": "^14.2.5"
+  }
+}
