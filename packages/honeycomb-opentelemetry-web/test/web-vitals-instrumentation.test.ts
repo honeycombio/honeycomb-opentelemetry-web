@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
   CLSMetricWithAttribution,
   FCPMetricWithAttribution,
@@ -934,20 +935,23 @@ describe('Web Vitals Instrumentation Tests', () => {
   // config sets `reportSoftNavs`. A soft navigation has a non-zero time
   // origin, so these spans anchor to `navigationStartTime` instead of 0.
   describe('soft navigations', () => {
-    it('should pass reportSoftNavs through to every web-vitals reporter', () => {
+    it('should pass reportSoftNavs through to every web-vitals reporter', async () => {
       const reporters = {
-        onCLS: jest.fn(),
-        onLCP: jest.fn(),
-        onINP: jest.fn(),
-        onFCP: jest.fn(),
-        onTTFB: jest.fn(),
+        onCLS: vi.fn(),
+        onLCP: vi.fn(),
+        onINP: vi.fn(),
+        onFCP: vi.fn(),
+        onTTFB: vi.fn(),
       };
 
-      jest.isolateModules(() => {
-        jest.doMock('web-vitals/attribution', () => reporters);
-        const {
-          WebVitalsInstrumentation: Instrumentation,
-        } = require('../src/web-vitals-autoinstrumentation');
+      /* The instrumentation captures the reporters at module load, so the mock
+       * has to be in place before a fresh copy of the module is imported. */
+      vi.resetModules();
+      vi.doMock('web-vitals/attribution', () => reporters);
+
+      try {
+        const { WebVitalsInstrumentation: Instrumentation } =
+          await import('../src/web-vitals-autoinstrumentation');
 
         new Instrumentation({
           cls: { reportSoftNavs: true },
@@ -956,7 +960,10 @@ describe('Web Vitals Instrumentation Tests', () => {
           fcp: { reportSoftNavs: true },
           ttfb: { reportSoftNavs: true },
         });
-      });
+      } finally {
+        vi.doUnmock('web-vitals/attribution');
+        vi.resetModules();
+      }
 
       // The instrumentation hands these opts to web-vitals; storing them
       // alone would not enable soft navs.

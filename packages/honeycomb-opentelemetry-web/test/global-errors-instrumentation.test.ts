@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
   getStructuredStackTrace,
   GlobalErrorsInstrumentation,
@@ -7,11 +8,14 @@ import * as tracekit from 'tracekit';
 
 import { setupTestExporter } from './test-helpers';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-jest.mock('tracekit', () => ({
-  __esModule: true,
-  ...jest.requireActual('tracekit'),
-}));
+/* computeStackTrace is spied on below. An ES module namespace is frozen, so the
+ * module is replaced with a writable copy of itself. tracekit is CommonJS, so
+ * depending on interop its members sit on the namespace or on `default`. */
+vi.mock('tracekit', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  const real = (actual.default ?? actual) as Record<string, unknown>;
+  return { ...real, default: real };
+});
 
 describe('Global Errors Instrumentation Tests', () => {
   const exporter = setupTestExporter();
@@ -36,9 +40,13 @@ describe('Global Errors Instrumentation Tests', () => {
         '    at bar (filename.js:6:3)\n' +
         '    at foo (filename.js:2:3)\n' +
         '    at (filename.js:13:1)';
-      setTimeout(() => {
-        throw err;
-      });
+      /* Dispatch the event the browser would raise for an uncaught error.
+       * Actually throwing inside a timer surfaces as a Node uncaught exception
+       * under Vitest rather than reaching jsdom's window 'error' event, so the
+       * listener under test would never run. */
+      window.dispatchEvent(
+        new ErrorEvent('error', { error: err, message: err.message }),
+      );
       await timers.setTimeout();
 
       const span = exporter.getFinishedSpans()[0];
@@ -102,9 +110,13 @@ describe('Global Errors Instrumentation Tests', () => {
 
     it('should add custom attributes to every span span', async () => {
       const err = new Error('Something happened');
-      setTimeout(() => {
-        throw err;
-      });
+      /* Dispatch the event the browser would raise for an uncaught error.
+       * Actually throwing inside a timer surfaces as a Node uncaught exception
+       * under Vitest rather than reaching jsdom's window 'error' event, so the
+       * listener under test would never run. */
+      window.dispatchEvent(
+        new ErrorEvent('error', { error: err, message: err.message }),
+      );
       await timers.setTimeout();
 
       const span = exporter.getFinishedSpans()[0];
@@ -123,7 +135,7 @@ describe('Global Errors Instrumentation Tests', () => {
     });
 
     it('should return an empty object if StackTrace.stack is null', () => {
-      const spy = jest.spyOn(tracekit, 'computeStackTrace');
+      const spy = vi.spyOn(tracekit, 'computeStackTrace');
       // @ts-expect-error bad data from 3rd part lib
       spy.mockReturnValueOnce({ stack: null });
 

@@ -1,17 +1,18 @@
-/* DiagConsoleLogger calls the console methods @opentelemetry/api captured at
- * module load, deliberately bypassing anything that patches console later. The
- * spy therefore has to be in place before the API module is first loaded, which
- * means requiring these modules rather than importing them. */
-const consoleSpy = jest
-  .spyOn(console, 'debug')
-  .mockImplementation(() => undefined);
+import { vi } from 'vitest';
+import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
+import { defaultOptions, TRACES_PATH } from '../src/util';
+import {
+  MISSING_API_KEY_ERROR,
+  MISSING_SERVICE_NAME_ERROR,
+} from '../src/validate-options';
 
-const { HoneycombWebSDK } =
-  require('../src/honeycomb-otel-sdk') as typeof import('../src/honeycomb-otel-sdk');
-const { defaultOptions, TRACES_PATH } =
-  require('../src/util') as typeof import('../src/util');
-const { MISSING_API_KEY_ERROR, MISSING_SERVICE_NAME_ERROR } =
-  require('../src/validate-options') as typeof import('../src/validate-options');
+/* DiagConsoleLogger calls the console methods @opentelemetry/api captured at
+ * module load, deliberately bypassing anything that patches console later, so
+ * the spy has to exist before the API module is evaluated. vi.hoisted runs
+ * ahead of the imports above, which is exactly that window. */
+const { consoleSpy } = vi.hoisted(() => ({
+  consoleSpy: vi.spyOn(console, 'debug').mockImplementation(() => undefined),
+}));
 
 afterEach(() => {
   consoleSpy.mockClear();

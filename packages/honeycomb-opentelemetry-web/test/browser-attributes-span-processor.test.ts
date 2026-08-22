@@ -1,7 +1,4 @@
-/**
- * @jest-environment-options {"url": "http://something-something.com/some-page?search_params=yes&hello=hi#the-hash"}
- */
-
+/* The jsdom URL these assertions depend on is set in vitest.config.ts. */
 import { BrowserAttributesSpanProcessor } from '../src/browser-attributes-span-processor';
 import { SpanKind, trace } from '@opentelemetry/api';
 
