@@ -110,10 +110,6 @@ describe('Global Errors Instrumentation Tests', () => {
 
     it('should add custom attributes to every span span', async () => {
       const err = new Error('Something happened');
-      /* Dispatch the event the browser would raise for an uncaught error.
-       * Actually throwing inside a timer surfaces as a Node uncaught exception
-       * under Vitest rather than reaching jsdom's window 'error' event, so the
-       * listener under test would never run. */
       window.dispatchEvent(
         new ErrorEvent('error', { error: err, message: err.message }),
       );

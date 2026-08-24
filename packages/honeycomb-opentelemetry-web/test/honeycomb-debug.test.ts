@@ -6,10 +6,6 @@ import {
   MISSING_SERVICE_NAME_ERROR,
 } from '../src/validate-options';
 
-/* DiagConsoleLogger calls the console methods @opentelemetry/api captured at
- * module load, deliberately bypassing anything that patches console later, so
- * the spy has to exist before the API module is evaluated. vi.hoisted runs
- * ahead of the imports above, which is exactly that window. */
 const { consoleSpy } = vi.hoisted(() => ({
   consoleSpy: vi.spyOn(console, 'debug').mockImplementation(() => undefined),
 }));
