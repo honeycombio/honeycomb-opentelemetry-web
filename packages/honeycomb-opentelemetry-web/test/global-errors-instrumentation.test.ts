@@ -8,9 +8,6 @@ import * as tracekit from 'tracekit';
 
 import { setupTestExporter } from './test-helpers';
 
-/* computeStackTrace is spied on below. An ES module namespace is frozen, so the
- * module is replaced with a writable copy of itself. tracekit is CommonJS, so
- * depending on interop its members sit on the namespace or on `default`. */
 vi.mock('tracekit', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   const real = (actual.default ?? actual) as Record<string, unknown>;
