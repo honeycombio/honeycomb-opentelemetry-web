@@ -19,10 +19,11 @@ module.exports = tseslint.config(
       '**/build/**',
       '**/coverage/**',
       '**/.cache/**',
-      /* The example apps carry their own toolchains and their own eslint
-       * configuration, which flat config does not pick up. They are linted from
-       * their own directories instead. */
-      'examples/**',
+      /* Both React examples configure eslint through .eslintrc.json extending
+       * `react-app`, which is eslintrc-only and unsupported on ESLint 10. They
+       * are linted by their own react-scripts toolchain instead. */
+      'examples/hello-world-react-create-app/**',
+      'examples/experimental/user-interaction-instrumentation/**',
     ],
   },
 
@@ -74,6 +75,13 @@ module.exports = tseslint.config(
        * shimmer's. */
       'import-x/namespace': 'off',
     },
+  },
+
+  {
+    /* Example TypeScript is outside the package tsconfigs, so the
+     * type-checked rules above cannot resolve it. Lint it untyped. */
+    files: ['examples/**/*.ts'],
+    extends: [tseslint.configs.disableTypeChecked],
   },
 
   {
