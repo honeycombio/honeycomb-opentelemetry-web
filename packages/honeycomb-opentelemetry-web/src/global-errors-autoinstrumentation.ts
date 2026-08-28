@@ -100,8 +100,7 @@ export function recordException(
   errorSpan.end();
 }
 
-export interface GlobalErrorsInstrumentationConfig
-  extends InstrumentationConfig {
+export interface GlobalErrorsInstrumentationConfig extends InstrumentationConfig {
   /**
    * A callback function for adding custom attributes to the span when an error is recorded.
    *

@@ -92,6 +92,15 @@ jobs:
           at: ./
       - run: npm run lint:ci
 
+  # Vitest transpiles without type checking, where ts-jest used to check every
+  # test file as it ran. This keeps that guarantee.
+  typecheck:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: npm run typecheck
+
   lint-examples:
     executor: node
     steps:
@@ -108,8 +117,6 @@ jobs:
       - run:
           name: Run tests with JUnit as reporter
           command: npm run test:ci
-          environment:
-            JEST_JUNIT_OUTPUT_DIR: ./reports/
       - store_test_results:
           path: ./reports/
       - store_artifacts:
@@ -175,6 +182,10 @@ workflows:
           requires:
             - checkout-and-install
       - lint:
+          <<: *filters_always
+          requires:
+            - checkout-and-install
+      - typecheck:
           <<: *filters_always
           requires:
             - checkout-and-install

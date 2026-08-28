@@ -1,7 +1,4 @@
-/**
- * @jest-environment-options {"url": "http://something-something.com/some-page?search_params=yes&hello=hi#the-hash"}
- */
-
+/* The jsdom URL these assertions depend on is set in vitest.config.ts. */
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { WebSDK } from '../src/base-otel-sdk';
@@ -178,7 +175,7 @@ describe('span processor config', () => {
         .getTracer('span-processor-testing')
         .startSpan('A Very Important Browser Span!');
       span.end();
-    } catch (e) {
+    } catch {
       // Ignore the error
     }
   });
@@ -287,7 +284,7 @@ describe('disabling browser attributes', () => {
         .getTracer('browser-span-processor-testing')
         .startSpan('A Very Important Browser Span!');
       span.end();
-    } catch (e) {
+    } catch {
       // Ignore the error
     }
 

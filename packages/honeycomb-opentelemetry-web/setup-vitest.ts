@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, jest } from '@jest/globals';
+import { afterEach, beforeEach, vi } from 'vitest';
 
-const getEntriesByTypeSpy = jest.fn(() => {
-  return [];
+const getEntriesByTypeSpy = vi.fn(() => {
+  return [] as PerformanceEntryList;
 });
 
 beforeEach(() => {

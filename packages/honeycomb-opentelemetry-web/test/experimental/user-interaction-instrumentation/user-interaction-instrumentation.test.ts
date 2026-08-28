@@ -1,13 +1,14 @@
+import { vi } from 'vitest';
 import { wrapEventPropagationCb } from '../../../src/experimental/user-interaction-instrumentation/user-interaction-instrumentation';
 
 describe('wrapEventPropagationCb', () => {
   it('calls span.end on evt.stopPropagation', () => {
     const fakeEvent = {
-      stopPropagation: jest.fn(),
-      stopImmediatePropagation: jest.fn(),
+      stopPropagation: vi.fn(),
+      stopImmediatePropagation: vi.fn(),
     };
     const fakeSpan = {
-      end: jest.fn(),
+      end: vi.fn(),
     };
     wrapEventPropagationCb(fakeEvent, 'stopPropagation', fakeSpan);
 

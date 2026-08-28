@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+import type { Mock, MockInstance } from 'vitest';
 import { ReadableSpan } from '@opentelemetry/sdk-trace-base';
 import {
   buildTraceUrl,
@@ -38,24 +40,24 @@ describe('buildTraceUrl', () => {
 
 describe('ConsoleTraceLinkExporter', () => {
   let originalFetch: typeof global.fetch;
-  let consoleLogSpy: jest.SpyInstance;
+  let consoleLogSpy: MockInstance;
 
   beforeAll(() => {
     originalFetch = global.fetch;
-    global.fetch = jest.fn();
+    global.fetch = vi.fn();
 
-    consoleLogSpy = jest.spyOn(console, 'log');
+    consoleLogSpy = vi.spyOn(console, 'log');
   });
   afterAll(() => {
     global.fetch = originalFetch;
   });
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('makes request and logs the trace url', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: () =>
         Promise.resolve({
@@ -102,7 +104,7 @@ describe('ConsoleTraceLinkExporter', () => {
   });
 
   it('makes request and handles successful requests that return errors', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: false,
     });
 
@@ -144,7 +146,7 @@ describe('ConsoleTraceLinkExporter', () => {
   });
 
   it('makes request and handles failed requests', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce({});
+    (global.fetch as Mock).mockRejectedValueOnce({});
 
     const exporter = configureConsoleTraceLinkExporter({
       apiKey: apikey,

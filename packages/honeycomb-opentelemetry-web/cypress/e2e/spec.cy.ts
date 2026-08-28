@@ -38,6 +38,6 @@ describe('Smoke Tests', () => {
       .and('be.calledWithMatch', 'Honeycomb Web SDK Debug Mode Enabled')
       .and('be.calledWithMatch', '@honeycombio/opentelemetry-web')
       .and('be.calledWithMatch', 'button clicked')
-      .and('be.calledWithMatch', 'XHR success');
+      .and('be.calledWithMatch', 'export response success');
   });
 });

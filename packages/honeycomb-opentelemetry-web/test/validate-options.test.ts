@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { DiagLogLevel } from '@opentelemetry/api';
 import { HoneycombWebSDK } from '../src/honeycomb-otel-sdk';
 import {
@@ -14,11 +15,9 @@ import {
   AlwaysOnSampler,
   ConsoleSpanExporter,
 } from '@opentelemetry/sdk-trace-base';
-const debugSpy = jest
-  .spyOn(console, 'debug')
-  .mockImplementation(() => undefined);
+const debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => undefined);
 
-const warningSpy = jest
+const warningSpy = vi
   .spyOn(console, 'warn')
   .mockImplementation(() => undefined);
 

@@ -1,16 +1,13 @@
-/**
- * @jest-environment-options {"url": "http://something-something.com/some-page?search_params=yes&hello=hi#the-hash"}
- */
+import { vi } from 'vitest';
+/* The jsdom URL these assertions depend on is set in vitest.config.ts. */
 import { configureEntryPageResource } from '../src/entry-page-resource';
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 test('when called without a custom config, the resource should include default attributes', () => {
-  jest
-    .spyOn(document, 'referrer', 'get')
-    .mockReturnValue('http://fan-site.com');
+  vi.spyOn(document, 'referrer', 'get').mockReturnValue('http://fan-site.com');
 
   const resource = configureEntryPageResource();
   expect(resource.attributes).toEqual({
@@ -28,7 +25,7 @@ test('when called with false, it should return an emtpy resource', () => {
 });
 
 test('a custom config overrides the default attributes', () => {
-  jest.spyOn(document, 'referrer', 'get').mockReturnValue('');
+  vi.spyOn(document, 'referrer', 'get').mockReturnValue('');
   const resource = configureEntryPageResource({ path: false, url: true });
 
   expect(resource.attributes).toEqual({

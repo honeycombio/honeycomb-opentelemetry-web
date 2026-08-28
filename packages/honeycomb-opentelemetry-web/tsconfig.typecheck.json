@@ -1,0 +1,20 @@
+{
+  // ts-jest type checked every test file as it ran. Vitest transpiles with
+  // esbuild and does not type check, so this config restores that guarantee as
+  // a separate step.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    // The base config roots at ./src so it can emit; type checking spans tests too.
+    "rootDir": ".",
+    // vitest.config.mts sets `globals: true`, so describe/it/expect are ambient.
+    // Listing types at all opts out of the default "every @types package", so
+    // node has to be named explicitly for `global`, `process` and node: imports.
+    "types": ["vitest/globals", "node"],
+    // Tests use dynamic import() and es2017 library features; the base config
+    // targets the browser bundle and is narrower on both.
+    "module": "esnext",
+    "lib": ["es2017", "dom"]
+  },
+  "include": ["./src/", "./test/"]
+}
