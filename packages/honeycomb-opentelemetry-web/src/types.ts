@@ -256,7 +256,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * set `enabled: true` to turn it on.
    *
    * Emits a `browser.resource_timing` log record per resource the browser
-   * loads. See the types `initiatorTypes` and `ignoreUrls` for configuration options. 
+   * loads. See the types `initiatorTypes` and `ignoreUrls` for configuration options.
    * This SDK's own export endpoints are always ignored.
    */
   resourceTimingInstrumentationConfig?: ResourceTimingInstrumentationConfig;
