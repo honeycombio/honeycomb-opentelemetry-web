@@ -82,7 +82,6 @@ teardown_file() {
   result=$(span_attributes_for ${DOCUMENT_LOAD_SCOPE} | jq "select(.key == \"SampleRate\").value.intValue")
   assert_equal "$result" '"1"
 "1"
-"1"
 "1"'
 }
 
@@ -95,10 +94,9 @@ teardown_file() {
 "click"
 "click"'
 }
-@test "Auto instrumentation produces 4 document load spans" {
+@test "Auto instrumentation produces 3 document load spans" {
   result=$(span_names_for ${DOCUMENT_LOAD_SCOPE})
   assert_equal "$result" '"documentFetch"
-"resourceFetch"
 "resourceFetch"
 "documentLoad"'
 }
