@@ -247,8 +247,7 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * Config options for navigation timing instrumentation. Disabled by default;
    * set `enabled: true` to turn it on.
    *
-   * Emits a `browser.navigation_timing` log record per page load, carrying the
-   * PerformanceNavigationTiming milestones.
+   * Emits a `browser.navigation_timing` log record per page load with the PerformanceNavigationTiming.
    */
   navigationTimingInstrumentationConfig?: NavigationTimingInstrumentationConfig;
 
@@ -257,9 +256,8 @@ export interface HoneycombOptions extends Partial<WebSDKConfiguration> {
    * set `enabled: true` to turn it on.
    *
    * Emits a `browser.resource_timing` log record per resource the browser
-   * loads, so it is the higher volume of the two. Narrow it with
-   * `initiatorTypes` and `ignoreUrls`. This SDK's own export endpoints are
-   * always ignored.
+   * loads. See the types `initiatorTypes` and `ignoreUrls` for configuration options. 
+   * This SDK's own export endpoints are always ignored.
    */
   resourceTimingInstrumentationConfig?: ResourceTimingInstrumentationConfig;
 
