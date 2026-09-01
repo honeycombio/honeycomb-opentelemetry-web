@@ -5,12 +5,15 @@ import { configureSampler } from './deterministic-sampler';
 import { validateOptionsWarnings } from './validate-options';
 import { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
 import { GlobalErrorsInstrumentation } from './global-errors-autoinstrumentation';
+import { NavigationTimingInstrumentation } from '@opentelemetry/browser-instrumentation/experimental/navigation-timing';
+import { ResourceTimingInstrumentation } from '@opentelemetry/browser-instrumentation/experimental/resource-timing';
 import {
   configureLogExporters,
   configureMetricExporters,
   configureTraceExporters,
 } from './composite-exporter';
 import { configureSpanProcessors } from './configure-span-processors';
+import { configureResourceTiming } from './configure-resource-timing';
 import { configureResourceAttributes } from './configure-resource-attributes';
 
 export class HoneycombWebSDK extends WebSDK {
@@ -28,6 +31,20 @@ export class HoneycombWebSDK extends WebSDK {
         new GlobalErrorsInstrumentation(
           options?.globalErrorsInstrumentationConfig,
         ),
+      );
+    }
+    // Include navigation timing instrumentation only when explicitly set to true
+    if (options?.navigationTimingInstrumentationConfig?.enabled === true) {
+      instrumentations.push(
+        new NavigationTimingInstrumentation(
+          options.navigationTimingInstrumentationConfig,
+        ),
+      );
+    }
+    // Include resource timing instrumentation only when explicitly set to true
+    if (options?.resourceTimingInstrumentationConfig?.enabled === true) {
+      instrumentations.push(
+        new ResourceTimingInstrumentation(configureResourceTiming(options)),
       );
     }
 

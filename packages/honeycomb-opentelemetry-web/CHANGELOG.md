@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat: add opt-in navigation and resource timing instrumentations (#661) | @wolfgangcodes
+
 ## v1.4.0 - 2026-08-25
 
 - feat: report Core Web Vitals for soft navigations (#656) | @wolfgangcodes

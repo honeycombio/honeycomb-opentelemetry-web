@@ -94,6 +94,8 @@ Pass these options to the HoneycombWebSDK:
 | disableDefaultLogExporter         | optional                                         | boolean                           | false                   | Disable default Honeycomb log exporter. You can provide additional exporters via `logExporters` config option.                                                                                  |
 | webVitalsInstrumentationConfig    | optional                                         | WebVitalsInstrumentationConfig    | `{ enabled: true }`     | See [WebVitalsInstrumentationConfig](####WebVitalsInstrumentationConfig).                                                                                                                       |
 | globalErrorsInstrumentationConfig | optional                                         | GlobalErrorsInstrumentationConfig | `{ enabled: true }`     | See [GlobalErrorsInstrumentationConfig](####GlobalErrorsInstrumentationConfig).                                                                                                                 |
+| navigationTimingInstrumentationConfig | optional                                     | NavigationTimingInstrumentationConfig | `{ enabled: false }` | Emit a `browser.navigation_timing` event per page load. Off by default. See [Navigation and resource timing](#navigation-and-resource-timing).                                                   |
+| resourceTimingInstrumentationConfig | optional                                       | ResourceTimingInstrumentationConfig | `{ enabled: false }`   | Emit a `browser.resource_timing` event per resource the browser loads. Off by default. See [Navigation and resource timing](#navigation-and-resource-timing).                                     |
 | logLevel                          | optional                                         | DiagLogLevel                      | DiagLogLevel.DEBUG      | Controls the verbosity of logs printed to the console.                                                                                                                                          |
 | contextManager                    | optional                                         | ContextManager                    |                         | Sets a [Context Manager](https://opentelemetry.io/docs/languages/js/context/#context-manager) for managing global span context. See [Context Management](#context-management) for more details. |
 
@@ -189,6 +191,40 @@ sdk.start();
 Zone.js has known limitations with async/await code, and [requires](https://github.com/open-telemetry/opentelemetry-js/tree/main/packages/opentelemetry-context-zone-peer-dep#installation) your code to be transpiled down to ES2015. It also may carry a performance penalty.
 
 For these reasons, we do not enable ZoneContextManager by default.
+
+## Navigation and resource timing
+
+Two instrumentations from OpenTelemetry's browser SDK report page load performance. Both are **off by default**; set `enabled: true` to turn them on.
+
+They emit **log records, not spans**, so they arrive in Honeycomb as events rather than as part of a trace:
+
+* `browser.navigation_timing` — one event per page load, carrying the `PerformanceNavigationTiming` milestones: DNS, connect, request, response, DOM interactive, DOM complete, load event, transfer sizes.
+* `browser.resource_timing` — one event per resource the browser loads: scripts, stylesheets, images, fonts, XHR and fetch.
+
+```js
+const sdk = new HoneycombWebSDK({
+  // other config options omitted...
+  navigationTimingInstrumentationConfig: { enabled: true },
+  resourceTimingInstrumentationConfig: { enabled: true },
+});
+```
+
+Resource timing is the higher volume of the two, since it reports on every asset a page loads. Narrow it with `initiatorTypes` and `ignoreUrls`:
+
+```js
+resourceTimingInstrumentationConfig: {
+  enabled: true,
+  // Only report on data fetches, not every image and stylesheet.
+  initiatorTypes: ['fetch', 'xmlhttprequest'],
+  ignoreUrls: [/\/healthz$/],
+},
+```
+
+This SDK's own export endpoints are always ignored, ahead of anything passed to `ignoreUrls`. Without that, exporting telemetry would itself create a resource entry, that entry would be exported, and so on.
+
+`ignoreUrls` compares strings with strict equality, so a trailing slash or query string will not match. Prefer regular expressions.
+
+These instrumentations are marked experimental upstream, so their event names and attributes may change in a minor release.
 
 ## Auto-instrumentation
 

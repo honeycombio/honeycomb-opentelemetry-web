@@ -20,6 +20,10 @@ export {
   recordException,
 } from './global-errors-autoinstrumentation';
 export { BaggageSpanProcessor } from './baggage-span-processor';
+/* Navigation and resource timing come from upstream's browser instrumentation.
+ * Re-exported so callers can type their config without depending on it directly. */
+export type { NavigationTimingInstrumentationConfig } from '@opentelemetry/browser-instrumentation/experimental/navigation-timing';
+export type { ResourceTimingInstrumentationConfig } from '@opentelemetry/browser-instrumentation/experimental/resource-timing';
 export type {
   WebSDKConfiguration,
   HoneycombOptions,
