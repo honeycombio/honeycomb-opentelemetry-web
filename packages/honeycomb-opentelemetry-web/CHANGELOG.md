@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- maint: remove the dead script tag from the collector example (#670) | @wolfgangcodes
+
 ## v1.4.0 - 2026-08-25
 
 - feat: report Core Web Vitals for soft navigations (#656) | @wolfgangcodes
