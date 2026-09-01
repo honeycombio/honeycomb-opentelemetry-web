@@ -13,8 +13,8 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "chokidar": "^4.0.3",
+    "chokidar": "^5.0.0",
     "chokidar-cli": "^3.0.0",
-    "serve": "^14.2.5"
+    "serve": "^14.2.6"
   }
 }
