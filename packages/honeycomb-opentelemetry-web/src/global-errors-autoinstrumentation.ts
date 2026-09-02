@@ -20,6 +20,11 @@ const LIBRARY_NAME = '@honeycombio/instrumentation-global-errors';
 
 type ApplyCustomErrorAttributesOnSpanFn = (span: Span, error: Error) => void;
 
+type ShouldIgnoreErrorFn = (
+  error: Error,
+  event: ErrorEvent | PromiseRejectionEvent,
+) => boolean;
+
 /**
  * Extracts and structures the stack trace from an error object.
  *
@@ -108,6 +113,16 @@ export interface GlobalErrorsInstrumentationConfig extends InstrumentationConfig
    * @param {Error} error - The error object that is being recorded.
    */
   applyCustomAttributesOnSpan?: ApplyCustomErrorAttributesOnSpanFn;
+
+  /**
+   * A callback function to filter out errors that should not be recorded, for
+   * example errors thrown by browser extensions or third party scripts.
+   *
+   * @param {Error} error - The error that reached the window.
+   * @param {ErrorEvent | PromiseRejectionEvent} event - The event that carried the error.
+   * @returns {boolean} `true` to skip recording a span for this error.
+   */
+  shouldIgnoreError?: ShouldIgnoreErrorFn;
 }
 
 /**
@@ -117,13 +132,16 @@ export interface GlobalErrorsInstrumentationConfig extends InstrumentationConfig
 export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
   private _isEnabled: boolean;
   readonly applyCustomAttributesOnSpan?: ApplyCustomErrorAttributesOnSpanFn;
+  readonly shouldIgnoreError?: ShouldIgnoreErrorFn;
   constructor({
     enabled = true,
     applyCustomAttributesOnSpan,
+    shouldIgnoreError,
   }: GlobalErrorsInstrumentationConfig = {}) {
     const config: GlobalErrorsInstrumentationConfig = {
       enabled,
       applyCustomAttributesOnSpan,
+      shouldIgnoreError,
     };
     super(LIBRARY_NAME, VERSION, config);
     if (enabled) {
@@ -131,14 +149,30 @@ export class GlobalErrorsInstrumentation extends InstrumentationAbstract {
     }
     this._isEnabled = enabled;
     this.applyCustomAttributesOnSpan = applyCustomAttributesOnSpan;
+    this.shouldIgnoreError = shouldIgnoreError;
   }
 
   onError = (event: ErrorEvent | PromiseRejectionEvent) => {
     const error: Error | undefined =
       'reason' in event ? event.reason : event.error;
-    if (error) {
-      recordException(error, {}, this.tracer, this.applyCustomAttributesOnSpan);
+    if (!error) {
+      return;
     }
+
+    if (this.shouldIgnoreError) {
+      try {
+        if (this.shouldIgnoreError(error, event)) {
+          return;
+        }
+      } catch (filterError) {
+        this._diag.error(
+          'shouldIgnoreError threw, recording the error anyway',
+          filterError,
+        );
+      }
+    }
+
+    recordException(error, {}, this.tracer, this.applyCustomAttributesOnSpan);
   };
 
   init() {}

@@ -122,6 +122,69 @@ describe('Global Errors Instrumentation Tests', () => {
     });
   });
 
+  describe('when filtering errors with shouldIgnoreError', () => {
+    beforeEach(() => {
+      instr = new GlobalErrorsInstrumentation({
+        shouldIgnoreError: (error) =>
+          error.stack?.includes('chrome-extension://') ?? false,
+      });
+      instr.enable();
+    });
+
+    afterEach(() => {
+      instr.disable();
+      exporter.reset();
+    });
+
+    it('should not create a span for ignored errors', async () => {
+      const err = new Error('Extension exploded');
+      err.stack =
+        '' +
+        '  Error: Extension exploded\n' +
+        '    at baz (chrome-extension://abc123/content.js:10:15)';
+      window.dispatchEvent(
+        new ErrorEvent('error', { error: err, message: err.message }),
+      );
+      await timers.setTimeout();
+
+      expect(exporter.getFinishedSpans()).toHaveLength(0);
+    });
+
+    it('should create a span for errors that are not ignored', async () => {
+      const err = new Error('Something happened');
+      err.stack =
+        '' + '  Error: Something happened\n' + '    at baz (filename.js:10:15)';
+      window.dispatchEvent(
+        new ErrorEvent('error', { error: err, message: err.message }),
+      );
+      await timers.setTimeout();
+
+      expect(exporter.getFinishedSpans()[0].attributes).toMatchObject({
+        'exception.message': 'Something happened',
+      });
+    });
+
+    it('should record the error when the callback throws', async () => {
+      instr.disable();
+      instr = new GlobalErrorsInstrumentation({
+        shouldIgnoreError: () => {
+          throw new Error('bad filter');
+        },
+      });
+      instr.enable();
+
+      const err = new Error('Something happened');
+      window.dispatchEvent(
+        new ErrorEvent('error', { error: err, message: err.message }),
+      );
+      await timers.setTimeout();
+
+      expect(exporter.getFinishedSpans()[0].attributes).toMatchObject({
+        'exception.message': 'Something happened',
+      });
+    });
+  });
+
   describe('getStructuredStackTrace', () => {
     it('should return an empty object if error is undefined', () => {
       expect(getStructuredStackTrace(undefined)).toEqual({});
