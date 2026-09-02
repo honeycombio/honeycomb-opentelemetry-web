@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## v1.5.0 - 2026-09-02
+
+- maint(deps): bump browserslist from 4.24.4 to 4.28.8 in /packages/honeycomb-opentelemetry-web/examples/experimental/user-interaction-instrumentation (#669) | @dependabot
+- maint(deps): bump web-vitals from 6.1.0 to 6.2.0 in /packages/honeycomb-opentelemetry-web (#665) | @dependabot
 - feat: add opt-in navigation and resource timing instrumentations (#661) | @wolfgangcodes
 
 ## v1.4.0 - 2026-08-25
