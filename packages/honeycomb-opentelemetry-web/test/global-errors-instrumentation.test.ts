@@ -153,9 +153,7 @@ describe('Global Errors Instrumentation Tests', () => {
     it('should create a span for errors that are not ignored', async () => {
       const err = new Error('Something happened');
       err.stack =
-        '' +
-        '  Error: Something happened\n' +
-        '    at baz (filename.js:10:15)';
+        '' + '  Error: Something happened\n' + '    at baz (filename.js:10:15)';
       window.dispatchEvent(
         new ErrorEvent('error', { error: err, message: err.message }),
       );
