@@ -12,7 +12,12 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "node": "./dist/cjs/index.js",
+      "browser": "./dist/esm/index.js",
+      "react-server": "./dist/cjs/node.js",
+      "node": {
+        "require": "./dist/cjs/node.js",
+        "import": "./dist/esm/node.js"
+      },
       "require": "./dist/cjs/index.js",
       "import": "./dist/esm/index.js",
       "default": "./dist/esm/index.js"
@@ -33,7 +38,8 @@
   "scripts": {
     "compile": "rollup -c",
     "build:clean": "rm -rf dist",
-    "build": "npm run build:clean && npm run compile",
+    "build": "npm run build:clean && npm run compile && npm run verify:node-entry",
+    "verify:node-entry": "node ./scripts/verify-node-entry.mjs",
     "check-format": "prettier --list-different \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "format": "prettier --write \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "lint": "eslint .",

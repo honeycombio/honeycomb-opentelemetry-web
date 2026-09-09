@@ -10,6 +10,7 @@ import autoExternal from 'rollup-plugin-auto-external';
 const entryPoint = {
   index: './src/index.ts',
   'experimental/index': './src/experimental/index.ts',
+  node: './src/node.ts',
 };
 
 const modulePlugins = [

@@ -11,10 +11,8 @@
 
 export { WebSDK } from './base-otel-sdk';
 export { HoneycombWebSDK } from './honeycomb-otel-sdk';
-export {
-  WebVitalsInstrumentation,
-  WebVitalsInstrumentationConfig,
-} from './web-vitals-autoinstrumentation';
+export { WebVitalsInstrumentation } from './web-vitals-autoinstrumentation';
+export type { WebVitalsInstrumentationConfig } from './web-vitals-autoinstrumentation';
 export {
   GlobalErrorsInstrumentation,
   recordException,
