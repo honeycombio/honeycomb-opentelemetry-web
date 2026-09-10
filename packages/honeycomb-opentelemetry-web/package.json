@@ -12,7 +12,10 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "browser": "./dist/esm/index.js",
+      "browser": {
+        "require": "./dist/cjs/index.js",
+        "import": "./dist/esm/index.js"
+      },
       "react-server": "./dist/cjs/node.js",
       "node": {
         "require": "./dist/cjs/node.js",
