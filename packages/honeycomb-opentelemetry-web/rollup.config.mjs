@@ -13,6 +13,20 @@ const entryPoint = {
   node: './src/node.ts',
 };
 
+/* dist/esm holds ES modules, but the package declares no "type", so Node reads
+ * those .js files as CommonJS. Node 20+ hides that by sniffing for import
+ * syntax; Node 18 fails outright. Say it explicitly instead. */
+const emitEsmPackageType = () => ({
+  name: 'emit-esm-package-type',
+  generateBundle() {
+    this.emitFile({
+      type: 'asset',
+      fileName: 'package.json',
+      source: '{\n  "type": "module"\n}\n',
+    });
+  },
+});
+
 const modulePlugins = [
   autoExternal(),
   commonjs(),
@@ -38,7 +52,7 @@ const cjsConfig = {
 const esmConfig = {
   input: entryPoint,
   output: { dir: 'dist/esm', format: 'esm' },
-  plugins: [...modulePlugins],
+  plugins: [...modulePlugins, emitEsmPackageType()],
 };
 
 const IGNORE_WARNINGS = ['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY', 'EVAL'];
