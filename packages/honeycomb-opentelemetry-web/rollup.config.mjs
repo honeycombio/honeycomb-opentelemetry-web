@@ -13,11 +13,8 @@ const entryPoint = {
   node: './src/node.ts',
 };
 
-/* Two builds share one package.json. A root `type` gives the wrong value to
- * one of them. Node reads `type` from the nearest parent directory. This plugin
- * emits a second package.json in dist/esm. That file sets `type` for the ESM
- * build only. Without it, Node examines each file for import syntax and prints
- * the warning MODULE_TYPELESS_PACKAGE_JSON. */
+/* This plugin emits a nested package.json in dist/esm. That file sets `type`
+ * for the ESM build only, to avoid the warning MODULE_TYPELESS_PACKAGE_JSON. */
 const emitEsmPackageType = () => ({
   name: 'emit-esm-package-type',
   generateBundle() {
