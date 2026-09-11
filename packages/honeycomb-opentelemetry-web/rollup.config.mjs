@@ -13,14 +13,10 @@ const entryPoint = {
   node: './src/node.ts',
 };
 
-/* `type` is a single package-wide switch and we ship two builds, so no value at
- * the package root is true for both: it would mislabel dist/esm as CommonJS or
- * dist/cjs as ESM. Scope the declaration instead — Node resolves `type` from
- * the nearest parent package.json, so one emitted here covers dist/esm alone.
- *
- * Not a version workaround. Without it Node falls back to sniffing each file
- * for import syntax, which re-parses the module and warns the consumer
- * (MODULE_TYPELESS_PACKAGE_JSON) on every supported release. */
+/* Two builds share one package.json, so a root `type` would mislabel one of
+ * them. Node reads `type` from the nearest parent, which scopes this to
+ * dist/esm. Without it Node sniffs each file for import syntax and warns
+ * (MODULE_TYPELESS_PACKAGE_JSON). */
 const emitEsmPackageType = () => ({
   name: 'emit-esm-package-type',
   generateBundle() {

@@ -86,6 +86,23 @@ assert_equal() {
 	fi
 }
 
+# Fail and display details if the command run under bats `run` exited
+# non-zero. Reads the $status and $output that `run` sets.
+# Arguments: none
+assert_success() {
+	if [[ "$status" -ne 0 ]]; then
+		{
+			echo
+			echo "-- 💥 command failed 💥 --"
+			echo "status : $status"
+			echo "output : $output"
+			echo "--"
+			echo
+		} >&2 # output error to STDERR
+		return 1
+	fi
+}
+
 # Fail and display details if the actual value is empty.
 # Arguments: $1 - actual result
 assert_not_empty() {
