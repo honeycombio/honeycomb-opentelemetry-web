@@ -84,13 +84,13 @@ describe('non-browser entry point', () => {
     expect(notices[0]).toContain('WebVitalsInstrumentation');
   });
 
-  it('Can start the SDK without throwing.', () => {
+  it('Starts the SDK and throws no error.', () => {
     const sdk = new nodeEntry.HoneycombWebSDK(CONFIG);
 
     expect(() => sdk.start()).not.toThrow();
   });
 
-  it('Can record an exception without throwing.', () => {
+  it('Records an exception and throws no error.', () => {
     expect(() => nodeEntry.recordException(new Error('boom'))).not.toThrow();
   });
 });
