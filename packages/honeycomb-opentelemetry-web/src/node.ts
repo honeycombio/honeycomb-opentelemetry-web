@@ -2,14 +2,17 @@
  * This file is the entry point for environments with no DOM. The `node` and
  * `react-server` export conditions select it.
  *
- * The HoneycombWebSDK package is intended to be run in a browser context.
+ * The `@honeycombio/opentelemetry-web` package is intended to be run in a
+ * browser context.
  *
- * The browser can expect `window`, `document`, etc. to exist.
- * Node does not have these globals, which can cause unexpected errors at
- * import and instantiation time.
+ * A browser provides `window`, `document`, etc. Node does not have these
+ * globals, which can cause unexpected errors at import and instantiation time.
  *
  * This inert build has the same exports as `./index`, but each export is a
  * no-op and emits no telemetry.
+ *
+ * Each value exported from `./index` must also be exported from this file.
+ * A type check in `test/node-entry.test.ts` enforces this.
  *
  * To instrument in a Node context, consider @opentelemetry/sdk-node.
  */
