@@ -1,6 +1,6 @@
 /**
- * The entry point for environments with no DOM. The `node` and `react-server`
- * export conditions select this file.
+ * This file is the entry point for environments with no DOM. The `node` and
+ * `react-server` export conditions select it.
  *
  * This package is for browsers. The browser build reads `window`, `document`
  * and `navigator`. Node does not have these globals. A server, a Node test
@@ -23,10 +23,9 @@ function logInertUsage(what: string) {
   if (warned) return;
   warned = true;
   diag.debug(
-    `@honeycombio/opentelemetry-web: ${what} ran outside a browser. ` +
-      `This build collects no telemetry. You probably created this object in a ` +
-      `Node context. Examples are a test runner and a server component. ` +
-      `To instrument Node, use the OpenTelemetry Node SDK: ` +
+    `@honeycombio/opentelemetry-web: ${what} ran outside a browser, for ` +
+      `example in a test runner or a server component. This build collects no ` +
+      `telemetry. To instrument Node, use the OpenTelemetry Node SDK: ` +
       `@opentelemetry/sdk-node.`,
   );
 }
@@ -79,8 +78,8 @@ export class BaggageSpanProcessor {
 }
 
 /**
- * This function does nothing outside a browser. It discards the error and
- * throws no exception. The browser build records an `exception` span.
+ * This function discards the error and throws no exception. The browser build
+ * records an `exception` span.
  */
 export const recordException: (
   error?: unknown,

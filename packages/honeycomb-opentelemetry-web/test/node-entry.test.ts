@@ -14,11 +14,12 @@ import {
 type LogFn = (message: string, ...args: unknown[]) => void;
 
 /**
- * A type check makes sure that this build exports each value that the browser
- * build exports. The `node` and `react-server` conditions select this build. A
- * missing export becomes `undefined` for the caller.
- * `tsconfig.typecheck.json` includes ./test, so `npm run typecheck` fails and
- * gives the name of the export.
+ * The `node` and `react-server` conditions select the inert build. The inert
+ * build must export every value that the browser build exports. If an export
+ * is absent, the caller receives `undefined`.
+ *
+ * `tsconfig.typecheck.json` includes ./test. `npm run typecheck` fails and
+ * gives the name of the absent export.
  */
 type MissingFromNodeEntry = Exclude<
   keyof typeof import('../src/index'),
@@ -27,9 +28,8 @@ type MissingFromNodeEntry = Exclude<
 type AssertNever<T extends never> = T;
 type NodeEntryParity = AssertNever<MissingFromNodeEntry>;
 
-/* This file runs in Node. The other tests run in jsdom, which has a `window`.
- * Node does not have a `window`. If this file reads a browser global at module
- * scope, the import fails. */
+/* This file runs in Node. The other tests run in jsdom. Node has no `window`.
+ * If this file reads a browser global at module scope, the import fails. */
 describe('non-browser entry point', () => {
   const CONFIG = { apiKey: 'x'.repeat(32), serviceName: 'test' };
 
@@ -63,7 +63,8 @@ describe('non-browser entry point', () => {
   it('Logs an inert notice when the caller creates the SDK.', () => {
     new nodeEntry.HoneycombWebSDK(CONFIG);
 
-    /* `diag.setLogger` logs its own registration, so select our notices. */
+    /* `diag.setLogger` logs its own registration. Select only the notices from
+     * this package. */
     const notices = debug.mock.calls
       .map((call) => String(call[0]))
       .filter((message) => message.includes('@honeycombio/opentelemetry-web'));

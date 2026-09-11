@@ -164,9 +164,9 @@ teardown_file() {
 
 ## tests for non-browser consumers ##
 #
-# These tests resolve the package by name. Resolution by name goes through the
-# exports map, the way a consumer does. The unit suite runs in jsdom, which has
-# a DOM. It cannot catch a build that fails to import in Node.
+# These tests resolve the package by name, in the same way as a consumer. Name
+# resolution uses the exports map. The unit suite runs in jsdom and cannot
+# catch a build that fails to import in Node.
 
 @test "A CommonJS consumer outside a browser resolves and imports the inert build" {
   run node -e '
