@@ -12,8 +12,8 @@
  * something inert with the same shape. Importing is always safe; collection
  * happens in the browser, where the real build is resolved.
  *
- * Every value exported from `./index` must be exported here too.
- * `test/node-entry.test.ts` enforces that.
+ * Every value exported from `./index` must be exported here too;
+ * `test/node-entry.test.ts` enforces that at type-check time.
  */
 
 import { diag } from '@opentelemetry/api';
@@ -30,7 +30,8 @@ function noteInertUsage(what: string) {
     `@honeycombio/opentelemetry-web: ${what} was constructed outside a browser, ` +
       `so no telemetry will be collected here. This is expected during server ` +
       `rendering or in Node-based test runners; the browser build is used in ` +
-      `the browser.`,
+      `the browser. To instrument the server itself, use the Node distribution, ` +
+      `@honeycombio/opentelemetry-node.`,
   );
 }
 

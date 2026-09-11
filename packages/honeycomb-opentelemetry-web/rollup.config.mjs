@@ -13,9 +13,14 @@ const entryPoint = {
   node: './src/node.ts',
 };
 
-/* dist/esm holds ES modules, but the package declares no "type", so Node reads
- * those .js files as CommonJS. Node 20+ hides that by sniffing for import
- * syntax; Node 18 fails outright. Say it explicitly instead. */
+/* `type` is a single package-wide switch and we ship two builds, so no value at
+ * the package root is true for both: it would mislabel dist/esm as CommonJS or
+ * dist/cjs as ESM. Scope the declaration instead — Node resolves `type` from
+ * the nearest parent package.json, so one emitted here covers dist/esm alone.
+ *
+ * Not a version workaround. Without it Node falls back to sniffing each file
+ * for import syntax, which re-parses the module and warns the consumer
+ * (MODULE_TYPELESS_PACKAGE_JSON) on every supported release. */
 const emitEsmPackageType = () => ({
   name: 'emit-esm-package-type',
   generateBundle() {

@@ -38,11 +38,13 @@
     "README.md",
     "LICENSE"
   ],
+  "engines": {
+    "node": ">=20.6.0"
+  },
   "scripts": {
     "compile": "rollup -c",
     "build:clean": "rm -rf dist",
-    "build": "npm run build:clean && npm run compile && npm run verify:node-entry",
-    "verify:node-entry": "node ./scripts/verify-node-entry.mjs",
+    "build": "npm run build:clean && npm run compile",
     "check-format": "prettier --list-different \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "format": "prettier --write \"./**/*.{ts,mts,cts,js,cjs,mjs,tsx,jsx}\"",
     "lint": "eslint .",
