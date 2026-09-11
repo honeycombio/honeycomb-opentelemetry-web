@@ -28,8 +28,7 @@ type MissingFromNodeEntry = Exclude<
 type AssertNever<T extends never> = T;
 type NodeEntryParity = AssertNever<MissingFromNodeEntry>;
 
-/* This file runs in Node. The other tests run in jsdom. Node has no `window`.
- * If this file reads a browser global at module scope, the import fails. */
+/* This file runs in a Node context. */
 describe('non-browser entry point', () => {
   const CONFIG = { apiKey: 'x'.repeat(32), serviceName: 'test' };
 
@@ -37,8 +36,6 @@ describe('non-browser entry point', () => {
   let debug: Mock<LogFn>;
 
   beforeEach(async () => {
-    /* The build sends the notice one time for each module instance. Give each
-     * test a new instance, so the tests can run in any sequence. */
     vi.resetModules();
 
     debug = vi.fn<LogFn>();
@@ -63,8 +60,6 @@ describe('non-browser entry point', () => {
   it('Logs an inert notice when the caller creates the SDK.', () => {
     new nodeEntry.HoneycombWebSDK(CONFIG);
 
-    /* `diag.setLogger` logs its own registration. Select only the notices from
-     * this package. */
     const notices = debug.mock.calls
       .map((call) => String(call[0]))
       .filter((message) => message.includes('@honeycombio/opentelemetry-web'));
