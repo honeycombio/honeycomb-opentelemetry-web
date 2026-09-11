@@ -86,10 +86,10 @@ assert_equal() {
 	fi
 }
 
-# Fail and display details if the command run under bats `run` exited
-# non-zero. Reads the $status and $output that `run` sets.
+# Fail and display details if the command that bats `run` executes exits
+# with a status that is not 0. Reads the $status and $output that `run` sets.
 # Arguments: none
-assert_success() {
+assert_command_finished_successfully() {
 	if [[ "$status" -ne 0 ]]; then
 		{
 			echo

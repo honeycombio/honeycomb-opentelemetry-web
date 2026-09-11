@@ -13,10 +13,10 @@ const entryPoint = {
   node: './src/node.ts',
 };
 
-/* Two builds share one package.json, so a root `type` would mislabel one of
- * them. Node reads `type` from the nearest parent, which scopes this to
- * dist/esm. Without it Node sniffs each file for import syntax and warns
- * (MODULE_TYPELESS_PACKAGE_JSON). */
+/* Two builds share one package.json, so a root `type` gives the wrong value to
+ * one of them. Node reads `type` from the nearest parent directory. This file
+ * sets `type` for dist/esm only. Without this file, Node examines each file for
+ * import syntax and prints the warning MODULE_TYPELESS_PACKAGE_JSON. */
 const emitEsmPackageType = () => ({
   name: 'emit-esm-package-type',
   generateBundle() {

@@ -164,11 +164,11 @@ teardown_file() {
 
 ## tests for non-browser consumers ##
 #
-# These resolve the package by name, so they go through the exports map the
-# way a consumer does. The unit suite runs in jsdom and cannot catch a build
-# that fails to import without a DOM: 1.5.0 shipped green and unimportable.
+# These tests resolve the package by name. Resolution by name goes through the
+# exports map, the way a consumer does. The unit suite runs in jsdom, which has
+# a DOM. It cannot catch a build that fails to import in Node.
 
-@test "CommonJS consumers outside a browser get the inert build and import it cleanly" {
+@test "A CommonJS consumer outside a browser resolves and imports the inert build" {
   run node -e '
     const resolved = require.resolve("@honeycombio/opentelemetry-web");
     if (!resolved.endsWith("/dist/cjs/node.js")) {
@@ -179,10 +179,10 @@ teardown_file() {
     new sdk.HoneycombWebSDK({ apiKey: "x".repeat(32), serviceName: "smoke" }).start();
     sdk.recordException(new Error("smoke"));
   '
-  assert_success
+  assert_command_finished_successfully
 }
 
-@test "ESM consumers outside a browser get the inert build and import it cleanly" {
+@test "An ESM consumer outside a browser resolves and imports the inert build" {
   run node --input-type=module -e '
     const resolved = import.meta.resolve("@honeycombio/opentelemetry-web");
     if (!resolved.endsWith("/dist/esm/node.js")) {
@@ -192,5 +192,5 @@ teardown_file() {
     const sdk = await import("@honeycombio/opentelemetry-web");
     new sdk.HoneycombWebSDK({ apiKey: "x".repeat(32), serviceName: "smoke" }).start();
   '
-  assert_success
+  assert_command_finished_successfully
 }
