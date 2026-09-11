@@ -1,25 +1,21 @@
 /**
- * Non-browser entry point, selected by the `node` and `react-server` export
- * conditions.
+ * The entry point for environments with no DOM. The `node` and `react-server`
+ * export conditions select this file.
  *
- * This package targets browsers: it reads `window`, `document` and `navigator`,
- * and so does the upstream instrumentation it bundles. Server rendering,
- * Node-target test runners and RSC all evaluate client modules in Node, where
- * those globals do not exist, so resolving them to the browser build makes a
- * bare `import` fatal — before any of the caller's own code runs.
+ * This package is for browsers. It reads `window`, `document` and `navigator`.
+ * Node does not have these globals. Server rendering, Node test runners and
+ * React Server Components run browser code in Node. If these environments load
+ * the browser build, the import fails.
  *
- * Rather than guard every browser global, this build gives those environments
- * something inert with the same shape. Importing is always safe; collection
- * happens in the browser, where the real build is resolved.
+ * This build has the same exports as `./index`, but each export does nothing.
+ * An import is always safe. The browser build collects the telemetry.
  *
- * Every value exported from `./index` must be exported here too;
- * `test/node-entry.test.ts` enforces that at type-check time.
+ * Export each value from `./index` in this file also. A type check fails if you
+ * do not. See `test/node-entry.test.ts`.
  */
 
 import { diag } from '@opentelemetry/api';
 
-/* Pure string constants — no DOM access, and useful in code shared between
- * browser and server, so they are re-exported rather than stubbed. */
 export * from './semantic-attributes';
 
 let warned = false;
@@ -27,11 +23,10 @@ function noteInertUsage(what: string) {
   if (warned) return;
   warned = true;
   diag.debug(
-    `@honeycombio/opentelemetry-web: ${what} was constructed outside a browser, ` +
-      `so no telemetry will be collected here. This is expected during server ` +
-      `rendering or in Node-based test runners; the browser build is used in ` +
-      `the browser. To instrument the server itself, use the Node distribution, ` +
-      `@honeycombio/opentelemetry-node.`,
+    `@honeycombio/opentelemetry-web: ${what} ran outside a browser. ` +
+      `This build collects no telemetry. This is correct for server rendering ` +
+      `and for Node test runners. To instrument Node, use the OpenTelemetry ` +
+      `Node SDK: @opentelemetry/sdk-node.`,
   );
 }
 
@@ -57,9 +52,10 @@ class InertInstrumentation {
 export class WebSDK {
   constructor(options?: unknown) {
     void options;
-    noteInertUsage('WebSDK');
   }
-  start() {}
+  start() {
+    noteInertUsage(this.constructor.name);
+  }
   shutdown() {
     return Promise.resolve();
   }

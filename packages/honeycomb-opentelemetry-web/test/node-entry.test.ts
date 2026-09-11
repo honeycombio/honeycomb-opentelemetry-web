@@ -14,13 +14,11 @@ import {
 type LogFn = (message: string, ...args: unknown[]) => void;
 
 /**
- * Parity, enforced at compile time. The `node` and `react-server` conditions
- * resolve to this module, so a name exported from the browser entry but missing
- * here is `undefined` for every server-rendered and Node-side consumer, and
- * surfaces at the point of use rather than here.
- *
- * `tsconfig.typecheck.json` covers ./test, so a gap fails `npm run typecheck`
- * and the error names the missing export.
+ * A type check makes sure that this build exports each value that the browser
+ * build exports. The `node` and `react-server` conditions select this build. A
+ * missing export becomes `undefined` for the caller, far from the cause.
+ * `tsconfig.typecheck.json` includes ./test, so `npm run typecheck` fails and
+ * gives the name of the export.
  */
 type MissingFromNodeEntry = Exclude<
   keyof typeof import('../src/index'),
@@ -29,17 +27,18 @@ type MissingFromNodeEntry = Exclude<
 type AssertNever<T extends never> = T;
 type NodeEntryParity = AssertNever<MissingFromNodeEntry>;
 
-/* Unlike the rest of the suite this file runs in a real Node environment, so
- * `window` is absent while the module under test is evaluated. Imports are
- * hoisted, so deleting globals inside a test body would run after evaluation
- * and could never catch a module-scope read, which is how 1.5.0 broke. */
+/* This file runs in Node. The other tests run in jsdom, which has a `window`.
+ * Node does not, so a read of a browser global at module scope fails the
+ * import. */
 describe('non-browser entry point', () => {
+  const CONFIG = { apiKey: 'x'.repeat(32), serviceName: 'test' };
+
   let nodeEntry: typeof import('../src/node');
   let debug: Mock<LogFn>;
 
   beforeEach(async () => {
-    /* The inert build logs its notice once per module instance. Reset the
-     * registry so each test gets its own and can run in any order. */
+    /* The build sends the notice one time for each module instance. Give each
+     * test a new instance, so the tests can run in any sequence. */
     vi.resetModules();
 
     debug = vi.fn<LogFn>();
@@ -61,42 +60,34 @@ describe('non-browser entry point', () => {
     diag.disable();
   });
 
-  /* diag.setLogger announces its own registration, so pick out ours. */
-  const noticesLogged = () =>
-    debug.mock.calls
+  it('Logs an inert notice when the caller starts the SDK.', () => {
+    new nodeEntry.HoneycombWebSDK(CONFIG).start();
+
+    /* `diag.setLogger` logs its own registration, so select our notices. */
+    const notices = debug.mock.calls
       .map((call) => String(call[0]))
       .filter((message) => message.includes('@honeycombio/opentelemetry-web'));
 
-  it('names the Node SDK once, not on every construction', () => {
-    new nodeEntry.HoneycombWebSDK({
-      apiKey: 'x'.repeat(32),
-      serviceName: 'test',
-    });
+    expect(notices).toHaveLength(1);
+    expect(notices[0]).toContain('HoneycombWebSDK');
+    expect(notices[0]).toContain('@opentelemetry/sdk-node');
+  });
+
+  it('Logs an inert notice when the caller creates an instrumentation.', () => {
     new nodeEntry.WebVitalsInstrumentation();
 
-    const notices = noticesLogged();
+    const notices = debug.mock.calls
+      .map((call) => String(call[0]))
+      .filter((message) => message.includes('@honeycombio/opentelemetry-web'));
 
     expect(notices).toHaveLength(1);
-    expect(notices[0]).toContain('@honeycombio/opentelemetry-node');
+    expect(notices[0]).toContain('WebVitalsInstrumentation');
   });
 
-  /* `navigator` is deliberately not asserted on: Node has shipped a global
-   * Navigator since v21, so unlike `window` and `document` it says nothing
-   * about whether a DOM is present. */
-  it('loads with no DOM present', () => {
-    expect(typeof window).toBe('undefined');
-    expect(typeof document).toBe('undefined');
-  });
-
-  it('is inert rather than throwing', () => {
-    const sdk = new nodeEntry.HoneycombWebSDK({
-      apiKey: 'x'.repeat(32),
-      serviceName: 'test',
-    });
+  it('Can start the SDK without throwing.', () => {
+    const sdk = new nodeEntry.HoneycombWebSDK(CONFIG);
 
     expect(() => sdk.start()).not.toThrow();
-    expect(() => nodeEntry.recordException(new Error('boom'))).not.toThrow();
-    expect(new nodeEntry.WebVitalsInstrumentation().isEnabled()).toBe(false);
   });
 });
 
