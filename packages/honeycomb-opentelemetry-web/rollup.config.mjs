@@ -10,7 +10,21 @@ import autoExternal from 'rollup-plugin-auto-external';
 const entryPoint = {
   index: './src/index.ts',
   'experimental/index': './src/experimental/index.ts',
+  node: './src/node.ts',
 };
+
+/* This plugin emits a nested package.json in dist/esm. That file sets `type`
+ * for the ESM build only, to avoid the warning MODULE_TYPELESS_PACKAGE_JSON. */
+const emitEsmPackageType = () => ({
+  name: 'emit-esm-package-type',
+  generateBundle() {
+    this.emitFile({
+      type: 'asset',
+      fileName: 'package.json',
+      source: '{\n  "type": "module"\n}\n',
+    });
+  },
+});
 
 const modulePlugins = [
   autoExternal(),
@@ -37,7 +51,7 @@ const cjsConfig = {
 const esmConfig = {
   input: entryPoint,
   output: { dir: 'dist/esm', format: 'esm' },
-  plugins: [...modulePlugins],
+  plugins: [...modulePlugins, emitEsmPackageType()],
 };
 
 const IGNORE_WARNINGS = ['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY', 'EVAL'];

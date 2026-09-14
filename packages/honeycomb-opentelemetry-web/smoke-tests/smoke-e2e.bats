@@ -161,3 +161,32 @@ teardown_file() {
   result=$(log_bodies_for "logger")
   assert_equal "$result" '"This is a log."'
 }
+
+## tests for non-browser consumers ##
+
+@test "A CommonJS consumer outside a browser resolves and imports the inert build" {
+  run node -e '
+    const resolved = require.resolve("@honeycombio/opentelemetry-web");
+    if (!resolved.endsWith("/dist/cjs/node.js")) {
+      console.error("resolved to " + resolved);
+      process.exit(1);
+    }
+    const sdk = require("@honeycombio/opentelemetry-web");
+    new sdk.HoneycombWebSDK({ apiKey: "x".repeat(32), serviceName: "smoke" }).start();
+    sdk.recordException(new Error("smoke"));
+  '
+  assert_command_finished_successfully
+}
+
+@test "An ESM consumer outside a browser resolves and imports the inert build" {
+  run node --input-type=module -e '
+    const resolved = import.meta.resolve("@honeycombio/opentelemetry-web");
+    if (!resolved.endsWith("/dist/esm/node.js")) {
+      console.error("resolved to " + resolved);
+      process.exit(1);
+    }
+    const sdk = await import("@honeycombio/opentelemetry-web");
+    new sdk.HoneycombWebSDK({ apiKey: "x".repeat(32), serviceName: "smoke" }).start();
+  '
+  assert_command_finished_successfully
+}

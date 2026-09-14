@@ -12,7 +12,15 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "node": "./dist/cjs/index.js",
+      "browser": {
+        "require": "./dist/cjs/index.js",
+        "import": "./dist/esm/index.js"
+      },
+      "react-server": "./dist/cjs/node.js",
+      "node": {
+        "require": "./dist/cjs/node.js",
+        "import": "./dist/esm/node.js"
+      },
       "require": "./dist/cjs/index.js",
       "import": "./dist/esm/index.js",
       "default": "./dist/esm/index.js"
@@ -30,6 +38,9 @@
     "README.md",
     "LICENSE"
   ],
+  "engines": {
+    "node": ">=20.6.0"
+  },
   "scripts": {
     "compile": "rollup -c",
     "build:clean": "rm -rf dist",

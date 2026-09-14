@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: resolve non-browser environments to an inert build (#676) | @wolfgangcodes
+
 ## v1.5.0 - 2026-09-02
 
 - maint(deps): bump browserslist from 4.24.4 to 4.28.8 in /packages/honeycomb-opentelemetry-web/examples/experimental/user-interaction-instrumentation (#669) | @dependabot
