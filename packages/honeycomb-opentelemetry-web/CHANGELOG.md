@@ -1,8 +1,9 @@
 # honeycomb-opentelemetry-web changelog
 
-## Unreleased
+## v1.5.1 - 2026-09-14
 
 - fix: resolve non-browser environments to an inert build (#676) | @wolfgangcodes
+- maint(deps): bump web-vitals from 6.2.0 to 6.2.1 in /packages/honeycomb-opentelemetry-web (#675) | @dependabot
 
 ## v1.5.0 - 2026-09-02
 
