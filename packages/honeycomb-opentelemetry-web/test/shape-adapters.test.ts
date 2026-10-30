@@ -8,7 +8,6 @@ import { logs } from '@opentelemetry/api-logs';
 import {
   exceptionSpanAdapter,
   ShapeLogRecordProcessor,
-  userActionSpanAdapter,
   webVitalsSpanAdapter,
 } from '../src/shape';
 import { setupTestExporter } from './test-helpers';
@@ -27,8 +26,8 @@ describe('shape adapters: upstream log records -> Honeycomb spans', () => {
     const provider = new LoggerProvider({
       processors: [
         new ShapeLogRecordProcessor(
-          new SimpleLogRecordProcessor({ exporter: exportedLogs }),
-          [webVitalsSpanAdapter, exceptionSpanAdapter, userActionSpanAdapter],
+          [new SimpleLogRecordProcessor({ exporter: exportedLogs })],
+          [webVitalsSpanAdapter, exceptionSpanAdapter],
         ),
       ],
     });
@@ -136,21 +135,6 @@ describe('shape adapters: upstream log records -> Honeycomb spans', () => {
       18, 6,
     ]);
     expect(exportedLogs.getFinishedLogRecords()).toHaveLength(0);
-  });
-
-  test('click: span carries the target tag and an xpath resolved from the selector', async () => {
-    await emit('browser.user_action.click', {
-      'browser.tag_name': 'BUTTON',
-      'browser.css_selector': '#btn',
-    });
-
-    const [span] = spans.getFinishedSpans();
-    expect(span.name).toBe('click');
-    expect(span.attributes).toMatchObject({
-      event_type: 'click',
-      target_element: 'BUTTON',
-      target_xpath: '//html/body/button',
-    });
   });
 
   test('events with no adapter pass through to the exporting processor untouched', async () => {

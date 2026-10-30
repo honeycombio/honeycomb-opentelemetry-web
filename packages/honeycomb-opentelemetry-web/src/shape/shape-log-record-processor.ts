@@ -17,17 +17,17 @@ export interface LogShapeAdapter {
 }
 
 /**
- * Sits in front of the exporting log processor. Records an adapter consumes
+ * Sits in front of the exporting log processors. Records an adapter consumes
  * stop here; every other record passes through to `inner` untouched.
  *
  * A LogRecordProcessor cannot drop a record, so the host has to own the
- * processor that exports: that is why `inner` is a constructor argument.
+ * processors that export: that is why `inner` is a constructor argument.
  */
 export class ShapeLogRecordProcessor implements LogRecordProcessor {
   private readonly _adapters: Map<string, LogShapeAdapter>;
 
   constructor(
-    private readonly _inner: LogRecordProcessor,
+    private readonly _inner: LogRecordProcessor[],
     adapters: LogShapeAdapter[],
   ) {
     this._adapters = new Map(adapters.map((a) => [a.eventName, a]));
@@ -46,14 +46,14 @@ export class ShapeLogRecordProcessor implements LogRecordProcessor {
         consumed = false;
       }
     }
-    if (!consumed) this._inner.onEmit(record, context);
+    if (!consumed) this._inner.forEach((p) => p.onEmit(record, context));
   }
 
-  forceFlush() {
-    return this._inner.forceFlush();
+  async forceFlush() {
+    await Promise.all(this._inner.map((p) => p.forceFlush()));
   }
 
-  shutdown() {
-    return this._inner.shutdown();
+  async shutdown() {
+    await Promise.all(this._inner.map((p) => p.shutdown()));
   }
 }

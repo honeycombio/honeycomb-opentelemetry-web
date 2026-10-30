@@ -1,5 +1,9 @@
 import { Attributes, Context, SpanStatusCode } from '@opentelemetry/api';
 import { hrTimeToMilliseconds } from '@opentelemetry/core';
+import {
+  ATTR_EXCEPTION_MESSAGE,
+  ATTR_EXCEPTION_STACKTRACE,
+} from '@opentelemetry/semantic-conventions';
 import { SdkLogRecord } from '@opentelemetry/sdk-logs';
 import { LogShapeAdapter } from './shape-log-record-processor';
 import { emitSpan } from './emit-span';
@@ -14,10 +18,10 @@ export const exceptionSpanAdapter: LogShapeAdapter = {
   eventName: 'exception',
   adapt(record: SdkLogRecord, context?: Context) {
     const a = record.attributes as Attributes;
-    const stack = a['exception.stacktrace'];
+    const stack = a[ATTR_EXCEPTION_STACKTRACE];
     // computeStackTrace reads `.stack` off an Error-like object.
     const asError = Object.assign(
-      new Error(String(a['exception.message'] ?? '')),
+      new Error(String(a[ATTR_EXCEPTION_MESSAGE] ?? '')),
       { stack: typeof stack === 'string' ? stack : undefined },
     );
     const at = hrTimeToMilliseconds(record.hrTime);
@@ -30,7 +34,7 @@ export const exceptionSpanAdapter: LogShapeAdapter = {
       context,
       {
         code: SpanStatusCode.ERROR,
-        message: String(a['exception.message'] ?? ''),
+        message: String(a[ATTR_EXCEPTION_MESSAGE] ?? ''),
       },
     );
     return true;

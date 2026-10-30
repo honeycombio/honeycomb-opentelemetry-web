@@ -1,6 +1,7 @@
 import { Attributes, Context } from '@opentelemetry/api';
 import { SdkLogRecord } from '@opentelemetry/sdk-logs';
 import { hrTimeToMilliseconds } from '@opentelemetry/core';
+import { EVENT_BROWSER_WEB_VITAL } from '@opentelemetry/semantic-conventions/incubating';
 import { LogShapeAdapter } from './shape-log-record-processor';
 import { defined, emitSpan } from './emit-span';
 
@@ -19,6 +20,7 @@ import { defined, emitSpan } from './emit-span';
  *  - `applyCustomAttributes(vital, span)` receives no live `Metric`
  */
 const SCOPE = '@honeycombio/instrumentation-web-vitals';
+// The `browser.web_vital.*` attribute constants arrive in semantic-conventions 1.44.
 const ATTR = (k: string) => `browser.web_vital.${k}`;
 
 /** A `PerformanceNavigationTiming` after `JSON.stringify`. */
@@ -117,7 +119,7 @@ const dataAttributes = (selector: unknown, prefix: string): Attributes => {
 };
 
 export const webVitalsSpanAdapter: LogShapeAdapter = {
-  eventName: 'browser.web_vital',
+  eventName: EVENT_BROWSER_WEB_VITAL,
   adapt(record: SdkLogRecord, context?: Context) {
     const a = record.attributes as Attributes;
     const name = String(a[ATTR('name')] ?? '').toLowerCase();
