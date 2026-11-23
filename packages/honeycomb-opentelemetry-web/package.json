@@ -120,6 +120,7 @@
     "@opentelemetry/api-logs": "~0.220.0",
     "@opentelemetry/auto-instrumentations-web": "^0.65.0",
     "@opentelemetry/browser-instrumentation": "^0.6.0",
+    "@opentelemetry/browser-sdk": "^0.5.0",
     "@opentelemetry/core": "~2.9.0",
     "@opentelemetry/exporter-logs-otlp-http": "^0.220.0",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.220.0",
